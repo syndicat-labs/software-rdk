@@ -16,7 +16,11 @@ export interface ThemeDefinition {
   readonly description: string;
 }
 
-export const THEME_REGISTRY: readonly ThemeDefinition[] = [
+// `satisfies` rather than a `: readonly ThemeDefinition[]` annotation: the
+// annotation widens `id` to `string`, which silently discarded `as const` and
+// made ThemeId resolve to `string` — so any unknown theme id type-checked.
+// `satisfies` keeps the shape check while preserving the literal types.
+export const THEME_REGISTRY = [
   {
     id: 'rdk-default',
     label: 'Default',
@@ -27,7 +31,7 @@ export const THEME_REGISTRY: readonly ThemeDefinition[] = [
     label: 'Obsidian',
     description: 'Dark/light duality enterprise theme — mineral restraint, typographic authority',
   },
-] as const;
+] as const satisfies readonly ThemeDefinition[];
 
 export type ThemeId = typeof THEME_REGISTRY[number]['id'];
 

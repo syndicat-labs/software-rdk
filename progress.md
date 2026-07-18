@@ -1073,3 +1073,79 @@ component semantic-role metadata. Recorded so the abstract limitation has a conc
 | FLAG-14 fix evolute muted + brand | High | 2.52:1 and 3.74:1. |
 | FLAG-15 component role metadata | Medium | Unlocks Tier B enforcement. |
 | Comparison page layout | Low | Third panel wraps below fold at 1600px. |
+
+---
+
+## 2026-07-18 (session 6) — FLAG-14 closed: the accessibility floor is now enforced
+
+The floor was declared non-negotiable law in machine root §3.5 and checked by nothing. It is now a
+Tier A gate.
+
+### The gate found 7× more than manual review did
+
+Session 5 found 3 contrast failures by hand. `scripts/check-contrast.mjs` found **21**, across all
+three languages — including failures in `rdk-default`, which nobody had looked at.
+
+It resolves `var()` chains per language (globals, then the language's own block, matching the
+cascade), so it checks *rendered* values rather than declarations. Per protocol §6 a Tier A failure
+means rebuild, not exemption, so the script has **no ratchet and no allowlist by design**.
+
+### A bug in the gate, found by the gate
+
+16 pairs initially reported "non-computable". The cause was mine: `DECLARATION` was anchored with
+`^\s*`, and SCSS permits several declarations per line — `_evolute.scss` line 54 declares three
+status ramps on one line, so two of every three were silently unparsed.
+
+**`check-theme-contract.mjs` carried the identical bug**, which means its namespace-isolation check
+had been under-reporting since it was written: a foreign namespace token declared as the second
+declaration on a line would have passed. Both regexes are now unanchored.
+
+### Fixes applied
+
+Shared primitives (one fix, all languages benefit):
+
+| Token | Before | After |
+|---|---|---|
+| `--color-neutral-400` | `#94a3b8` | `#6a7483` |
+| `--color-danger-600` | `#dc2626` | `#ce2424` |
+| `--color-warning-700` | `#b45309` | `#ab4f09` |
+| `--color-brand-500` | `#6366f1` | `#6265f0` |
+
+Obsidian — **a genuine design conflict surfaced here.** At 4.5:1 on its `#EBEBEB` ground, muted and
+secondary both solve to `#6a6a6a`, collapsing a tier that "hierarchy without colour" depends on.
+Resolved by darkening secondary further to preserve three distinct tiers:
+
+| Token | Before | After | On `#EBEBEB` |
+|---|---|---|---|
+| `--obs-text-secondary` | `#6B6B6B` | `#4D4D4D` | 7.09:1 |
+| `--obs-text-muted` | `#AAAAAA` | `#6A6A6A` | 4.54:1 |
+
+theEvolute: `--evo-warm-400` → `#777270`, `--evo-teal-500` → `#12a796` (focus ring, 3:1 non-text),
+`--evo-teal-600` → `#0b8177` (fixes brand text *and* white-on-brand), `--evo-danger-600` → `#d82525`.
+
+Obsidian's failures were **pre-existing** and shipped in the machine default language.
+
+### Verified red
+
+Regressing `--obs-text-muted` to `#AAAAAA` → 1.95:1 fail. Weakening theEvolute's focus ring to
+`#2dd4bf` → 1.86:1 fail against the 3:1 non-text threshold.
+
+### Note on the CI job name
+
+`Architecture rules (tokens · storage)` is a **required status check** in branch protection. It was
+briefly renamed to mention contrast and reverted: renaming a required check makes it never report,
+which blocks every merge. Comment added at the job so this is not rediscovered.
+
+### Gate results
+
+| Gate | Result |
+|---|---|
+| lint · typecheck | exit 0 |
+| architecture (tokens · **contrast** · storage) | exit 0 |
+| test | 593 passed / 30 suites · 98.09% stmt |
+
+Re-rendered after the palette changes: Obsidian's three grey tiers remain visually distinct.
+
+### Still open
+
+FLAG-13 (elevation tokens absent from the contract) and FLAG-15 (Tier B polarity) are unchanged.

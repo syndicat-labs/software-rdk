@@ -34,7 +34,11 @@ const THEMES_DIR = join(ROOT, 'src/styles/themes');
 const APP_DIR = join(ROOT, 'src/app');
 
 /** A custom-property *declaration* (`--name:`), not a usage (`var(--name)`). */
-const DECLARATION = /^\s*(--[a-z0-9-]+)\s*:/gim;
+// Not anchored to line start: SCSS permits several declarations on one line and
+// an anchored pattern captures only the first, which silently under-reported
+// namespace isolation. A usage — `var(--x)` — is never matched because the
+// token must be followed by a colon.
+const DECLARATION = /(--[a-z0-9-]+)\s*:/gi;
 const USAGE = /var\(\s*(--[a-z0-9-]+)/g;
 const THEME_PRIVATE_PREFIX = '--obs-';
 const COMPONENT_EXTENSIONS = /\.(ts|scss|html)$/;

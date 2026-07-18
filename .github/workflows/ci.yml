@@ -94,9 +94,13 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
 
-  # Architectural rules that eslint cannot express: the two-layer token
-  # contract and the [ABSOLUTE] storage rule. Both were previously defended
-  # only by review, which is how three dead tokens survived unnoticed.
+  # Architectural rules that eslint cannot express: the token contract, the
+  # protocol's accessibility floor, and the [ABSOLUTE] storage rule. All three
+  # were previously defended only by review — which is how three dead tokens
+  # and 21 WCAG contrast failures survived unnoticed.
+  # Job name is load-bearing: it is a required status check in branch
+  # protection. Renaming it makes the required check never report and blocks
+  # every merge. Change it only alongside a protection update.
   architecture:
     name: Architecture rules (tokens · storage)
     runs-on: ubuntu-latest

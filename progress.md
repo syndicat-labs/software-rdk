@@ -1277,3 +1277,72 @@ The +10 comes from the per-language parameterised suites now running for three l
 ### Still open
 
 FLAG-15 (Tier B polarity metadata) is the only protocol flag outstanding.
+
+---
+
+## 2026-07-18 (session 9) — New Design Ideas becomes per-language
+
+### The problem
+
+Every page under "New Design Ideas" was authored for Obsidian. Once the showcase stopped pinning
+`data-theme="obsidian"` (session 7), they rendered under every language — presenting Obsidian's
+structural choices (one dark anchor card, high density, contained illustration) as though they were
+shared by languages that explicitly refuse them. **A design idea carries a philosophy, so it cannot
+be re-skinned by swapping tokens.**
+
+### Structure
+
+A **design idea** is now a *problem* stated independently of any language —
+`src/app/features/showcase/design-ideas/design-idea.ts` — with zero or more per-language variants,
+lazily loaded. `DesignIdeaHostComponent` resolves the variant for the active language from one
+parameterised route (`new-design-ideas/:ideaId`), replacing eight hardcoded routes.
+
+**A missing variant renders as an explicit gap, never a substitute.** Showing Obsidian's pricing
+page under theEvolute would display a single dark anchor card under a language whose emphasis budget
+is unbounded, and label it as that language's position. The gap names which languages *have*
+expressed the idea, so it reads as information rather than an error.
+
+### Pricing Section — three philosophies, one problem
+
+| Language | Structure | Reference |
+|---|---|---|
+| **Obsidian** | Light ground, white cards, **one dark anchor**, contained illustration lower-right, hierarchy without colour | `pricing1.jpg` |
+| **Modern** | Conventional three-tier table with a "Most popular" marker; brand colour marks the tier rather than surface inversion; gradient closing band as the second permitted emphasis surface | — |
+| **theEvolute** | Flush numbered tiles `/01 /02 /03`, gradient anchor tile, checklist settling to the bottom edge, separation by elevation, **no privileged tier** | `pricing2.jpg` |
+
+Each follows from its declaration: Modern's `colorRole: brand-led` and `emphasisSurfaceBudget: 2`;
+theEvolute's `unbounded` budget, `sectionRhythm: elevation`, and the Chromatic Key pattern with the
+index numeral as the redundant non-colour cue.
+
+The other seven ideas remain Obsidian-only and now show the gap under the other two languages.
+
+### A bug the tests did not catch, and the test that now does
+
+The language selector displayed **"Modern"** while rendering theEvolute. `[value]` on a `<select>`
+is applied before `@for` has produced the options, so it silently fell back to the first entry.
+Fixed by binding `selected` on each option.
+
+**The existing test passed throughout.** It asserted `select.value === service.current()`, but the
+service default is also the first option, so "shows the first option" and "shows the active
+language" were indistinguishable. The new test persists a language that is *not* first — verified to
+fail against the old binding and pass against the fix.
+
+Also self-inflicted: the explanatory comment used backticks inside a backtick-delimited template
+literal, terminating the template. Caught by typecheck.
+
+### Gate results
+
+| Gate | Result |
+|---|---|
+| lint · typecheck | exit 0 |
+| architecture | exit 0 — 90 tokens, 3 languages |
+| test | **610 passed / 31 suites** · 98.10% stmt |
+| build:prod | exit 0 — each variant now its own lazy chunk |
+
+### Pending
+
+| Item | Priority | Notes |
+|---|---|---|
+| Variants for the other seven ideas | Medium | Each shows the gap under Modern and theEvolute today. |
+| FLAG-15 component role metadata | Medium | Still the only open protocol flag. |
+| Idea variant coverage in the gate | Low | Nothing asserts a registered idea's `load()` resolves. |

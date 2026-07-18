@@ -7,10 +7,9 @@ const angularTemplateParser = require('@angular-eslint/template-parser');
 const prettierConfig = require('eslint-config-prettier');
 
 module.exports = tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
   {
     files: ['**/*.ts'],
+    extends: [eslint.configs.recommended, ...tseslint.configs.recommended],
     plugins: {
       '@angular-eslint': angular,
     },

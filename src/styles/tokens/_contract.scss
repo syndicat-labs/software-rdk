@@ -10,7 +10,7 @@
 // All registered themes must be updated before the change ships.
 // Bump the contract version comment below and update token-contract.ts.
 //
-// Contract version: 1.0.0
+// Contract version: 1.1.0
 
 :root {
 
@@ -148,7 +148,25 @@
   --color-surface-featured-text:  #f1f5f9;
   --color-surface-featured-muted: rgba(241, 245, 249, 0.65);
 
-  // ── Monospace data font ───────────────────────────────────────────────────────
+  // ── Elevation ─────────────────────────────────────────────────────────────────
+  // Added in contract 1.1.0. A language answering `depthModel: shadow` or
+  // `surfaceBoundary: elevation` had no token through which to express it: the
+  // contract carried colour, space, radius and type only. theEvolute declared
+  // both and rendered flat, because its private elevation tokens bridged onto
+  // nothing. A language that separates surfaces by other means answers `none`.
+  --elevation-raised:  var(--shadow-sm);
+  --elevation-float:   var(--shadow-lg);
+  --elevation-overlay: var(--shadow-2xl);
+
+  // ── Typography ────────────────────────────────────────────────────────────────
+  // Added in contract 1.1.0. Only --font-data existed, so a language declaring
+  // `typeRoleAssignment` for display/heading/body had no token to deliver it
+  // through: theEvolute declared Inter throughout and rendered in the legacy
+  // Barlow defaults. Obsidian only appeared to work because it overrode the
+  // legacy --font-family / --display-font globals directly.
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
   // Semantic signal for machine-generated data: IDs, amounts, codes, timestamps
   --font-data: 'JetBrains Mono', monospace;
 }

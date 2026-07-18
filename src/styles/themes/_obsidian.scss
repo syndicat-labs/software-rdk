@@ -124,6 +124,14 @@
   --check-checked-border:       var(--obs-text-primary);
   --toggle-track-on:            var(--obs-text-primary);
 
+  // ── Elevation bridge (contract 1.1.0) ────────────────────────────────────────
+  // Obsidian answers `surfaceBoundary: hybrid` / `depthModel: shadow`: a light
+  // card carries a soft lift, the dark anchor a deeper one. Overlay reuses the
+  // dark card shadow — Obsidian has no separate modal depth.
+  --elevation-raised:   var(--obs-shadow-card-light);
+  --elevation-float:    var(--obs-shadow-card-dark);
+  --elevation-overlay:  var(--obs-shadow-card-dark);
+
   // ── Navigation bridge ────────────────────────────────────────────────────────
   --color-nav-bg:                 var(--obs-surface-card-dark);
   --color-nav-text:               rgba(255, 255, 255, 0.55);
@@ -149,5 +157,8 @@
   // Overrides the legacy font vars consumed by body and headings in styles.scss.
   --font-family:                var(--obs-font-display);
   --display-font:               var(--obs-font-heading);
+  --font-display:               var(--obs-font-display);
+  --font-heading:               var(--obs-font-heading);
+  --font-body:                  var(--obs-font-display);
   --font-data:                  var(--obs-font-data);
 }

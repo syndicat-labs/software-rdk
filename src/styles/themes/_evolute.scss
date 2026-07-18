@@ -59,8 +59,11 @@
   --evo-info-500:    #3b82f6;  --evo-info-700:    #1d4ed8;
 
   // Elevation — this language's section rhythm device, in place of inversion.
+  // The Lift Ladder: three steps, each meaning a rank change. Before contract
+  // 1.1.0 these bridged onto nothing and the language rendered flat.
   --evo-elevation-raised:  0 1px 2px rgb(28 25 23 / 0.04), 0 2px 8px rgb(28 25 23 / 0.06);
   --evo-elevation-float:   0 4px 12px rgb(28 25 23 / 0.08), 0 12px 32px rgb(28 25 23 / 0.10);
+  --evo-elevation-overlay: 0 8px 24px rgb(28 25 23 / 0.12), 0 24px 64px rgb(28 25 23 / 0.16);
 
   // Gradients — permitted decoration under this language.
   --evo-gradient-brand:    linear-gradient(135deg, var(--evo-teal-500), var(--evo-violet-500));
@@ -175,6 +178,17 @@
   --color-surface-featured-text:   #f0fdfa;
   --color-surface-featured-muted:  rgb(240 253 250 / 0.72);
 
+  // Elevation (contract 1.1.0) — this language's declared surfaceBoundary is
+  // `elevation`, so these are load-bearing rather than decorative.
+  --elevation-raised:   var(--evo-elevation-raised);
+  --elevation-float:    var(--evo-elevation-float);
+  --elevation-overlay:  var(--evo-elevation-overlay);
+
   // Monospace data font — scope is `data-and-code` under this language.
+  // typeRoleAssignment: one humanist family across prose roles — type stays
+  // quiet here so colour and lift carry rank.
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
   --font-data: 'JetBrains Mono', monospace;
 }

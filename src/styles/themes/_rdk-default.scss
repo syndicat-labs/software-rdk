@@ -117,5 +117,14 @@
   --color-surface-featured-muted: rgba(241, 245, 249, 0.65);
 
   // ── Monospace data font ───────────────────────────────────────────────────────
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
   --font-data: 'JetBrains Mono', monospace;
-}
+
+
+  // Elevation (contract 1.1.0) — reference implementation uses the neutral
+  // shadow ramp; `surfaceBoundary: hybrid`, border plus a soft lift.
+  --elevation-raised:   var(--shadow-sm);
+  --elevation-float:    var(--shadow-lg);
+  --elevation-overlay:  var(--shadow-2xl);}

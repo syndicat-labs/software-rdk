@@ -135,7 +135,7 @@ export const DESIGN_LANGUAGES = [
   {
     id: 'obsidian',
     privateTokenPrefix: '--obs-',
-    contractVersion: '1.0.0',
+    contractVersion: '1.1.0',
     protocolVersion: PROTOCOL_VERSION,
     philosophy: {
       thesis:
@@ -211,7 +211,7 @@ export const DESIGN_LANGUAGES = [
   {
     id: 'evolute',
     privateTokenPrefix: '--evo-',
-    contractVersion: '1.0.0',
+    contractVersion: '1.1.0',
     protocolVersion: PROTOCOL_VERSION,
     philosophy: {
       thesis: 'Light and colour are how meaning arrives. Structure should feel grown, not carved.',

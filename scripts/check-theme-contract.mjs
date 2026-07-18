@@ -47,21 +47,15 @@ const COMPONENT_EXTENSIONS = /\.(ts|scss|html)$/;
 // always resolves there. Everything else must go through the contract.
 const PRIVATE_TOKEN_ALLOWED = /^src[/\\]app[/\\]features[/\\]showcase[/\\]/;
 
-// Ratcheted rule-C deviations. This list may only ever shrink.
+// Ratcheted rule-C deviations. This list may only ever shrink, and a stale
+// entry is itself a failure so the gate cannot quietly loosen.
 //
-// theme-toggle gates its --obs-* reads behind
-// `[class.theme-toggle--active]="themeService.current() === 'obsidian'"`, so
-// they do resolve today. The deviation is architectural rather than visual: a
-// shared atom carries a hardcoded theme id, so registering a third theme means
-// editing this component — which breaks "swapping a theme is a single
-// data-theme change, no component code changes".
-//
-// Clearing it requires new --color-surface-inverse* contract tokens, which is a
-// versioned contract change every registered theme must satisfy first. Tracked
-// as FLAG-12; do not resolve by widening this list.
-const RULE_C_RATCHET = new Set([
-  'src/app/shared/components/atoms/theme-toggle/theme-toggle.component.ts',
-]);
+// Empty as of FLAG-12's resolution: theme-toggle was the only entry. It read
+// --obs-* tokens behind a hardcoded `current() === 'obsidian'` check, which
+// meant a shared atom carried one language's private namespace and could not
+// survive a third language. Rewriting it as a registry-driven select removed
+// both the private tokens and the hardcoded id.
+const RULE_C_RATCHET = new Set([]);
 
 let failed = false;
 
@@ -287,6 +281,115 @@ for (const [id, { prefix }] of declaredLanguages) {
         `nor its own "${prefix}" namespace:`,
       foreign.sort(),
     );
+  }
+}
+
+// ─── Rule F: slot answers must be expressible (protocol §6, tier A) ─────────
+// Rule E proves a language ANSWERED every slot. It does not prove the answer
+// can be delivered. theEvolute declared `surfaceBoundary: elevation` and
+// `depthModel: shadow` against a contract carrying no elevation token: it
+// passed every gate and rendered flat, its private --evo-elevation-* tokens
+// bridging onto nothing. Answering a slot the contract cannot express is a
+// declaration the language cannot honour.
+//
+// Each entry maps a slot answer to the tokens that must carry it, and requires
+// the language to give them a meaningful (non-`none`) value.
+const SLOT_REQUIREMENTS = [
+  {
+    slot: 'surfaceBoundary',
+    answer: 'elevation',
+    tokens: ['--elevation-raised'],
+    because: 'surfaces separated by lift need a shadow to lift with',
+  },
+  {
+    slot: 'surfaceBoundary',
+    answer: 'border',
+    tokens: ['--color-border-default'],
+    because: 'surfaces separated by stroke need a border colour',
+  },
+  {
+    slot: 'depthModel',
+    answer: 'shadow',
+    tokens: ['--elevation-raised', '--elevation-float'],
+    because: 'a shadow depth model needs more than one step to be a model',
+  },
+  {
+    slot: 'depthModel',
+    answer: 'surface-tint',
+    tokens: ['--color-bg-elevated'],
+    because: 'tint-based depth is carried by the elevated surface colour',
+  },
+  {
+    slot: 'sectionRhythm',
+    answer: 'elevation',
+    tokens: ['--elevation-raised'],
+    because: 'sections separated by lift need a shadow to lift with',
+  },
+  {
+    slot: 'sectionRhythm',
+    answer: 'surface-inversion',
+    tokens: ['--color-surface-featured', '--color-surface-featured-text'],
+    because: 'inversion needs an inverted surface and legible text on it',
+  },
+  {
+    slot: 'sectionRhythm',
+    answer: 'border-rule',
+    tokens: ['--color-border-strong'],
+    because: 'a rule between sections needs a border strong enough to read',
+  },
+];
+
+// typeRoleAssignment is a map rather than a single answer, so it is checked
+// separately: declaring a face for a role obliges the language to deliver that
+// role through a token. theEvolute declared Inter for display/heading/body and
+// rendered in the legacy Barlow defaults, because only --font-data existed —
+// the same failure as the elevation gap, one slot over.
+const TYPE_ROLE_TOKENS = {
+  display: '--font-display',
+  heading: '--font-heading',
+  body: '--font-body',
+  data: '--font-data',
+};
+
+/** A token that resolves to `none`/empty cannot carry the answer that needs it. */
+function declaresMeaningfully(declared, source, token) {
+  if (!declared.has(token)) return false;
+  const value = source.match(new RegExp(`${token}\\s*:\\s*([^;]+);`))?.[1]?.trim();
+  return Boolean(value) && !/^none$/i.test(value);
+}
+
+for (const [id, { prefix: _prefix }] of declaredLanguages) {
+  const entry = languageEntries.find((e) => new RegExp(`id:\\s*'${id}'`).test(e));
+  const declared = themeDeclarations.get(id);
+  if (!entry || !declared) continue;
+  const source = read(join(THEMES_DIR, `_${id}.scss`));
+
+  for (const req of SLOT_REQUIREMENTS) {
+    const answered = new RegExp(`${req.slot}:\\s*'${req.answer}'`).test(entry);
+    if (!answered) continue;
+    const missing = req.tokens.filter((t) => !declaresMeaningfully(declared, source, t));
+    if (missing.length) {
+      fail(
+        `Language "${id}" answers ${req.slot}: '${req.answer}' but cannot express it — ` +
+          `${req.because}. Missing or empty:`,
+        missing,
+      );
+    }
+  }
+
+  const typeBlock = entry.match(/typeRoleAssignment:\s*\{([\s\S]*?)\}/)?.[1];
+  if (typeBlock) {
+    const undeliverable = Object.entries(TYPE_ROLE_TOKENS)
+      .filter(([role]) => new RegExp(`\\b${role}\\s*:`).test(typeBlock))
+      .filter(([, token]) => !declaresMeaningfully(declared, source, token))
+      .map(([role, token]) => `${role} → ${token}`);
+    if (undeliverable.length) {
+      fail(
+        `Language "${id}" assigns type roles it cannot deliver — the role is declared ` +
+          `but no token carries it, so the face falls back to the global default:`,
+        undeliverable,
+      );
+    }
   }
 }
 

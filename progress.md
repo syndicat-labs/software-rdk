@@ -1149,3 +1149,71 @@ Re-rendered after the palette changes: Obsidian's three grey tiers remain visual
 ### Still open
 
 FLAG-13 (elevation tokens absent from the contract) and FLAG-15 (Tier B polarity) are unchanged.
+
+---
+
+## 2026-07-18 (session 7) — FLAG-13 closed; contract 1.1.0; language selector
+
+### FLAG-13 — the gap, and a second instance of it
+
+Contract **1.1.0** (breaking; all three languages re-answered).
+
+**Elevation.** The contract carried colour, space, radius and type only. theEvolute declared
+`surfaceBoundary: elevation`, `depthModel: shadow` and a *Lift Ladder* pattern against a contract
+with no shadow token, so its `--evo-elevation-*` tokens bridged onto nothing and it rendered flat.
+Added `--elevation-raised` / `--elevation-float` / `--elevation-overlay`; all three languages now
+implement them. theEvolute's cards visibly lift.
+
+**Typography — the same bug, one slot over, found by looking at the render.** Only `--font-data`
+existed. theEvolute declared `typeRoleAssignment` of Inter for display/heading/body and rendered in
+the legacy Barlow defaults; Obsidian only appeared correct because it overrode the legacy
+`--font-family` / `--display-font` globals directly. Added `--font-display` / `--font-heading` /
+`--font-body`; the legacy aliases now point at the contract instead of hardcoding Barlow.
+
+Contract: 84 → **90 tokens**.
+
+### Rule F — slot answers must be expressible
+
+Rule E proved a language *answered* every slot. It never proved the answer could be *delivered*.
+Rule F maps each answer to the tokens that must carry it and requires a meaningful (non-`none`)
+value — `surfaceBoundary: elevation` needs a shadow to lift with, `sectionRhythm: surface-inversion`
+needs an inverted surface and legible text on it, and each assigned type role needs its font token.
+
+**Verified red** by reproducing the original FLAG-13 state: stripping theEvolute's elevation bridge
+fails on all three affected slots; stripping its font tokens fails all three type roles.
+
+### FLAG-12 closed
+
+`theme-toggle` was the sole rule-C ratchet entry: it read `--obs-*` behind a hardcoded
+`current() === 'obsidian'`, so a shared atom carried one language's private namespace and could not
+survive a third language. Rewritten as a **registry-driven `<select>`** — registering a language now
+makes it selectable with no edit here, and a native select brings keyboard and screen-reader
+behaviour the button lacked. The **stale-ratchet check fired on its own removal**, which is the
+ratchet working as designed. `RULE_C_RATCHET` is now empty.
+
+### Showcase follows the selected language
+
+`ShowcaseLayoutComponent` pinned `data-theme="obsidian"` on its own host, so every page rendered in
+one language regardless of selection — making the showcase a demonstration of Obsidian rather than
+of the component library. Pin removed. Verified first that **no showcase page reads `--obs-*`**, so
+nothing depended on it; the gate's showcase exemption turns out to guard nothing.
+
+"New Design Ideas" now shows what each language's philosophy does to layout, structure and type.
+
+### Design Languages page
+
+Moved outside `ShowcaseLayoutComponent` so it has no component sidebar and the three panels fit
+side by side. **Interpretation to confirm:** the app-shell navigation is still present — only the
+showcase's secondary sidebar was removed.
+
+### Gate results
+
+| Gate | Result |
+|---|---|
+| lint · typecheck | exit 0 |
+| architecture (tokens · contrast · storage) | exit 0 — **90 tokens**, 3 languages |
+| test | **599 passed / 31 suites** (+6) · 98.10% stmt |
+
+### Still open
+
+FLAG-15 (Tier B polarity metadata) and `rdk-default`'s missing declaration are unchanged.

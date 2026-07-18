@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -185,7 +185,12 @@ interface NavGroup {
   `],
 })
 export class ShowcaseLayoutComponent {
-  @HostBinding('attr.data-theme') readonly dataTheme = 'obsidian';
+  // The showcase previously pinned data-theme="obsidian" on its own host, so
+  // every page rendered in one language regardless of selection. That made the
+  // showcase a demonstration of Obsidian rather than of the component library,
+  // and "New Design Ideas" could not show what a language's philosophy does to
+  // layout, structure and type. The pin is gone: pages now follow the selected
+  // language. No showcase page reads --obs-* tokens, so nothing depended on it.
 
   protected readonly navGroups: NavGroup[] = [
     {

@@ -158,11 +158,18 @@ import { getDesignLanguage } from '../../../../core/theme/design-language';
         font-style: italic;
       }
 
+      /* Both border and elevation are applied unconditionally. Each language
+         decides via its tokens which one carries the separation: a language
+         answering surfaceBoundary:border gives --elevation-raised little or no
+         shadow, one answering :elevation gives --color-border-default a faint
+         value and lets the shadow do the work. The component states neither
+         preference — that is the point. */
       .card {
         background: var(--color-bg-surface);
         border: 1px solid var(--color-border-default);
         border-radius: var(--radius-surface);
         padding: var(--space-component-lg);
+        box-shadow: var(--elevation-raised);
       }
       .card__title {
         color: var(--color-text-primary);
@@ -224,6 +231,7 @@ import { getDesignLanguage } from '../../../../core/theme/design-language';
 
       .ledger {
         background: var(--color-bg-sunken);
+        box-shadow: var(--elevation-raised);
         border-radius: var(--radius-component);
         padding: var(--space-component-md);
       }

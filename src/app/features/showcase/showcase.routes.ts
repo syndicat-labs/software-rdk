@@ -42,17 +42,19 @@ import { ComboboxShowcaseComponent } from './pages/organisms/combobox-showcase/c
 import { LanguageComparisonComponent } from './pages/language-comparison/language-comparison.component';
 
 export const SHOWCASE_ROUTES: Routes = [
+  // Deliberately outside ShowcaseLayoutComponent: the comparison renders one
+  // panel per registered language and needs the horizontal room the component
+  // sidebar would take. It is a protocol view, not a component page.
+  {
+    path: 'protocol/languages',
+    component: LanguageComparisonComponent,
+    data: { title: 'Design Languages' },
+  },
   {
     path: '',
     component: ShowcaseLayoutComponent,
     children: [
       { path: '', redirectTo: 'atoms/button', pathMatch: 'full' },
-      // Protocol
-      {
-        path: 'protocol/languages',
-        component: LanguageComparisonComponent,
-        data: { title: 'Design Languages' },
-      },
       // Atoms
       { path: 'atoms/button', component: ButtonShowcaseComponent, data: { title: 'Button' } },
       { path: 'atoms/badge', component: BadgeShowcaseComponent, data: { title: 'Badge' } },

@@ -988,3 +988,88 @@ red cases — foreign namespace, typo'd contract token, unregistered language �
 | Tier B enforcement | Medium | Needs component semantic-role metadata. |
 | L3 composition archetypes | Medium | Vocabulary specified at machine root; nothing built. |
 | Greyscale review gate for theEvolute | Medium | Declared in its philosophy, not automated (Tier C). |
+
+---
+
+## 2026-07-18 (session 5) — theEvolute rendered; three findings the gates could not see
+
+Four sessions declared a protocol without once looking at what it produces. This session built
+`/showcase/protocol/languages` — one `ng-template` instantiated per registered language via
+`ngTemplateOutlet`, so the markup is identical and any difference is attributable to `data-theme`
+alone — plus a Playwright harness capturing each language and a greyscale render.
+
+### What held
+
+**Swap invariance is real.** Three visibly distinct renderings from one template, zero component
+changes, no console errors. The protocol's central claim is now demonstrated rather than asserted.
+
+**Greyscale test passes for polarity.** Credit/debit survive without colour: the `+`/`−` signs and
+weight carry the meaning. Status badges carry text labels, so WCAG 1.4.1 is satisfied.
+
+### ⚠ FLAG-13 · theEvolute's central identity is undeliverable (high priority)
+
+theEvolute declares `surfaceBoundary: elevation`, `depthModel: shadow`, and a named pattern —
+**Lift Ladder** — whose entire job is conveying rank through stacked elevation. None of it renders.
+
+- The 84-token contract contains **no elevation or shadow token**. The only match for `elev` is
+  `--color-bg-elevated`, which is a background colour.
+- `--evo-elevation-raised` / `--evo-elevation-float` are declared in `_evolute.scss` and **consumed
+  by nothing** — dead tokens.
+- theEvolute overrides **zero** shadow tokens. Obsidian works around the gap by overriding
+  `--card-shadow` at the *component* layer; theEvolute does not.
+- Rendered result: flat bordered cards. Measured surface separation **1.05:1** (fill) and **1.21:1**
+  (border) against its own ground.
+
+**This is a protocol gap, not merely a theEvolute bug.** Tier A verifies that declared tokens
+*resolve*; it never verifies that a language's declared slot answers are *expressible* through the
+contract. A language can answer `depthModel: shadow` against a contract with no shadow token and
+pass every gate — which is exactly what happened.
+
+**Resolution:** add elevation tokens to the contract (v1.1.0 — a breaking change requiring every
+registered language to re-answer), or add a gate asserting each slot answer maps to contract
+capacity. Preferably both.
+
+### ⚠ FLAG-14 · The accessibility floor is declared law but is unenforced (high priority)
+
+Machine root §3.5 states contrast ≥4.5:1 as non-negotiable law bounding the slot space. **Nothing
+checks it.** Measured on rendered output:
+
+| Language | Token | Ratio | |
+|---|---|---|---|
+| obsidian | `--color-text-muted` #AAAAAA on #FFFFFF | 2.32:1 | **FAIL** |
+| obsidian | `--color-text-secondary` #6B6B6B | 5.33:1 | pass |
+| evolute | `--color-text-muted` #a8a29e on #FFFFFF | 2.52:1 | **FAIL** |
+| evolute | `--color-text-secondary` #57534e | 7.63:1 | pass |
+| evolute | `--color-text-brand` #0d9488 | 3.74:1 | **FAIL** |
+
+Obsidian's failure is **pre-existing** — it predates the protocol work and ships in the machine
+default language. theEvolute's muted failure replicated that pattern; its brand failure is new.
+
+A language currently passes every Tier A gate while violating what machine law calls non-negotiable.
+This is the failure mode the 2026-07-18 retrospective catalogued: believing a gate does work it does
+not. The floor is described as law but is enforced no better than Tier C.
+
+**Resolution:** add a contrast gate to Tier A. It is statically computable from the token values and
+needs no component metadata, so there is no reason it sits outside the enforced tier.
+
+### ⚠ FLAG-15 · Tier B gap is now concrete, not theoretical (medium priority)
+
+The ledger renders green credit / red debit under **Obsidian**, whose declared
+`polarityEncoding` is `weight-before-color`. The contract has no polarity-specific token, so a
+component displaying polarity must choose a colour token, and its choice can contradict the active
+language's declared policy.
+
+This is the documented Tier B limitation made visible: `polarityEncoding` cannot be enforced without
+component semantic-role metadata. Recorded so the abstract limitation has a concrete example.
+
+### Pending (added 2026-07-18, session 5)
+
+| Item | Priority | Notes |
+|---|---|---|
+| FLAG-13 elevation tokens in contract | **High** | Contract v1.1.0, breaking; all languages re-answer. |
+| FLAG-13 gate: slot answers vs contract capacity | **High** | Would have caught this statically. |
+| FLAG-14 contrast gate in Tier A | **High** | Statically computable; no reason it is unenforced. |
+| FLAG-14 fix obsidian `--color-text-muted` | **High** | Pre-existing failure in the machine default. |
+| FLAG-14 fix evolute muted + brand | High | 2.52:1 and 3.74:1. |
+| FLAG-15 component role metadata | Medium | Unlocks Tier B enforcement. |
+| Comparison page layout | Low | Third panel wraps below fold at 1600px. |

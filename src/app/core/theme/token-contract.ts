@@ -23,8 +23,9 @@ export interface ThemeDefinition {
 export const THEME_REGISTRY = [
   {
     id: 'rdk-default',
-    label: 'Default',
-    description: 'RDK default light theme — canonical contract reference implementation',
+    label: 'Modern',
+    description:
+      'Contemporary product convention — familiar affordances, brand-led colour, gradient anchor',
   },
   {
     id: 'obsidian',

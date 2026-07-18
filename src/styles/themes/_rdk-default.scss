@@ -12,6 +12,24 @@
 
 [data-theme="rdk-default"] {
 
+  // ── L0 · Private primitives ─────────────────────────────────────────────────
+  // Modern's own values — the ones that are its identity rather than shared
+  // scale. Everything else maps straight to the primitive layer, which is why
+  // this block is small: a language only needs a private token where it holds a
+  // value no other language should inherit.
+  --rdk-font-display:      'Space Grotesk', system-ui, sans-serif;
+  --rdk-font-body:         'Plus Jakarta Sans', system-ui, sans-serif;
+  --rdk-font-data:         'JetBrains Mono', monospace;
+  // Gradient Anchor — the featured surface device.
+  --rdk-gradient-anchor:   linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+  --rdk-anchor-border:     rgba(99, 102, 241, 0.2);
+  --rdk-anchor-text:       #f1f5f9;
+  --rdk-anchor-text-muted: rgba(241, 245, 249, 0.65);
+  // Soft Card — border and lift together, neither alone.
+  --rdk-elevation-raised:  var(--shadow-sm);
+  --rdk-elevation-float:   var(--shadow-lg);
+  --rdk-elevation-overlay: var(--shadow-2xl);
+
   // ── Text ─────────────────────────────────────────────────────────────────────
   --color-text-primary:    var(--color-neutral-900);
   --color-text-secondary:  var(--color-neutral-500);
@@ -111,20 +129,23 @@
   --color-nav-avatar-bg:          linear-gradient(135deg, var(--color-brand-500), var(--color-violet-500));
 
   // ── Featured / hero surface ───────────────────────────────────────────────────
-  --color-surface-featured:       linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
-  --color-surface-featured-border: rgba(99, 102, 241, 0.2);
-  --color-surface-featured-text:  #f1f5f9;
-  --color-surface-featured-muted: rgba(241, 245, 249, 0.65);
+  --color-surface-featured:       var(--rdk-gradient-anchor);
+  --color-surface-featured-border: var(--rdk-anchor-border);
+  --color-surface-featured-text:  var(--rdk-anchor-text);
+  --color-surface-featured-muted: var(--rdk-anchor-text-muted);
 
   // ── Monospace data font ───────────────────────────────────────────────────────
-  --font-display: 'Inter', system-ui, sans-serif;
-  --font-heading: 'Inter', system-ui, sans-serif;
-  --font-body:    'Inter', system-ui, sans-serif;
+  // Space Grotesk carries the character — its grotesque details read as
+  // deliberate at display size. Plus Jakarta Sans takes body copy, where those
+  // same details would tire the eye over a paragraph.
+  --font-display: var(--rdk-font-display);
+  --font-heading: var(--rdk-font-display);
+  --font-body:    var(--rdk-font-body);
   --font-data: 'JetBrains Mono', monospace;
 
 
   // Elevation (contract 1.1.0) — reference implementation uses the neutral
   // shadow ramp; `surfaceBoundary: hybrid`, border plus a soft lift.
-  --elevation-raised:   var(--shadow-sm);
-  --elevation-float:    var(--shadow-lg);
-  --elevation-overlay:  var(--shadow-2xl);}
+  --elevation-raised:   var(--rdk-elevation-raised);
+  --elevation-float:    var(--rdk-elevation-float);
+  --elevation-overlay:  var(--rdk-elevation-overlay);}

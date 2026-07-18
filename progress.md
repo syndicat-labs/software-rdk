@@ -1217,3 +1217,63 @@ showcase's secondary sidebar was removed.
 ### Still open
 
 FLAG-15 (Tier B polarity metadata) and `rdk-default`'s missing declaration are unchanged.
+
+---
+
+## 2026-07-18 (session 8) — rdk-default declared as "Modern"; retrofit complete
+
+### All three languages now declared
+
+`rdk-default` was the last entry in the protocol-retrofit ratchet. It now carries a full
+declaration — 18 slots plus philosophy — so **the ratchet is empty and the gate reports nothing
+outstanding.** Every registered language is protocol-native.
+
+**The id stays `rdk-default`**; only the label changed to **Modern**. The id is also the contract's
+reference implementation and the fallback `ThemeService` applies when nothing is stored, so renaming
+it would break both.
+
+### Modern's position
+
+Thesis: *"Convention is a feature. An interface should feel immediately familiar so attention goes
+to the work rather than to learning the interface."* It optimises for time-to-first-competence.
+
+Named patterns: **Conventional Affordance**, **Gradient Anchor**, **Soft Card**, **Signed and
+Coloured**. It sits between the other two on most axes — `colorRole: brand-led` (Obsidian
+functional-only, theEvolute expressive), `colorInHierarchy: supporting` (excluded / primary),
+`emphasisSurfaceBudget: 2` (1 / unbounded).
+
+`polarityEncoding: color-led` is permissible only because **Signed and Coloured** mandates the sign
+travels with the colour — the accessibility floor bounding the slot space, as designed.
+
+### The gate caught a false declaration
+
+Declaring `privateTokenPrefix: '--rdk-'` failed immediately: the theme declared **no** `--rdk-*`
+tokens, mapping contract tokens straight to shared primitives. Rather than exempt it, Modern was
+given a genuine L0 layer holding the values that are its own identity — the Space Grotesk / Plus
+Jakarta Sans faces, the Gradient Anchor, and its Soft Card elevation ramp — bridged onto the
+contract. The private layer is deliberately small: a language needs a private token only where it
+holds a value no other language should inherit.
+
+### Typography
+
+Barlow / Barlow Condensed were loaded but referenced by nothing once the legacy aliases were pointed
+at the contract. Replaced with **Space Grotesk** (display, heading) and **Plus Jakarta Sans** (body).
+
+Verified in-browser rather than by eye: both faces return 200 from gstatic, `document.fonts` reports
+all five families resolved, and computed `font-family` under `[data-theme="rdk-default"]` is
+`"Plus Jakarta Sans"`. **The first visual read was wrong** — the narrow geometric face was mistaken
+for a condensed fallback, which is exactly why the check was run.
+
+### Gate results
+
+| Gate | Result |
+|---|---|
+| lint · typecheck | exit 0 |
+| architecture | exit 0 — 90 tokens, 3 languages, **retrofit ratchet empty** |
+| test | **609 passed / 31 suites** (+10) · 98.10% stmt |
+
+The +10 comes from the per-language parameterised suites now running for three languages.
+
+### Still open
+
+FLAG-15 (Tier B polarity metadata) is the only protocol flag outstanding.

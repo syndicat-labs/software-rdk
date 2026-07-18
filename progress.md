@@ -765,3 +765,127 @@ than a patch. Ratcheted in `check-theme-contract.mjs` until then.
 | P9 `IMPLEMENTATION-PLAN.md` + `audit.md` | Medium | No Definition of Done yet. |
 | P11 harden pre-commit hook | Low | Currently gitleaks only. |
 | Storybook trigger has fired | Low | ADR §17 defers until >15 shared components; there are 32. |
+
+---
+
+## 2026-07-18 (session 3) — Design Language Protocol v1.0.0 · theEvolute · licensing
+
+### Licensing — repo was unlicensed; Tailwind Plus excluded
+
+`software-rdk` was **public with no LICENSE file**, meaning all-rights-reserved by default — nobody
+could legally clone the toolkit, defeating its purpose. Added MIT + `THIRD-PARTY-NOTICES.md`.
+
+**Tailwind Plus (Catalyst, Oatmeal, UI Blocks) was requested as a source and excluded.** Its licence
+names this repository's exact use three separate times: converting a template to another framework
+and making it available *"either for sale or for free"*; creating a *"project starter kit"* from the
+components; and publishing *"a repository of your favorite Tailwind Plus components... or
+derivatives of them"* publicly. Purchasing does not resolve it — the restriction is on
+redistribution, not access, and a publicly cloneable toolkit is not an "End Product". Reasoning
+recorded in `THIRD-PARTY-NOTICES.md` so it is not re-litigated.
+
+Approved MIT alternatives for later study: HyperUI (closest structural match, and ~84% plain HTML
+rather than JSX, so materially easier to translate to Angular), Preline, Flowbite, shadcn/ui,
+Headless UI.
+
+### The problem the protocol solves
+
+The token contract governs **values** (84 CSS custom properties). It does not govern **rules**.
+Obsidian's defining decisions — hierarchy without colour, one dark card per layout, monospace as a
+semantic signal, badge-contained functional colour, high density — cannot be expressed as custom
+properties, so they lived as prose in `DESIGN-SYSTEM.md` and `CLAUDE.md`.
+
+**That prose is written as universal law but states one language's position.** A second language
+could not be described without contradicting it. The system and the opinions of the one language
+implemented in it were conflated.
+
+### Decision — Design Language Protocol v1.0.0
+
+Third layer added (`docs/design-refs/DESIGN-LANGUAGE-PROTOCOL.md`, ADR amendment 2026-07-18):
+
+```
+L0 Primitives    per-language, private     --obs-* · --evo-*
+L1 Contract      shared, versioned         _contract.scss · 84 tokens
+L2 Policy        per-language, declarative design-language.ts · 10 dimensions   ← NEW
+L3 Composition   shared vocabulary         page + section archetypes
+```
+
+Ten closed-union dimensions, all required — a default would smuggle one language's opinion back in
+as the system's. Components still read L1 only; component authoring is unchanged.
+
+### theEvolute — first protocol-native language
+
+Authored to take the **opposing position to Obsidian on every axis**, so the protocol is validated
+against a language that did not shape it:
+
+| Dimension | obsidian | theEvolute |
+|---|---|---|
+| hierarchySignals | weight · size · surface-contrast · position · opacity | weight · size · **colour** · elevation · position |
+| colorRole | functional-only | expressive |
+| emphasisSurfaceBudget | 1 (dark card anchor) | unbounded |
+| density | high | comfortable |
+| sectionRhythm | surface-inversion | elevation |
+| polarityEncoding | weight-before-colour | colour-led |
+
+Warm stone neutrals, teal/violet pairing, real shadow elevation instead of inverted anchor cards.
+Implements all 84 contract tokens with an `--evo-*` L0 namespace.
+
+**Obsidian and rdk-default are retrofitted later, deliberately.** Retrofitting first would let
+Obsidian's assumptions leak back in unexamined — the exact failure the protocol corrects.
+
+### Composition study
+
+Analysed public rendered sites from `tailwindcss.com/showcase` (PostHog, Polar). Both converge on
+the same archetype sequence (nav → hero → social-proof → feature-grid → deep-dive → demo → pricing →
+footer) and, notably, on **surface inversion as the section rhythm device**. Obsidian's "dark card
+anchor" is a constrained case of that general device — which is why `sectionRhythm` became a policy
+dimension rather than an Obsidian-specific rule.
+
+### Enforcement (Rule E added to check-theme-contract.mjs)
+
+Verifies each declared language names a registered theme, declares a private prefix and contract
+version, answers all ten dimensions, and declares **only** L1 contract tokens or its own L0
+namespace. Themes without a policy report as a shrinking retrofit ratchet.
+
+**Verified red:** dropping a policy dimension, declaring an unregistered language, leaking a foreign
+namespace, and typo'ing a contract token each fail the gate.
+
+**A bug found by that verification.** The first namespace check compared each language's tokens
+against *other declared languages'* prefixes. Only `evolute` has a policy, so there was nothing to
+compare against and the check was **structurally inert** — it would have silently passed a foreign
+namespace until a second language was retrofitted. Replaced with a closed rule: every token a
+language declares must be an L1 contract token or its own L0 token. The closed form also catches
+typo'd contract tokens, which the original never could.
+
+### Honest limits
+
+Three enforcement tiers, stated in both the protocol and the ADR: **Tier A** (policy completeness,
+registry coherence, namespace isolation) is enforced now; **Tier B** (`monospaceScope`,
+`functionalColorContainment`) needs component semantic-role metadata and is deferred; **Tier C**
+(`emphasisSurfaceBudget`, `density`) depends on rendered composition and stays review-only.
+
+The protocol makes intent explicit, typed and *partially* enforced. It does not make design
+correctness automatic.
+
+### Gate results
+
+| Gate | Result |
+|---|---|
+| lint | exit 0 |
+| typecheck | exit 0 |
+| architecture | exit 0 — 84 tokens, **3 themes**, 222 read, all resolvable |
+| test | **578 passed / 30 suites** (+14) · 98.09% stmt · 93.86% branch |
+| build:prod | exit 0 |
+
+Coverage initially *dropped* to 97.72% from the new untested protocol code; `design-language.spec.ts`
+was added (14 tests, including a runtime mirror of the static policy check) restoring it to 98.09%.
+
+### Pending (added 2026-07-18, session 3)
+
+| Item | Priority | Notes |
+|---|---|---|
+| Retrofit obsidian + rdk-default onto L2 | High | Ratchet currently reports 2 themes without policy. |
+| Re-scope `CLAUDE.md` *Core UI Principles* | High | Currently states Obsidian's policy as universal law. Do this with the retrofit. |
+| theEvolute visual verification | High | No rendered output reviewed yet — same gap as FLAG-06. |
+| Clone MIT component sources | Medium | HyperUI, Preline, Flowbite, shadcn/ui. |
+| L3 composition archetypes as components | Medium | Vocabulary specified, nothing built. |
+| Tier B enforcement (component role metadata) | Medium | Unlocks monospace + colour-containment checks. |

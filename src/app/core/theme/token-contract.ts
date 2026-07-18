@@ -31,6 +31,12 @@ export const THEME_REGISTRY = [
     label: 'Obsidian',
     description: 'Dark/light duality enterprise theme — mineral restraint, typographic authority',
   },
+  {
+    id: 'evolute',
+    label: 'theEvolute',
+    description:
+      'Luminous warm-neutral language — expressive colour, elevation rhythm, comfortable density',
+  },
 ] as const satisfies readonly ThemeDefinition[];
 
 export type ThemeId = typeof THEME_REGISTRY[number]['id'];

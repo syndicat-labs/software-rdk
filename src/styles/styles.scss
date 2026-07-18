@@ -16,8 +16,11 @@
 
 // ─── Legacy tokens (kept for PrimeNG bridge + landing/login pages) ────────────
 :root {
-  --font-family:   'Barlow', system-ui, sans-serif;
-  --display-font:  'Barlow Condensed', system-ui, sans-serif;
+  // Legacy aliases kept for the PrimeNG bridge and older pages. They now point
+  // at the contract rather than hardcoding Barlow, so a language's declared
+  // typeRoleAssignment actually reaches body copy and headings.
+  --font-family:   var(--font-body);
+  --display-font:  var(--font-heading);
   --font-size: 1rem;
   --border-radius: var(--radius-md);
 

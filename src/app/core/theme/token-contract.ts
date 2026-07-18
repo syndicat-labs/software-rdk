@@ -2,13 +2,13 @@
 // Authoritative list of all semantic tokens every theme must provide.
 // Mirrors the token names declared in _contract.scss.
 //
-// Contract version: 1.0.0
+// Contract version: 1.1.0
 // Bump version here and in _contract.scss when adding/removing required tokens.
 //
 // Used by ThemeService.validateTheme() in development mode to catch missing
 // token implementations before they reach production.
 
-export const CONTRACT_VERSION = '1.0.0';
+export const CONTRACT_VERSION = '1.1.0';
 
 export interface ThemeDefinition {
   readonly id: string;
@@ -136,7 +136,14 @@ export const CONTRACT_TOKENS: readonly string[] = [
   '--color-surface-featured-border',
   '--color-surface-featured-text',
   '--color-surface-featured-muted',
-  // Typography
+  // Elevation — added in 1.1.0
+  '--elevation-raised',
+  '--elevation-float',
+  '--elevation-overlay',
+  // Typography — display/heading/body added in 1.1.0
+  '--font-display',
+  '--font-heading',
+  '--font-body',
   '--font-data',
 ] as const;
 

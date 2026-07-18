@@ -38,8 +38,18 @@ import { AccordionShowcaseComponent } from './pages/organisms/accordion-showcase
 import { DatePickerShowcaseComponent } from './pages/organisms/date-picker-showcase/date-picker-showcase.component';
 import { FileUploadShowcaseComponent } from './pages/organisms/file-upload-showcase/file-upload-showcase.component';
 import { ComboboxShowcaseComponent } from './pages/organisms/combobox-showcase/combobox-showcase.component';
+// Protocol
+import { LanguageComparisonComponent } from './pages/language-comparison/language-comparison.component';
 
 export const SHOWCASE_ROUTES: Routes = [
+  // Deliberately outside ShowcaseLayoutComponent: the comparison renders one
+  // panel per registered language and needs the horizontal room the component
+  // sidebar would take. It is a protocol view, not a component page.
+  {
+    path: 'protocol/languages',
+    component: LanguageComparisonComponent,
+    data: { title: 'Design Languages' },
+  },
   {
     path: '',
     component: ShowcaseLayoutComponent,

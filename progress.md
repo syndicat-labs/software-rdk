@@ -613,3 +613,155 @@ before any future PrimeNG 22 move.
 | Resolve FLAG-10 (`@primeng/themes` deprecated) | Low | Migrate to `@primeuix/themes`. |
 | Re-evaluate PrimeNG 22 licensing | Low | Scheduled 2027-01-18 (see ADR accepted risk). |
 | Raise coverage on `file-upload`, `sidebar` | Low | Individually below the un-gated bar; aggregate passes. |
+
+---
+
+## 2026-07-18 (session 2) — Track A: CI made sound; architectural rules made executable
+
+Two sittings. The first resolved the structural CI faults (FLAG-04, FLAG-05) and landed the whole
+Angular 21 migration on `main`, which had until then been sitting unmerged. The second gave the
+design-token contract and the `[ABSOLUTE]` storage rule executable enforcement, and corrected an
+ADR risk entry that recorded a mitigation which does not mitigate.
+
+### Landed on main
+
+`main` was still at `dbc8118` — pre-migration — while every accomplishment sat on a branch
+misnamed `chore/upgrade-angular-22` (it contained Angular 21). Renamed to
+`chore/upgrade-angular-21` and merged via PR #1.
+
+`main`'s complete CI history is now `failure → failure → success`. Those two failures were the only
+runs it had ever had, which independently corroborates the retrospective's claim that this pipeline
+had never once passed.
+
+### FLAG-04 resolved — CI split into independent gates
+
+`lint → typecheck → audit → test → build` as five steps in one job became eight independent jobs
+with no `needs:` between them: `preflight`, `lint`, `typecheck`, `architecture`, `test`, `build`,
+`supply-chain`, `secret-scan`.
+
+Note the audit's own proposal (P1) suggested a combined `correctness` job bundling
+lint · typecheck · test. That was rejected: it reproduces the same step-masking at smaller scale.
+
+All eight are required by name in branch protection (P10), with `enforce_admins`, force-push and
+deletion disabled. No review requirement — a solo maintainer requiring an approver cannot merge.
+
+### FLAG-05 resolved — toolchain-presence gate
+
+`preflight` asserts `ng`, `eslint`, `tsc`, `jest`, `prettier` are actually installed. Dropped
+`--legacy-peer-deps` after verifying the tree resolves without it; that flag is what let `eslint`
+go missing. Declared supported Node in `engines`.
+
+**Verified red, not just green.** Deleting `node_modules/.bin/eslint` makes preflight fail with
+exit 127 — the exact signature originally misdiagnosed as a code fault. Given this project's
+history, a gate observed only green is not evidence.
+
+### P3 — token contract now enforced (`scripts/check-theme-contract.mjs`)
+
+Ported from `restaurant-management-system/frontend/scripts/`, adapted: the showcase is exempt from
+the `--obs-*` rule because it pins `[data-theme="obsidian"]` on its own host.
+
+Two rules from the sibling were **not** adopted:
+- *"every theme restates every contract token"* — flags correct by-design cascade. `_contract.scss`
+  declares the full contract on `:root`; obsidian legitimately overrides 42 fewer than it inherits.
+- The global-declaration scan was widened from `styles/tokens/**` to all of `src/styles` except
+  `themes/`, because `styles.scss` holds the legacy `--font-family` / `--display-font` defaults.
+
+**Real finding — three tokens that resolve to nothing.** `--surface-border`, `--text-color` and
+`--text-color-secondary` were read by `header`, `app-shell`, `empty-state` and `loading-spinner`
+but declared nowhere. These are PrimeNG legacy variable names expected from a prebuilt theme this
+project never imported. Checked against `15fd69c`: the pre-migration `styles.scss` is byte-identical
+in that block, so **this is not an Angular 21 regression** — those five usages have never rendered
+correctly. Repointed to `--color-border-default`, `--color-text-primary`, `--color-text-secondary`.
+
+### Defect — `ThemeId` was `string`, so unknown theme ids type-checked
+
+`THEME_REGISTRY: readonly ThemeDefinition[] = [...] as const` — the annotation widened `id` to
+`string` and silently discarded `as const`, so `ThemeId` resolved to `string`. The machine standard
+requires unknown theme ids to be a compile error; that guarantee was absent. Proved with a probe
+(`const x: ThemeId = 'not-a-theme'` compiled, exit 0), fixed with
+`as const satisfies readonly ThemeDefinition[]`, re-proved (now TS2322).
+
+### P4 — storage rule enforced; the breach is real and now visible
+
+`scripts/check-no-localstorage-auth.mjs` ported and wired in. The six existing `TokenService` call
+sites are ratcheted: visible on every run, non-blocking, and the list may only shrink. A stale
+entry — a ratcheted file that no longer violates — is itself a failure, so the gate cannot loosen
+silently.
+
+**Bug found in the ported script, and in its source.** The sibling matches forbidden keys with
+`\b(token|auth|…)\b`. `_` is a regex word character, so `\bauth\b` never matches inside
+`rdk_auth_token` — the most common key shape. The sibling's own comment claims `rms_token` is
+caught; it is not. Only the `TokenService` lines matched here, and only because they read
+`.auth.accessTokenKey`, where dots form real boundaries. Replaced with explicit non-alphanumeric
+boundaries plus a camelCase right-boundary, and strip `localStorage`/`sessionStorage` from the
+context first (otherwise `sessionStorage` matches "session" on every call regardless of key).
+Verified across 7 cases: underscore keys, camelCase and `sessionStorage`+jwt now fail; theme
+preference and non-sensitive UI state still pass. **This false negative should be reported to
+`restaurant-management-system` and `theLodge`, whose gates carry it.**
+
+### ADR corrected — R-003 recorded a mitigation that does not mitigate
+
+R-003 read *"Mitigated by strict CSP"*, scored 6, status *Phase 0 complete*. CSP constrains what
+the browser loads and executes; it places no restriction on what already-executing same-origin
+script may read. Any XSS reads `localStorage` directly. Reopened, rescored to 9, status Open, with
+a dated amendment recording the superseded text and the reasoning. §16's matching threat-table
+claim corrected too.
+
+The amendment also flags a consequence: migrating to `HttpOnly` cookies reopens **CSRF**, which §16
+currently dismisses as *"not applicable for Bearer token auth"* — valid only while auth is
+header-based.
+
+### Also fixed
+
+Every job ran **twice** per PR commit: `push: ['**']` and `pull_request: [main]` both fired on PR
+branches. Scoped the push trigger to `main`.
+
+### Flags raised
+
+#### ⚠ FLAG-11 · `localStorage` token storage is a live `[ABSOLUTE]` breach (high priority)
+**File:** `src/app/core/auth/token.service.ts` (6 call sites)
+**What:** JWTs in `localStorage`, contrary to the machine-level `[ABSOLUTE]` storage rule. Detected
+and ratcheted, not mitigated.
+**Resolution:** Migrate to `HttpOnly; Secure; SameSite=Strict` cookies. Requires backend cookie
+issuance and `withCredentials: true` in the auth interceptor; revisit the CSRF dismissal in §16 at
+the same time. Blocked on backend integration, not frontend effort.
+**Urgency:** High, but not actionable until a backend exists.
+
+#### ⚠ FLAG-12 · `theme-toggle` reads theme-private `--obs-*` tokens (medium priority)
+**File:** `src/app/shared/components/atoms/theme-toggle/theme-toggle.component.ts`
+**What:** Five `--obs-*` reads, gated behind
+`[class.theme-toggle--active]="themeService.current() === 'obsidian'"`. They **do** resolve today —
+this is not a live visual bug. The defect is architectural: a shared atom carries a hardcoded theme
+id, so registering a third theme requires editing this component, breaking *"swapping a theme is a
+single `data-theme` change, no component code changes"*.
+**Resolution:** Add `--color-surface-inverse*` contract tokens and repoint. That is a versioned
+contract change every registered theme must satisfy first, so it is an ADR-level decision rather
+than a patch. Ratcheted in `check-theme-contract.mjs` until then.
+**Urgency:** Medium — inert until a third theme is registered.
+
+### Gate results (all green)
+
+| Gate | Result |
+|---|---|
+| lint | exit 0 |
+| typecheck | exit 0 |
+| architecture (tokens · storage) | exit 0 — 84 contract tokens, 2 themes, 222 tokens read, all resolvable; 11 ratcheted deviations visible |
+| test | 564 passed / 29 suites · 98.08% stmt · 93.86% branch |
+| build:prod | exit 0 · 627 kB initial |
+| supply-chain (`npm audit --audit-level=high`) | exit 0 |
+| secret-scan (gitleaks) | exit 0 |
+
+### Pending (added 2026-07-18, session 2)
+
+| Item | Priority | Notes |
+|---|---|---|
+| FLAG-11 `HttpOnly` cookie migration | High | Blocked on backend. Ratcheted + detected meanwhile. |
+| Report the `\b` false negative to the two sibling projects | High | Their storage gates share the bug. |
+| FLAG-06 visual regression | High | Still unverified; the token contract now covers the token half, not the rendered half. |
+| FLAG-12 `--color-surface-inverse*` contract tokens | Medium | Versioned contract change; ADR-level. |
+| P5/FLAG-08 ratify or revert coverage scope | Medium | Unchanged from session 1. |
+| P6/FLAG-07 replace 100% function floor | Medium | Unchanged from session 1. |
+| P7 SBOM + licence policy | Medium | `supply-chain` job exists; SBOM not yet generated. |
+| P9 `IMPLEMENTATION-PLAN.md` + `audit.md` | Medium | No Definition of Done yet. |
+| P11 harden pre-commit hook | Low | Currently gitleaks only. |
+| Storybook trigger has fired | Low | ADR §17 defers until >15 shared components; there are 32. |

@@ -39,7 +39,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     }
     .rdk-loading-spinner__label {
       font-size: 0.875rem;
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
   `],
 })

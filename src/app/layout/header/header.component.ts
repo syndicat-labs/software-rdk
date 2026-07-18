@@ -41,7 +41,7 @@ import { ThemeToggleComponent } from '../../shared/components/atoms/theme-toggle
       height: 3.5rem;
       padding: 0 1.25rem;
       background: #fff;
-      border-bottom: 1px solid var(--surface-border);
+      border-bottom: 1px solid var(--color-border-default);
       flex-shrink: 0;
       gap: 1rem;
     }

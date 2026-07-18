@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
       gap: 0.75rem;
       padding: 2rem;
       text-align: center;
-      color: var(--text-color-secondary);
+      color: var(--color-text-secondary);
     }
     .rdk-empty-state__icon {
       font-size: 3rem;
@@ -35,7 +35,7 @@ import { CommonModule } from '@angular/common';
       margin: 0;
       font-size: 1.125rem;
       font-weight: 600;
-      color: var(--text-color);
+      color: var(--color-text-primary);
     }
     .rdk-empty-state__message {
       margin: 0;

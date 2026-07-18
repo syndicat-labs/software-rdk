@@ -1,8 +1,10 @@
 name: CI
 
 on:
+  # Scoped to main rather than '**': with pull_request also configured, a push
+  # to any PR branch triggered both events and ran every job twice.
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -91,6 +93,21 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+
+  # Architectural rules that eslint cannot express: the two-layer token
+  # contract and the [ABSOLUTE] storage rule. Both were previously defended
+  # only by review, which is how three dead tokens survived unnoticed.
+  architecture:
+    name: Architecture rules (tokens · storage)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint:rules
 
   test:
     name: Test (coverage floors)

@@ -15,7 +15,7 @@ import { SearchInputComponent } from '../../../../../shared/components/molecules
       <section class="showcase-section">
         <h2>Basic</h2>
         <div class="showcase-stack">
-          <rdk-search-input placeholder="Search items…" (search)="lastQuery.set($event)" />
+          <rdk-search-input placeholder="Search items…" (searched)="lastQuery.set($event)" />
           @if (lastQuery()) {
             <p class="result">Last search: "{{ lastQuery() }}"</p>
           }

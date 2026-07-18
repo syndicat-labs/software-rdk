@@ -37,7 +37,7 @@ const ALL_FRAMEWORKS: ComboboxSuggestion[] = [
           <rdk-form-field label="Framework" hint="Start typing to filter">
             <rdk-combobox
               [suggestions]="suggestions()"
-              (search)="onSearch($event)"
+              (searched)="onSearch($event)"
             />
           </rdk-form-field>
         </div>
@@ -50,7 +50,7 @@ const ALL_FRAMEWORKS: ComboboxSuggestion[] = [
             <rdk-combobox
               [suggestions]="suggestions()"
               [multiple]="true"
-              (search)="onSearch($event)"
+              (searched)="onSearch($event)"
             />
           </rdk-form-field>
         </div>

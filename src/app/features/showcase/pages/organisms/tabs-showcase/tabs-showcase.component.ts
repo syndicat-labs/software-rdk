@@ -17,7 +17,7 @@ import { TabsComponent, TabItem } from '../../../../../shared/components/organis
   template: `
     <div class="showcase-page">
       <h1>Tabs</h1>
-      <p class="showcase-page__intro">Tab navigation wrapping PrimeNG p-tabView with styled active indicators.</p>
+      <p class="showcase-page__intro">Tab navigation wrapping PrimeNG p-tabs with styled active indicators.</p>
 
       <section class="showcase-section">
         <h2>Basic</h2>

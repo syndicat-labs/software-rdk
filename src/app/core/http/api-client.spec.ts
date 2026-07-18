@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { HttpErrorResponse, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApiClient } from './api-client.service';
 import { APP_CONFIG } from '../config/app-config.token';
 import { AppConfig, DEFAULT_AUTH_CONFIG } from '../config/app-config.model';
@@ -71,6 +71,13 @@ describe('ApiClient (URL construction and HTTP methods)', () => {
       client.get('/items', { params: { ids: ['1', '2'] } }).subscribe();
       const req = controller.expectOne((r) => r.url === `${BASE_URL}/items`);
       expect(req.request.params.getAll('ids')).toEqual(['1', '2']);
+      req.flush([]);
+    });
+
+    it('attaches custom headers', () => {
+      client.get('/items', { headers: { 'X-Custom': 'yes' } }).subscribe();
+      const req = controller.expectOne(`${BASE_URL}/items`);
+      expect(req.request.headers.get('X-Custom')).toBe('yes');
       req.flush([]);
     });
   });

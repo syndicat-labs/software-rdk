@@ -18,13 +18,13 @@ export interface AccordionItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <p-accordion class="rdk-accordion" [multiple]="multiple">
-      @for (item of items; track item.header) {
-        <p-accordionTab
-          [header]="item.header"
-          [disabled]="item.disabled ?? false"
-        >
-          <p>{{ item.content }}</p>
-        </p-accordionTab>
+      @for (item of items; track item.header; let i = $index) {
+        <p-accordion-panel [value]="i" [disabled]="item.disabled ?? false">
+          <p-accordion-header>{{ item.header }}</p-accordion-header>
+          <p-accordion-content>
+            <p>{{ item.content }}</p>
+          </p-accordion-content>
+        </p-accordion-panel>
       }
     </p-accordion>
   `,
@@ -32,7 +32,7 @@ export interface AccordionItem {
     :host { display: block; }
 
     ::ng-deep .rdk-accordion {
-      .p-accordion-header .p-accordion-header-link {
+      .p-accordion-header {
         padding: var(--space-4);
         font-weight: var(--font-semibold);
         font-size: var(--text-base);
@@ -44,12 +44,12 @@ export interface AccordionItem {
 
         &:hover { background: var(--color-bg-sunken); }
         &:focus { box-shadow: var(--input-focus-shadow); }
-      }
 
-      .p-accordion-header.p-highlight .p-accordion-header-link {
-        background: var(--color-bg-brand-subtle);
-        color: var(--color-text-brand);
-        border-color: var(--color-brand-200);
+        &[aria-expanded='true'] {
+          background: var(--color-bg-brand-subtle);
+          color: var(--color-text-brand);
+          border-color: var(--color-brand-200);
+        }
       }
 
       .p-accordion-content {
@@ -60,7 +60,7 @@ export interface AccordionItem {
         background: var(--color-bg-surface);
       }
 
-      .p-accordion-tab { margin-bottom: var(--space-2); }
+      .p-accordion-panel { margin-bottom: var(--space-2); }
     }
   `],
 })

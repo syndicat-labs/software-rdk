@@ -19,7 +19,7 @@ import { FormFieldComponent } from '../../../../../shared/components/molecules/f
   template: `
     <div class="showcase-page">
       <h1>Date Picker</h1>
-      <p class="showcase-page__intro">Calendar input wrapping PrimeNG p-calendar, reactive forms compatible.</p>
+      <p class="showcase-page__intro">Date input wrapping PrimeNG p-datepicker, reactive forms compatible.</p>
 
       <section class="showcase-section">
         <h2>Basic</h2>

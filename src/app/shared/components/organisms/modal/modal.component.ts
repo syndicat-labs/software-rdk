@@ -6,7 +6,6 @@ import {
   Output,
 } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
-import { ButtonComponent } from '../../atoms/button/button.component';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 

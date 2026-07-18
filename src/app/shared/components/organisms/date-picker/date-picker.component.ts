@@ -7,12 +7,12 @@ import {
   Output,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
   selector: 'rdk-date-picker',
   standalone: true,
-  imports: [CalendarModule, FormsModule],
+  imports: [DatePickerModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -22,7 +22,7 @@ import { CalendarModule } from 'primeng/calendar';
     },
   ],
   template: `
-    <p-calendar
+    <p-datepicker
       class="rdk-date-picker"
       [(ngModel)]="value"
       (ngModelChange)="onValueChange($event)"
@@ -44,7 +44,7 @@ import { CalendarModule } from 'primeng/calendar';
     ::ng-deep .rdk-date-picker {
       width: 100%;
 
-      .p-calendar {
+      .p-datepicker {
         width: 100%;
       }
 
@@ -61,7 +61,7 @@ import { CalendarModule } from 'primeng/calendar';
         }
       }
 
-      .p-calendar-w-btn .p-datepicker-trigger {
+      .p-datepicker-dropdown {
         border-radius: 0 var(--input-border-radius) var(--input-border-radius) 0;
       }
     }

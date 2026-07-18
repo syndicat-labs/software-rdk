@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { render, screen, fireEvent } from '@testing-library/angular';
+import { render, fireEvent } from '@testing-library/angular';
 import { ClickOutsideDirective } from './click-outside.directive';
 import { TrapFocusDirective } from './trap-focus.directive';
 import { IntersectionObserverDirective } from './intersection-observer.directive';

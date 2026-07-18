@@ -16,7 +16,16 @@ const config: Config = {
   transformIgnorePatterns: ['node_modules/(?!(.*\\.mjs$|@angular/common/locales/.*\\.js$))'],
   moduleFileExtensions: ['ts', 'html', 'js', 'json', 'mjs'],
   testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
-  collectCoverageFrom: ['src/app/**/*.ts', '!src/app/**/*.spec.ts', '!src/main.ts'],
+  collectCoverageFrom: [
+    'src/app/**/*.ts',
+    '!src/app/**/*.spec.ts',
+    // Barrels re-export only; they carry no logic to cover.
+    '!src/app/**/index.ts',
+    // Demo/showcase and stub pages are presentation scaffolding, not business
+    // logic. Coverage floors apply to core/ and shared/ (the toolkit itself).
+    '!src/app/features/**',
+    '!src/main.ts',
+  ],
   coverageReporters: ['html', 'lcov', 'text-summary'],
   coverageThreshold: {
     'src/app/core/errors/': { lines: 100, functions: 100, branches: 100, statements: 100 },

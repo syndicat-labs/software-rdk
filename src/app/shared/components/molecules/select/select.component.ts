@@ -7,7 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
 
@@ -20,7 +20,7 @@ export interface SelectOption {
 @Component({
   selector: 'rdk-select',
   standalone: true,
-  imports: [DropdownModule, MultiSelectModule, FormsModule],
+  imports: [SelectModule, MultiSelectModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -31,7 +31,7 @@ export interface SelectOption {
   ],
   template: `
     @if (!multiple) {
-      <p-dropdown
+      <p-select
         class="rdk-select"
         [options]="options"
         [placeholder]="placeholder"
@@ -47,7 +47,7 @@ export interface SelectOption {
         [styleClass]="'rdk-select__dropdown'"
       />
     } @else {
-      <p-multiSelect
+      <p-multiselect
         class="rdk-select"
         [options]="options"
         [placeholder]="placeholder"
@@ -69,7 +69,7 @@ export interface SelectOption {
     ::ng-deep .rdk-select__dropdown {
       width: 100%;
 
-      .p-dropdown, .p-multiselect {
+      .p-select, .p-multiselect {
         width: 100%;
         border-radius: var(--input-border-radius);
         border-color: var(--input-border-color);

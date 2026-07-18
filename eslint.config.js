@@ -26,9 +26,17 @@ module.exports = tseslint.config(
       // TypeScript
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true }],
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/no-non-null-assertion': 'error',
       'no-console': 'error',
+    },
+  },
+  {
+    // Sanctioned console sinks: the app-bootstrap last-resort handler (no DI yet)
+    // and the logging/theme services that ARE the console boundary.
+    files: ['src/main.ts', 'src/app/core/logging/**/*.ts', 'src/app/core/theme/theme.service.ts'],
+    rules: {
+      'no-console': 'off',
     },
   },
   {
@@ -50,6 +58,8 @@ module.exports = tseslint.config(
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
   prettierConfig,

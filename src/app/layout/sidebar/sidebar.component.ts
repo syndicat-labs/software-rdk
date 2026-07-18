@@ -419,7 +419,7 @@ export class SidebarComponent implements OnChanges {
       .map((item) => ({
         label: item.label,
         icon: item.icon ?? 'pi-folder',
-        items: item.items!
+        items: (item.items ?? [])
           .filter((child) => this.hasPermission(child) && !!child.routerLink)
           .map((child) => this.toResolved(child)),
       }))
@@ -443,7 +443,7 @@ export class SidebarComponent implements OnChanges {
     return {
       label: item.label,
       icon: item.icon ?? 'pi-circle',
-      routerLink: item.routerLink!,
+      routerLink: item.routerLink ?? '',
       exact: item.exact ?? false,
     };
   }

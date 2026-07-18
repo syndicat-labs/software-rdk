@@ -1286,3 +1286,27 @@ threshold, so `global: 70%` governs the un-gated remainder (organisms, layout, a
 `lint` ✅ · `typecheck` ✅ · `npm audit --audit-level=high` ✅ · `test:ci` ✅ (564 tests, 29 suites,
 all coverage floors met) · `build:prod` ✅. Overall coverage: 98.08% statements, 93.86% branches,
 96.24% functions, 98.52% lines.
+
+### Known weaknesses left open by this decision
+
+The upgrade made the pipeline **pass**; it did not make the pipeline **sound**. Two structural
+faults that caused this incident remain unresolved and are tracked in `progress.md`:
+
+- **FLAG-04** — CI is a single sequential job, so the first failing gate masks the remaining
+  four. This is why one missing dependency concealed dead code, 48 lint errors, stale tests,
+  unmet coverage floors and 15 security advisories for the life of the repository. Until the
+  gates run as independent jobs, the same class of blind spot can recur silently.
+- **FLAG-05** — nothing verifies that required tooling binaries actually installed.
+  `npm ci --legacy-peer-deps` skips peer installs, so any binary not declared as a direct
+  dependency can disappear and present as a code failure rather than a tooling failure.
+
+Also open: **FLAG-06** (PrimeNG visual regression unverified — the largest unverified surface
+of this migration), **FLAG-07** (tests written to satisfy the 100% function floor rather than to
+verify behaviour), **FLAG-08** (coverage scope narrowed to exclude `src/app/features/**` without
+explicit sign-off), **FLAG-09** (breaking `search` → `searched` output rename), and **FLAG-10**
+(`@primeng/themes` deprecated upstream).
+
+A full post-mortem — including the mistakes made during the fix itself (a foreground `ng update`
+that timed out and emptied `node_modules`, a non-existent package version written into the
+manifest, and a misreading of how Jest applies the `global` coverage threshold) — is recorded in
+`progress.md` under "2026-07-18 — Retrospective".

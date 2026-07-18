@@ -28,6 +28,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CONTRACT_SCSS = join(ROOT, 'src/styles/tokens/_contract.scss');
 const CONTRACT_TS = join(ROOT, 'src/app/core/theme/token-contract.ts');
+const LANGUAGE_TS = join(ROOT, 'src/app/core/theme/design-language.ts');
 const STYLES_DIR = join(ROOT, 'src/styles');
 const THEMES_DIR = join(ROOT, 'src/styles/themes');
 const APP_DIR = join(ROOT, 'src/app');
@@ -136,11 +137,111 @@ for (const id of themeIds) {
     fail(`Theme "${id}" is registered but ${relative(ROOT, file)} does not exist.`);
     continue;
   }
-  if (!source.includes(`[data-theme="${id}"]`)) {
-    fail(`Theme "${id}" does not declare a [data-theme="${id}"] block.`);
+  // Both quote styles are valid CSS; accept either rather than enforcing a
+  // convention this check was never meant to police.
+  if (!new RegExp(`\\[data-theme=["']${id}["']\\]`).test(source)) {
+    fail(`Theme "${id}" does not declare a [data-theme] block.`);
     continue;
   }
   themeDeclarations.set(id, declarationsIn(source));
+}
+
+// ─── Rule E: L2 design-language policy (protocol §5, tier A) ────────────────
+// A policy layer that is not validated is prose with extra syntax. Every
+// declared language must name a registered theme, declare its private token
+// prefix, and answer every policy dimension — a missing dimension would let one
+// language's assumptions become an implicit default, which is precisely what
+// the protocol exists to prevent.
+const REQUIRED_POLICY_KEYS = [
+  'hierarchySignals',
+  'colorRole',
+  'functionalColorContainment',
+  'emphasisSurfaceBudget',
+  'monospaceScope',
+  'density',
+  'motion',
+  'decoration',
+  'polarityEncoding',
+  'sectionRhythm',
+];
+
+const languageTs = read(LANGUAGE_TS);
+const languagesBlock = languageTs.match(/DESIGN_LANGUAGES[^=]*=\s*\[([\s\S]*?)\n\]/);
+if (!languagesBlock) {
+  fail(`Could not parse DESIGN_LANGUAGES from ${relative(ROOT, LANGUAGE_TS)}.`);
+  process.exit(1);
+}
+
+// Split on top-level entry boundaries (`  {` at two-space indent).
+const languageEntries = languagesBlock[1]
+  .split(/\n(?=\s{2}\{)/)
+  .map((chunk) => chunk.trim())
+  .filter(Boolean);
+
+const declaredLanguages = new Map(); // id -> { prefix }
+for (const entry of languageEntries) {
+  const id = entry.match(/id:\s*'([^']+)'/)?.[1];
+  if (!id) {
+    fail('A DESIGN_LANGUAGES entry has no id.');
+    continue;
+  }
+  const prefix = entry.match(/privateTokenPrefix:\s*'([^']+)'/)?.[1];
+  if (!prefix) {
+    fail(`Language "${id}" does not declare a privateTokenPrefix.`);
+    continue;
+  }
+  if (!/contractVersion:\s*'[^']+'/.test(entry)) {
+    fail(`Language "${id}" does not declare a contractVersion.`);
+  }
+  const missingKeys = REQUIRED_POLICY_KEYS.filter((k) => !new RegExp(`\\b${k}\\s*:`).test(entry));
+  if (missingKeys.length) {
+    fail(
+      `Language "${id}" is missing ${missingKeys.length} required policy dimension(s). ` +
+        `An unanswered dimension becomes an implicit default:`,
+      missingKeys,
+    );
+  }
+  if (!themeIds.includes(id)) {
+    fail(`Language "${id}" declares a policy but is not registered in THEME_REGISTRY.`);
+  }
+  declaredLanguages.set(id, { prefix });
+}
+
+// The language's own theme block must actually use the prefix it claims, and
+// must not declare another language's private namespace.
+for (const [id, { prefix }] of declaredLanguages) {
+  const declared = themeDeclarations.get(id);
+  if (!declared) continue;
+  const own = [...declared].filter((t) => t.startsWith(prefix));
+  if (own.length === 0) {
+    fail(`Language "${id}" declares privateTokenPrefix "${prefix}" but its theme declares none.`);
+  }
+  // Closed rule rather than a cross-language comparison: every token a language
+  // declares must be either an L1 contract token or its OWN L0 private token.
+  // Comparing only against other *declared* languages would be inert until a
+  // second language is retrofitted, and would silently pass a foreign namespace
+  // in the meantime.
+  const foreign = [...declared].filter((t) => !t.startsWith(prefix) && !registeredTokens.has(t));
+  if (foreign.length) {
+    fail(
+      `Language "${id}" declares ${foreign.length} token(s) that are neither L1 contract tokens ` +
+        `nor its own "${prefix}" namespace:`,
+      foreign.sort(),
+    );
+  }
+}
+
+// Themes registered but not yet migrated onto the protocol. Per protocol §7,
+// obsidian and rdk-default are retrofitted only after theEvolute proves the
+// protocol holds, so this is expected — but it must stay visible and shrink.
+const awaitingProtocol = themeIds.filter((id) => !declaredLanguages.has(id));
+if (awaitingProtocol.length) {
+  console.warn(
+    `⚠ ${awaitingProtocol.length} registered theme(s) have no L2 policy yet ` +
+      `(protocol §7 retrofit, expected to shrink to zero):`,
+  );
+  for (const id of awaitingProtocol) console.warn(`    ${id}`);
+  console.warn('');
 }
 
 // Deliberately NOT checked: "every theme restates every contract token".

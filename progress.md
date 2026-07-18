@@ -889,3 +889,102 @@ was added (14 tests, including a runtime mirror of the static policy check) rest
 | Clone MIT component sources | Medium | HyperUI, Preline, Flowbite, shadcn/ui. |
 | L3 composition archetypes as components | Medium | Vocabulary specified, nothing built. |
 | Tier B enforcement (component role metadata) | Medium | Unlocks monospace + colour-containment checks. |
+
+---
+
+## 2026-07-18 (session 4) — Protocol moved to machine root; agnostics re-derived from evidence
+
+Session 3's protocol was **wrong in its derivation**, and this session corrects it. The correction
+came from the user: machine root should hold *agnostics* — the slots every design language must
+fill — not a set of universal rules. Obsidian is a paradigm that coexists with others, not the law.
+
+### What was wrong
+
+Session 3 derived its 10 policy dimensions largely by **inverting Obsidian's rules**. That leaves
+the agnostic layer secretly shaped by Obsidian — the exact failure the protocol exists to correct.
+theEvolute was also shipped as tokens plus a policy struct: no thesis, no refusals, no named
+patterns. A stylesheet, not a mindset.
+
+### Derivation rule (new)
+
+> A dimension is an **agnostic slot** only where established design languages demonstrably differ.
+> Where they converge, or an external standard is normative, it is **law**.
+
+Evidence base: Material 3 (incl. Expressive), IBM Carbon, Shopify Polaris, Microsoft Fluent 2,
+Atlassian, Radix, plus the session-3 composition study.
+
+The decisive case: **Material 3 ships cards as `elevated | filled | outlined`** and asks designers
+to choose by context. A question a system answers *plurally within itself* cannot be machine law →
+`surfaceBoundary` is a slot. Conversely WCAG 2.2 §2.4.11 (focus appearance) and §2.5.8 (target size
+≥24×24) are externally normative → law.
+
+### Machine root now authoritative
+
+`/home/cain/Claude files/design-language-protocol.md` — **18 closed, versioned slots** plus a
+philosophy schema (`thesis · optimizesFor · refuses · namedPatterns · slotRationale`). Machine law
+hardcodes no values. Adding a slot is a MAJOR bump requiring every language to re-answer.
+
+Key finding absent from session 3: **the accessibility floor bounds the slot space.** It is not a
+parallel checklist — `polarityEncoding: color-led` or `colorRole: expressive` are permissible *only*
+where a non-colour cue co-exists (WCAG 1.4.1). Density is negotiable; target size is not.
+
+### `/home/cain/CLAUDE.md` rewritten
+
+Obsidian demoted from machine law to a **registered adherent language** (still the default; default
+is not supremacy). Its ten "Hard Rules for UI Work" were contradicted by theEvolute on every axis —
+they are now recorded as Obsidian's *answers to the slots*.
+
+**Pre-existing self-contradictions fixed** (present before this work):
+- line 265 said components never read theme-private namespaces; line 306 said every colour uses an
+  `--obs-*` token. Both could not hold, and `check-theme-contract.mjs` enforces the first.
+- the production-readiness checklist and design-reference workflow carried the same defect.
+- `PROD-FLAG[DESIGN-OVERRIDE]` / `[HARDCODED-STYLE]` re-scoped off Obsidian; added
+  `PROD-FLAG[LANGUAGE-INCOMPLETE]`.
+
+### theEvolute — resubmitted as a mindset
+
+`docs/design-refs/LANGUAGE-EVOLUTE.md`. Thesis: *"Light and colour are how meaning arrives.
+Structure should feel grown, not carved."* Five refusals, five named patterns (Lift Ladder,
+Chromatic Key, Gradient as Vector, Redundant Signal, Warm Ground), and all 18 slot answers each
+tied back to the thesis via `slotRationale`.
+
+Because it makes colour load-bearing, **Redundant Signal is mandatory rather than stylistic** —
+remove the pairing and the language becomes non-conformant, not merely different.
+
+### Obsidian declared as answers to the same slots
+
+Obsidian now sits in `DESIGN_LANGUAGES` with its own thesis, refusals and named patterns (Dark Card
+Anchor, Monospace as Semantic Signal, Functional Colour Containment, Financial Polarity Without
+Colour). Its rules are a language's position in a registry, not ambient law.
+
+### Two defects the gate caught while being built
+
+1. **The closed namespace rule ignored component tokens** — tier 3 of the three-tier architecture
+   the protocol itself declares as law. It wrongly rejected 9 legitimate
+   `--card-*`/`--toggle-*`/`--check-*` overrides. Rule now permits a language's own private tokens
+   or any token declared in a global layer.
+2. **`--duration-productive` was an orphan** in `_obsidian.scss` — declared, bridged from
+   `--obs-duration-productive`, consumed by nothing. Removed.
+
+### Verification
+
+| Gate | Result |
+|---|---|
+| lint | exit 0 |
+| typecheck | exit 0 |
+| architecture | exit 0 — 84 tokens, 3 themes, 222 read, all resolvable |
+| test | **593 passed / 30 suites** (+15) · 98.09% stmt · 93.91% branch |
+
+**Verified red:** unanswered slot · incomplete philosophy · missing `namedPatterns`. (Session 3's
+red cases — foreign namespace, typo'd contract token, unregistered language — still hold.)
+
+### Pending (added 2026-07-18, session 4)
+
+| Item | Priority | Notes |
+|---|---|---|
+| theEvolute visual review | High | Still never rendered or examined. Unchanged from session 3. |
+| `rdk-default` declaration | Medium | Gate reports it as the remaining retrofit ratchet. |
+| Re-scope `CLAUDE.md` prose in `DESIGN-SYSTEM.md` | Medium | Obsidian's own doc still reads as system law in places. |
+| Tier B enforcement | Medium | Needs component semantic-role metadata. |
+| L3 composition archetypes | Medium | Vocabulary specified at machine root; nothing built. |
+| Greyscale review gate for theEvolute | Medium | Declared in its philosophy, not automated (Tier C). |

@@ -1,152 +1,306 @@
-// ─── Design Language Protocol — L2 (Policy) ───────────────────────────────────
-// See docs/design-refs/DESIGN-LANGUAGE-PROTOCOL.md
+// ─── Design Language Protocol — agnostics ─────────────────────────────────────
+// Canonical protocol: /home/cain/Claude files/design-language-protocol.md
 //
-// The L1 token contract (token-contract.ts) governs the VALUES a design language
-// supplies. This file governs the RULES it commits to.
+// Machine law is one sentence: all design languages obey the established
+// contracts to be accepted as valid theming contracts. Law hardcodes no values —
+// it defines the SLOTS every language must fill. Languages answer them in their
+// own philosophies and pass the gates.
 //
-// Obsidian's most characteristic decisions — hierarchy without colour, one dark
-// card per layout, monospace as a semantic signal — cannot be expressed as CSS
-// custom properties, so they previously existed only as prose written as if it
-// were universal system law. It is not: it is one language's position, and a
-// different language may legitimately disagree on every axis.
+// A slot exists only where established design languages demonstrably differ
+// (Material 3, Carbon, Polaris, Fluent, Atlassian). Where they converge, or an
+// external standard is normative, it is law and is not answerable here. The
+// decisive case: Material 3 ships cards as elevated | filled | outlined and asks
+// designers to choose — a question a system answers plurally within itself
+// cannot be machine law.
 //
-// Every dimension below is a closed union rather than free text. A policy that
-// cannot be compared across languages is documentation, not protocol.
+// Every field is required. Silence is not an answer: an unanswered slot becomes
+// an implicit default, which is how one language's opinion silently becomes the
+// system's.
 //
-// Protocol version: 1.0.0
+// Protocol version: 1.0.0 — 18 slots, closed. Adding a slot is a MAJOR bump and
+// every registered language must re-answer before it ships.
 
 export const PROTOCOL_VERSION = '1.0.0';
+export const PROTOCOL_SLOT_COUNT = 18;
 
-/** Channels a language may use to express hierarchy. */
-export type HierarchySignal =
-  'weight' | 'size' | 'surface-contrast' | 'position' | 'opacity' | 'color' | 'elevation';
+// ─── A · Surface & depth ──────────────────────────────────────────────────────
+export type SurfaceBoundary = 'border' | 'elevation' | 'fill' | 'none' | 'hybrid';
+export type DepthModel = 'shadow' | 'surface-tint' | 'border-weight' | 'layer-token' | 'flat';
+export type DarkStrategy =
+  'separate-palette' | 'tint-inversion' | 'elevation-tint' | 'single-palette';
 
-/** What colour is permitted to do. */
-export type ColorRole =
-  /** Semantic signals and contained illustration only; never hierarchy or decoration. */
-  | 'functional-only'
-  /** Colour may additionally carry brand expression and hierarchy. */
-  | 'expressive';
+// ─── B · Shape ────────────────────────────────────────────────────────────────
+export type CornerPhilosophy = 'uniform' | 'scaled-by-role' | 'expressive-mixed' | 'square';
 
-/** Where semantic (success/warning/danger) colour may appear. */
-export type FunctionalColorContainment =
-  /** Inside pill badges only — never surfaces, row backgrounds or body text. */
-  | 'badge-only'
-  /** May tint surfaces and rows in addition to badges. */
-  | 'surface-permitted';
+// ─── C · Colour ───────────────────────────────────────────────────────────────
+export type ColorRole = 'functional-only' | 'expressive' | 'brand-led' | 'generative';
+export type FunctionalColorContainment = 'badge-only' | 'surface-permitted' | 'unrestricted';
+export type ColorInHierarchy = 'excluded' | 'supporting' | 'primary';
+export type PolarityEncoding = 'weight-before-color' | 'color-led' | 'icon-led';
 
-/**
- * How many high-emphasis (inverted//anchor) surfaces may appear in one view.
- * A finite budget makes "two competing dark cards" a stated error rather than a
- * matter of taste. Not statically checkable — see protocol §5, tier C.
- */
-export type EmphasisSurfaceBudget = 1 | 2 | 'unbounded';
+// ─── D · Typography ───────────────────────────────────────────────────────────
+export interface TypeRoleAssignment {
+  readonly display: string;
+  readonly heading: string;
+  readonly body: string;
+  readonly data: string;
+}
+export type MonospaceScope = 'data-only' | 'data-and-code' | 'unrestricted';
 
-/** What monospace type is allowed to mark. */
-export type MonospaceScope =
-  /** IDs, amounts, codes, timestamps, references. Never prose or labels. */
-  | 'data-only'
-  /** The above, plus source code and technical samples. */
-  | 'data-and-code'
-  /** No semantic restriction; monospace is a stylistic choice. */
-  | 'unrestricted';
+// ─── E · Space ────────────────────────────────────────────────────────────────
+export type Density = 'high' | 'comfortable' | 'compact' | 'adaptive';
+export type SpaceAllocation = 'earned-by-importance' | 'even-rhythm';
+export type SectionRhythm = 'surface-inversion' | 'border-rule' | 'spacing-only' | 'elevation';
 
-/** How space is allocated. */
-export type Density =
-  /** Space is earned by importance; generous spacing signals a hierarchy problem. */
-  | 'high'
-  /** Even, generous rhythm is the default. */
-  | 'comfortable'
-  /** Maximum information per viewport; spacing minimised. */
-  | 'compact';
-
-/** Contexts in which non-productive (expressive) motion is permitted. */
+// ─── F · Motion ───────────────────────────────────────────────────────────────
 export type ExpressiveMotionContext =
   'onboarding' | 'empty-state' | 'transitions' | 'hover' | 'never';
 
-/** Non-informational visuals a language permits. */
-export type DecorationPolicy =
-  /** Contained, clipped illustration in defined zones. Nothing else. */
-  | 'illustration-contained'
-  /** Illustration plus gradient/ambient treatment. */
-  | 'gradient-and-illustration'
-  /** No decorative visuals at all. */
-  | 'none';
-
-/** How +/- polarity (credit/debit, gain/loss) is encoded. */
-export type PolarityEncoding =
-  /** Weight and prominence lead; colour only reinforces inside badges. */
-  | 'weight-before-color'
-  /** Colour is the primary signal. */
-  | 'color-led';
-
-/** The device used to separate page sections (protocol §4). */
-export type SectionRhythm = 'surface-inversion' | 'border-rule' | 'spacing-only' | 'elevation';
-
 export interface MotionPolicy {
-  /** Inclusive [min, max] duration in ms for productive motion. */
+  /** Inclusive [min, max] ms for productive motion. */
   readonly productiveRangeMs: readonly [number, number];
-  /** Easing curve for productive motion. */
   readonly easing: string;
-  /** Where expressive motion is allowed. `['never']` forbids it outright. */
+  /** `['never']` forbids expressive motion outright. */
   readonly expressiveAllowedIn: readonly ExpressiveMotionContext[];
 }
 
-/**
- * The complete set of rules a design language commits to. Every field is
- * required — a default would smuggle one language's opinion back into the
- * protocol, which is the failure this layer exists to correct.
- */
-export interface DesignLanguagePolicy {
-  readonly hierarchySignals: readonly HierarchySignal[];
+// ─── G · Ornament & emphasis ──────────────────────────────────────────────────
+export type DecorationPolicy =
+  'none' | 'illustration-contained' | 'gradient-and-illustration' | 'unrestricted';
+export type EmphasisSurfaceBudget = 1 | 2 | 'unbounded';
+export type HierarchySignal =
+  'weight' | 'size' | 'surface-contrast' | 'position' | 'opacity' | 'color' | 'elevation';
+
+/** The 18 agnostic slots. Closed set; every field required. */
+export interface SlotAnswers {
+  readonly surfaceBoundary: SurfaceBoundary;
+  readonly depthModel: DepthModel;
+  readonly darkStrategy: DarkStrategy;
+  readonly cornerPhilosophy: CornerPhilosophy;
+  readonly shapeCarriesBrand: boolean;
   readonly colorRole: ColorRole;
   readonly functionalColorContainment: FunctionalColorContainment;
-  readonly emphasisSurfaceBudget: EmphasisSurfaceBudget;
+  readonly colorInHierarchy: ColorInHierarchy;
+  readonly polarityEncoding: PolarityEncoding;
+  readonly typeRoleAssignment: TypeRoleAssignment;
   readonly monospaceScope: MonospaceScope;
   readonly density: Density;
+  readonly spaceAllocation: SpaceAllocation;
+  readonly sectionRhythm: SectionRhythm;
   readonly motion: MotionPolicy;
   readonly decoration: DecorationPolicy;
-  readonly polarityEncoding: PolarityEncoding;
-  readonly sectionRhythm: SectionRhythm;
+  readonly emphasisSurfaceBudget: EmphasisSurfaceBudget;
+  /** Ordered by read speed under this language's thesis. */
+  readonly hierarchySignals: readonly HierarchySignal[];
+}
+
+/** A signature structural pattern: a name, the job it does, and its rule. */
+export interface NamedPattern {
+  readonly name: string;
+  readonly job: string;
+  readonly rule: string;
+}
+
+/**
+ * Machine root defines the SHAPE of a philosophy, never its content.
+ * `refuses` and `slotRationale` are what make a language a paradigm rather than
+ * a palette — a language whose answers do not follow from its thesis is a
+ * collection of preferences.
+ */
+export interface Philosophy {
+  readonly thesis: string;
+  readonly optimizesFor: string;
+  readonly refuses: readonly string[];
+  readonly namedPatterns: readonly NamedPattern[];
+  /** Slot name → why that answer follows from the thesis. */
+  readonly slotRationale: Readonly<Record<string, string>>;
 }
 
 export interface DesignLanguage {
-  /** Must match a THEME_REGISTRY id and a [data-theme] block. */
   readonly id: string;
-  /** L0 private token prefix, e.g. `--obs-`. Valid only inside this language. */
+  /** L0 private prefix. Valid only inside this language's own block. */
   readonly privateTokenPrefix: string;
-  /** L1 contract version this language implements. */
   readonly contractVersion: string;
-  readonly policy: DesignLanguagePolicy;
+  readonly protocolVersion: string;
+  readonly philosophy: Philosophy;
+  readonly slots: SlotAnswers;
 }
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
-// `as const satisfies` rather than a type annotation: an annotation widens the
-// literal types and would make DesignLanguageId resolve to `string`, so unknown
-// ids would type-check. See the equivalent fix in token-contract.ts.
+// `as const satisfies` — a `: readonly DesignLanguage[]` annotation widens the
+// literals, silently discards `as const`, and leaves the id type as `string`, so
+// every unknown id type-checks. See the same fix in token-contract.ts.
 
 export const DESIGN_LANGUAGES = [
+  {
+    id: 'obsidian',
+    privateTokenPrefix: '--obs-',
+    contractVersion: '1.0.0',
+    protocolVersion: PROTOCOL_VERSION,
+    philosophy: {
+      thesis:
+        'Restraint is a law. Hierarchy is solved at the structure level, so colour is freed to carry only meaning.',
+      optimizesFor: 'Sustained legibility under dense, repeated, decision-critical use.',
+      refuses: [
+        'Colour as a hierarchy channel — reaching for colour signals a structural problem.',
+        'More than one emphasis surface competing in a layout.',
+        'Decorative motion inside task flows.',
+        'Decoration that is not contained illustration.',
+        'Monospace on prose — it would stop signalling machine data.',
+      ],
+      namedPatterns: [
+        {
+          name: 'Dark Card Anchor',
+          job: 'Anchor the single most decision-critical value in a layout',
+          rule: 'Exactly one per layout; two competing is a structural error',
+        },
+        {
+          name: 'Monospace as Semantic Signal',
+          job: 'Mark machine-generated data at a glance',
+          rule: 'IDs, amounts, codes, timestamps, references only — never prose or labels',
+        },
+        {
+          name: 'Functional Colour Containment',
+          job: 'Keep semantic colour readable and non-hierarchical',
+          rule: 'Inside pill badges only; never surfaces, rows or body text',
+        },
+        {
+          name: 'Financial Polarity Without Colour',
+          job: 'Encode credit/debit so colourblind users read it unaided',
+          rule: 'Credits bold + primary, debits regular + muted; colour reinforces, never leads',
+        },
+      ],
+      slotRationale: {
+        colorInHierarchy: 'Direct restatement of the thesis — structure carries hierarchy.',
+        emphasisSurfaceBudget: 'The Dark Card Anchor is meaningless if anything else competes.',
+        density: 'Space is earned by importance; generous spacing signals a hierarchy problem.',
+        sectionRhythm: 'Light/dark duality is the primary structural tool, so inversion is free.',
+        monospaceScope: 'Mono is a semantic signal; widening its scope destroys the signal.',
+      },
+    },
+    slots: {
+      surfaceBoundary: 'hybrid',
+      depthModel: 'shadow',
+      darkStrategy: 'single-palette',
+      cornerPhilosophy: 'uniform',
+      shapeCarriesBrand: false,
+      colorRole: 'functional-only',
+      functionalColorContainment: 'badge-only',
+      colorInHierarchy: 'excluded',
+      polarityEncoding: 'weight-before-color',
+      typeRoleAssignment: {
+        display: 'Inter',
+        heading: 'Montserrat',
+        body: 'Inter',
+        data: 'JetBrains Mono',
+      },
+      monospaceScope: 'data-only',
+      density: 'high',
+      spaceAllocation: 'earned-by-importance',
+      sectionRhythm: 'surface-inversion',
+      motion: {
+        productiveRangeMs: [150, 250],
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        expressiveAllowedIn: ['onboarding', 'empty-state'],
+      },
+      decoration: 'illustration-contained',
+      emphasisSurfaceBudget: 1,
+      hierarchySignals: ['weight', 'size', 'surface-contrast', 'position', 'opacity'],
+    },
+  },
   {
     id: 'evolute',
     privateTokenPrefix: '--evo-',
     contractVersion: '1.0.0',
-    policy: {
-      // Deliberately opposed to obsidian on every axis, so the protocol is
-      // proven against a language that did not shape it (protocol §7).
-      hierarchySignals: ['weight', 'size', 'color', 'elevation', 'position'],
+    protocolVersion: PROTOCOL_VERSION,
+    philosophy: {
+      thesis: 'Light and colour are how meaning arrives. Structure should feel grown, not carved.',
+      optimizesFor:
+        'Time-to-comprehension on unfamiliar screens — colour and elevation partition a view before reading begins.',
+      refuses: [
+        'Colour without a redundant cue — colour that cannot survive greyscale is decoration.',
+        'Manufacturing importance with a single anchor; three priorities are shown as three.',
+        'Gradient as filler — gradient encodes depth or progression or it is banned.',
+        'Surface inversion for rhythm; inversion is reserved for genuine mode changes.',
+        'Buying density with legibility.',
+      ],
+      namedPatterns: [
+        {
+          name: 'Lift Ladder',
+          job: 'Convey grouping and priority through stacked elevation',
+          rule: 'Max three elevation steps per view; a step must mean a rank change',
+        },
+        {
+          name: 'Chromatic Key',
+          job: 'Assign a hue to a recurring domain entity for pre-attentive recognition',
+          rule: 'A hue, once assigned, is never reused for another entity in the same product',
+        },
+        {
+          name: 'Gradient as Vector',
+          job: 'Encode progression — time, completion, flow — through gradient direction',
+          rule: 'Static gradients only on featured surfaces; elsewhere direction must mean something',
+        },
+        {
+          name: 'Redundant Signal',
+          job: 'Keep colour-carried meaning legible without colour',
+          rule: 'Greyscale test — if meaning is lost, the pattern is broken',
+        },
+        {
+          name: 'Warm Ground',
+          job: 'Make chromatic accents read as intentional',
+          rule: 'Never a cool grey ground under a warm accent',
+        },
+      ],
+      slotRationale: {
+        surfaceBoundary:
+          'Grown, not carved — a lifted plane reads as an object, a stroke reads as a cut.',
+        colorInHierarchy: 'Direct restatement of the thesis.',
+        polarityEncoding: 'Fastest read for +/-; valid only because Redundant Signal is mandatory.',
+        cornerPhilosophy:
+          'Radius grows with surface rank, reinforcing the Lift Ladder. Mixed radii would compete with elevation as a rank signal.',
+        shapeCarriesBrand:
+          'Colour and light carry identity; shape doing so too would double-encode and dilute both.',
+        typeRoleAssignment:
+          'One humanist family across prose roles — type is not a differentiating channel here, so it stays quiet.',
+        spaceAllocation:
+          'Predictable rhythm lets colour and elevation carry the variance; two variance channels produce noise.',
+        density:
+          'Elevation needs shadow room; high density collapses the Lift Ladder into flatness.',
+        motion:
+          'A decelerating curve reads as settling into place. Hover is included or elevation looks painted on.',
+        decoration: 'Gradient as Vector is a named pattern, so gradient must be permitted.',
+        emphasisSurfaceBudget:
+          'A fixed budget forces false single-focus on views with several genuine priorities.',
+      },
+    },
+    slots: {
+      surfaceBoundary: 'elevation',
+      depthModel: 'shadow',
+      darkStrategy: 'separate-palette',
+      cornerPhilosophy: 'scaled-by-role',
+      shapeCarriesBrand: false,
       colorRole: 'expressive',
       functionalColorContainment: 'surface-permitted',
-      emphasisSurfaceBudget: 'unbounded',
+      colorInHierarchy: 'primary',
+      polarityEncoding: 'color-led',
+      typeRoleAssignment: {
+        display: 'Inter',
+        heading: 'Inter',
+        body: 'Inter',
+        data: 'JetBrains Mono',
+      },
       monospaceScope: 'data-and-code',
       density: 'comfortable',
+      spaceAllocation: 'even-rhythm',
+      sectionRhythm: 'elevation',
       motion: {
         productiveRangeMs: [180, 320],
         easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
         expressiveAllowedIn: ['onboarding', 'empty-state', 'transitions', 'hover'],
       },
       decoration: 'gradient-and-illustration',
-      polarityEncoding: 'color-led',
-      sectionRhythm: 'elevation',
+      emphasisSurfaceBudget: 'unbounded',
+      hierarchySignals: ['color', 'elevation', 'size', 'weight', 'position'],
     },
   },
 ] as const satisfies readonly DesignLanguage[];
@@ -155,4 +309,17 @@ export type DesignLanguageId = (typeof DESIGN_LANGUAGES)[number]['id'];
 
 export function getDesignLanguage(id: string): DesignLanguage | undefined {
   return DESIGN_LANGUAGES.find((language) => language.id === id);
+}
+
+/**
+ * Languages making colour load-bearing are permitted by WCAG 2.2 §1.4.1 only
+ * alongside a non-colour cue. The protocol's accessibility floor bounds the slot
+ * space, so such a language must name the pattern that discharges the obligation.
+ */
+export function requiresRedundantColorCue(language: DesignLanguage): boolean {
+  return (
+    language.slots.polarityEncoding === 'color-led' ||
+    language.slots.colorInHierarchy === 'primary' ||
+    language.slots.colorRole === 'expressive'
+  );
 }

@@ -1,0 +1,11 @@
+title = "software-rdk gitleaks config"
+
+# Build on gitleaks' maintained default ruleset rather than replacing it.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known non-secret test fixtures (deliberately fake credentials used to assert log/sanitizer redaction)."
+paths = [
+  '''src/app/core/logging/logging\.spec\.ts''',
+]

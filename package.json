@@ -2,6 +2,7 @@
   "name": "software-rdk",
   "version": "0.1.0",
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks || true",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",

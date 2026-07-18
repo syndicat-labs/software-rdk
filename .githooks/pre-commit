@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+# Secrets gate: block any commit that stages a secret. Deny-by-default —
+# if the scanner is missing we refuse the commit rather than let it through unscanned.
+set -eu
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "ERROR: gitleaks is not installed, so staged changes cannot be scanned for secrets." >&2
+  echo "Install it (https://github.com/gitleaks/gitleaks#installing), e.g. a pinned release binary or 'brew install gitleaks'." >&2
+  echo "Commit blocked. Emergency bypass (use only if you are certain no secret is staged): git commit --no-verify" >&2
+  exit 1
+fi
+
+gitleaks protect --staged --redact --config .gitleaks.toml

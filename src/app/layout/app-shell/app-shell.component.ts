@@ -58,7 +58,7 @@ import { NAV_ITEMS } from '../nav-items.token';
       width: 1.5rem;
       height: 1.5rem;
       border-radius: 50%;
-      border: 1px solid var(--surface-border);
+      border: 1px solid var(--color-border-default);
       background: #fff;
       color: #64748b;
       display: flex;

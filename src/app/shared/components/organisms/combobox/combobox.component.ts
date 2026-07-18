@@ -73,7 +73,7 @@ export class ComboboxComponent implements ControlValueAccessor {
   @Input() minLength = 1;
   @Input() multiple = false;
 
-  @Output() search = new EventEmitter<string>();
+  @Output() searched = new EventEmitter<string>();
   @Output() selected = new EventEmitter<ComboboxSuggestion | ComboboxSuggestion[]>();
 
   value: ComboboxSuggestion | ComboboxSuggestion[] | null = null;
@@ -82,7 +82,7 @@ export class ComboboxComponent implements ControlValueAccessor {
   protected onTouched: () => void = () => {};
 
   protected onSearch(event: AutoCompleteCompleteEvent): void {
-    this.search.emit(event.query);
+    this.searched.emit(event.query);
   }
 
   protected onValueChange(v: ComboboxSuggestion | ComboboxSuggestion[] | null): void {

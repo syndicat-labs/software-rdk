@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { render, screen, fireEvent } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular';
 import { RouterTestingModule } from '@angular/router/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { signal } from '@angular/core';
@@ -32,35 +32,18 @@ const NAV_ITEMS: NavItem[] = [
 describe('HeaderComponent', () => {
   beforeEach(() => TestBed.resetTestingModule());
 
-  it('renders the toggle button', async () => {
+  it('renders the theme toggle', async () => {
     await render('<rdk-header />', {
       imports: [HeaderComponent, RouterTestingModule],
     });
-    expect(screen.getByRole('button', { name: 'Toggle sidebar' })).toBeInTheDocument();
+    expect(document.querySelector('rdk-theme-toggle')).toBeInTheDocument();
   });
 
-  it('renders title when provided', async () => {
-    await render('<rdk-header title="My Page" />', {
+  it('projects content into the actions slot', async () => {
+    await render('<rdk-header><button slot="actions">Do thing</button></rdk-header>', {
       imports: [HeaderComponent, RouterTestingModule],
     });
-    expect(screen.getByText('My Page')).toBeInTheDocument();
-  });
-
-  it('does not render title element when title is empty', async () => {
-    await render('<rdk-header title="" />', {
-      imports: [HeaderComponent, RouterTestingModule],
-    });
-    expect(document.querySelector('.rdk-header__title')).not.toBeInTheDocument();
-  });
-
-  it('emits sidebarToggle when toggle button clicked', async () => {
-    const fn = jest.fn();
-    await render('<rdk-header (sidebarToggle)="fn()" />', {
-      imports: [HeaderComponent, RouterTestingModule],
-      componentProperties: { fn },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Toggle sidebar' }));
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('button', { name: 'Do thing' })).toBeInTheDocument();
   });
 
   it('shows sign-in link when unauthenticated', async () => {

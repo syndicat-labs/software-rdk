@@ -1,7 +1,7 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { Router, provideRouter } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { AuthStore } from './auth.store';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
@@ -56,6 +56,11 @@ describe('AuthStore', () => {
   it('exposes roles signal', () => {
     store.setUser({ id: '1', roles: ['admin', 'user'] });
     expect(store.roles()).toEqual(['admin', 'user']);
+  });
+
+  it('roles default to empty and hasRole is false when unauthenticated', () => {
+    expect(store.roles()).toEqual([]);
+    expect(store.hasRole('admin')).toBe(false);
   });
 
   it('hasRole returns true when role exists', () => {
@@ -149,6 +154,10 @@ describe('TokenService', () => {
     expect(service.isTokenExpiringSoon(token)).toBe(false);
   });
 
+  it('isTokenExpiringSoon returns true for a malformed token', () => {
+    expect(service.isTokenExpiringSoon('not.a.jwt')).toBe(true);
+  });
+
   it('parsePayload returns null for non-three-part token', () => {
     expect(service.parsePayload('only.two')).toBeNull();
   });
@@ -224,6 +233,17 @@ describe('AuthService', () => {
       tick();
       expect(store.isLoading()).toBe(false);
     }));
+
+    it('wraps a non-HTTP pipeline error via fromUnknown', fakeAsync(() => {
+      jest.spyOn(tokenService, 'setTokens').mockImplementation(() => {
+        throw new Error('boom');
+      });
+      let code: string | undefined;
+      service.login({ username: 'a', password: 'b' }).subscribe({ error: (e) => (code = e.code) });
+      controller.expectOne(`${BASE_URL}/auth/login`).flush(MOCK_TOKENS);
+      tick();
+      expect(code).toBe(ErrorCode.INFRASTRUCTURE_UNKNOWN);
+    }));
   });
 
   describe('logout', () => {
@@ -241,6 +261,95 @@ describe('AuthService', () => {
       controller.expectOne(`${BASE_URL}/auth/logout`).flush(null);
       expect(store.isAuthenticated()).toBe(false);
     });
+
+    it('ignores errors from the logout endpoint', () => {
+      store.setUser(MOCK_USER);
+      service.logout();
+      controller.expectOne(`${BASE_URL}/auth/logout`).error(new ProgressEvent('error'));
+      expect(store.isAuthenticated()).toBe(false);
+    });
+  });
+
+  describe('register', () => {
+    it('stores tokens and user on success', fakeAsync(() => {
+      service.register({ name: 'New', username: 'a', password: 'b' }).subscribe();
+      controller.expectOne(`${BASE_URL}/auth/register`).flush(MOCK_TOKENS);
+      tick();
+      expect(tokenService.getAccessToken()).toBe('access.tok.en');
+      expect(store.isAuthenticated()).toBe(true);
+    }));
+
+    it('sets error, rethrows, and clears loading on failure', fakeAsync(() => {
+      let errored = false;
+      service
+        .register({ name: 'New', username: 'a', password: 'b' })
+        .subscribe({ error: () => (errored = true) });
+      controller
+        .expectOne(`${BASE_URL}/auth/register`)
+        .flush(null, { status: 409, statusText: 'Conflict' });
+      tick();
+      expect(errored).toBe(true);
+      expect(store.error()?.code).toBe(ErrorCode.RESOURCE_CONFLICT);
+      expect(store.isLoading()).toBe(false);
+    }));
+
+    it('wraps a non-HTTP pipeline error via fromUnknown', fakeAsync(() => {
+      jest.spyOn(tokenService, 'setTokens').mockImplementation(() => {
+        throw new Error('boom');
+      });
+      let code: string | undefined;
+      service
+        .register({ name: 'New', username: 'a', password: 'b' })
+        .subscribe({ error: (e) => (code = e.code) });
+      controller.expectOne(`${BASE_URL}/auth/register`).flush(MOCK_TOKENS);
+      tick();
+      expect(code).toBe(ErrorCode.INFRASTRUCTURE_UNKNOWN);
+    }));
+  });
+
+  describe('refreshToken', () => {
+    it('throws when no refresh token is stored', fakeAsync(() => {
+      let errored = false;
+      service.refreshToken().subscribe({ error: () => (errored = true) });
+      tick();
+      expect(errored).toBe(true);
+    }));
+
+    it('updates tokens on success', fakeAsync(() => {
+      tokenService.setTokens('old.access', 'refresh.tok.en');
+      service.refreshToken().subscribe();
+      controller.expectOne(`${BASE_URL}/auth/refresh`).flush(MOCK_TOKENS);
+      tick();
+      expect(tokenService.getAccessToken()).toBe('access.tok.en');
+    }));
+
+    it('logs out and rethrows on refresh failure', fakeAsync(() => {
+      tokenService.setTokens('old.access', 'refresh.tok.en');
+      store.setUser(MOCK_USER);
+      let errored = false;
+      service.refreshToken().subscribe({ error: () => (errored = true) });
+      controller
+        .expectOne(`${BASE_URL}/auth/refresh`)
+        .flush(null, { status: 401, statusText: 'Unauthorized' });
+      controller.expectOne(`${BASE_URL}/auth/logout`).flush(null);
+      tick();
+      expect(errored).toBe(true);
+      expect(store.isAuthenticated()).toBe(false);
+    }));
+
+    it('wraps a non-HTTP pipeline error via fromUnknown, then logs out', fakeAsync(() => {
+      tokenService.setTokens('old.access', 'refresh.tok.en');
+      jest.spyOn(tokenService, 'setTokens').mockImplementation(() => {
+        throw new Error('boom');
+      });
+      store.setUser(MOCK_USER);
+      let code: string | undefined;
+      service.refreshToken().subscribe({ error: (e) => (code = e.code) });
+      controller.expectOne(`${BASE_URL}/auth/refresh`).flush(MOCK_TOKENS);
+      controller.expectOne(`${BASE_URL}/auth/logout`).flush(null);
+      tick();
+      expect(code).toBe(ErrorCode.INFRASTRUCTURE_UNKNOWN);
+    }));
   });
 
   describe('restoreSession', () => {
@@ -265,12 +374,28 @@ describe('AuthService', () => {
       service.restoreSession();
       expect(store.isAuthenticated()).toBe(false);
     });
+
+    it('does nothing when a valid token has an unparseable payload', () => {
+      jest.spyOn(tokenService, 'getAccessToken').mockReturnValue('a.b.c');
+      jest.spyOn(tokenService, 'isTokenExpired').mockReturnValue(false);
+      jest.spyOn(tokenService, 'parsePayload').mockReturnValue(null);
+      service.restoreSession();
+      expect(store.isAuthenticated()).toBe(false);
+    });
+
+    it('restores a user with empty roles when the token omits them', () => {
+      const exp = Math.floor(Date.now() / 1000) + 3600;
+      const token = buildJwt({ sub: 'u2', exp, iat: exp - 3600 });
+      tokenService.setTokens(token, 'rt');
+      service.restoreSession();
+      expect(store.user()?.['id']).toBe('u2');
+      expect(store.roles()).toEqual([]);
+    });
   });
 });
 
 describe('authGuard', () => {
   let store: AuthStore;
-  let router: Router;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -284,7 +409,6 @@ describe('authGuard', () => {
       ],
     });
     store = TestBed.inject(AuthStore);
-    router = TestBed.inject(Router);
   });
 
   it('allows access when authenticated', fakeAsync(() => {

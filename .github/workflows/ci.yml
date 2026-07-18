@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+# Every gate below is an independent job. They deliberately do not use `needs:`
+# on one another: a gate that cannot fail on its own is not a gate. A single
+# sequential job is what concealed a broken toolchain, dead code, 48 lint
+# errors and 15 advisories for the life of this repository — see progress.md,
+# "Retrospective", FLAG-04.
 jobs:
   secret-scan:
     name: Secret scan (gitleaks)
@@ -36,31 +41,67 @@ jobs:
       - name: Scan full history for secrets
         run: gitleaks detect --source . --config .gitleaks.toml --redact --verbose
 
-  ci:
-    name: Lint · Typecheck · Audit · Test · Build
+  preflight:
+    name: Preflight (lockfile · toolchain)
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
 
+      # `npm ci` fails outright when package.json and package-lock.json have
+      # drifted, so this doubles as the lockfile-integrity check.
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
-      - name: Lint
-        run: npm run lint
+      # The fault that started all of this: eslint was declared only as a peer
+      # of its plugins, was never installed, and `npm run lint` exited 127 —
+      # a missing binary that read like a code failure. This step turns that
+      # class of fault into an immediate, unambiguous error. FLAG-05.
+      - name: Verify declared toolchain present
+        run: |
+          npx --no-install ng version
+          npx --no-install eslint --version
+          npx --no-install tsc --version
+          npx --no-install jest --version
+          npx --no-install prettier --version
 
-      - name: Typecheck
-        run: npm run typecheck
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
 
-      - name: Security audit
-        run: npm audit --audit-level=high
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+
+  test:
+    name: Test (coverage floors)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
 
       - name: Test with coverage
         run: npm run test:ci
@@ -73,5 +114,27 @@ jobs:
           path: coverage/
           retention-days: 7
 
-      - name: Production build
-        run: npm run build:prod
+  build:
+    name: Production build (bundle budgets)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build:prod
+
+  supply-chain:
+    name: Supply chain (audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Security audit
+        run: npm audit --audit-level=high

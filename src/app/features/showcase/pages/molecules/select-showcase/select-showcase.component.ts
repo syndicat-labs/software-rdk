@@ -18,7 +18,7 @@ import { FormFieldComponent } from '../../../../../shared/components/molecules/f
   template: `
     <div class="showcase-page">
       <h1>Select</h1>
-      <p class="showcase-page__intro">Dropdown select built on PrimeNG p-dropdown and p-multiSelect.</p>
+      <p class="showcase-page__intro">Dropdown select built on PrimeNG p-select and p-multiselect.</p>
 
       <section class="showcase-section">
         <h2>Single</h2>

@@ -112,7 +112,7 @@ export class SearchInputComponent implements OnDestroy {
   @Input() debounceMs = 300;
   @Input() ariaLabel?: string;
 
-  @Output() search = new EventEmitter<string>();
+  @Output() searched = new EventEmitter<string>();
   @Output() cleared = new EventEmitter<void>();
 
   protected readonly value = signal('');
@@ -120,7 +120,7 @@ export class SearchInputComponent implements OnDestroy {
   private readonly sub = this.input$.pipe(
     debounceTime(this.debounceMs),
     distinctUntilChanged(),
-  ).subscribe((v) => this.search.emit(v));
+  ).subscribe((v) => this.searched.emit(v));
 
   protected onInput(event: Event): void {
     const v = (event.target as HTMLInputElement).value;

@@ -1,0 +1,159 @@
+// ─── Component tokens ─────────────────────────────────────────────────────────
+// Component-scoped defaults. Override at the component or theme level.
+// All values reference semantic or primitive tokens — never raw values.
+
+:root {
+  // ── Button ───────────────────────────────────────────────────────────────────
+  --btn-font-weight:        var(--font-semibold);
+  --btn-letter-spacing:     0.01em;
+  --btn-transition:         background var(--duration-150) var(--ease-out),
+                            border-color var(--duration-150) var(--ease-out),
+                            box-shadow var(--duration-150) var(--ease-out),
+                            transform var(--duration-100) var(--ease-out);
+
+  --btn-height-sm:   2rem;       // 32px
+  --btn-height-md:   2.5rem;     // 40px
+  --btn-height-lg:   3rem;       // 48px
+  --btn-padding-x-sm: var(--space-3);
+  --btn-padding-x-md: var(--space-4);
+  --btn-padding-x-lg: var(--space-5);
+  --btn-font-size-sm: var(--text-sm);
+  --btn-font-size-md: var(--text-base);
+  --btn-font-size-lg: var(--text-lg);
+  --btn-radius:       var(--radius-component);
+  --btn-icon-gap:     var(--space-2);
+
+  // ── Input / Textarea ─────────────────────────────────────────────────────────
+  --input-height-sm:       2rem;
+  --input-height-md:       2.5rem;
+  --input-height-lg:       3rem;
+  --input-padding-x:       var(--space-3);
+  --input-font-size:       var(--text-base);
+  --input-border-width:    1.5px;
+  --input-border-color:    var(--color-border-default);
+  --input-border-radius:   var(--radius-component);
+  --input-bg:              var(--color-bg-surface);
+  --input-bg-disabled:     var(--color-bg-sunken);
+  --input-focus-shadow:    0 0 0 var(--color-focus-ring-width) var(--color-focus-ring-glow);
+  --input-transition:      border-color var(--duration-150) var(--ease-out),
+                           box-shadow var(--duration-150) var(--ease-out);
+
+  // ── Badge ────────────────────────────────────────────────────────────────────
+  --badge-font-size:        var(--text-xs);
+  --badge-font-weight:      var(--font-semibold);
+  --badge-padding-x:        var(--space-2);
+  --badge-padding-y:        var(--space-0-5);
+  --badge-radius:           var(--radius-pill);
+  --badge-height-sm:        1.25rem;
+  --badge-height-md:        1.5rem;
+  --badge-height-lg:        1.75rem;
+  --badge-dot-size:         0.5rem;
+
+  // ── Avatar ───────────────────────────────────────────────────────────────────
+  --avatar-size-xs:  1.5rem;
+  --avatar-size-sm:  2rem;
+  --avatar-size-md:  2.5rem;
+  --avatar-size-lg:  3rem;
+  --avatar-size-xl:  4rem;
+  --avatar-font-weight: var(--font-semibold);
+  --avatar-radius-circle:  var(--radius-pill);
+  --avatar-radius-rounded: var(--radius-xl);
+
+  // ── Chip ─────────────────────────────────────────────────────────────────────
+  --chip-height:       2rem;
+  --chip-padding-x:    var(--space-3);
+  --chip-font-size:    var(--text-sm);
+  --chip-font-weight:  var(--font-medium);
+  --chip-radius:       var(--radius-pill);
+  --chip-icon-size:    0.875rem;
+  --chip-gap:          var(--space-1-5);
+
+  // ── Spinner ──────────────────────────────────────────────────────────────────
+  --spinner-size-sm:   1.25rem;
+  --spinner-size-md:   2rem;
+  --spinner-size-lg:   3rem;
+  --spinner-track-color:    var(--color-neutral-200);
+  --spinner-fill-color:     var(--color-brand-500);
+  --spinner-stroke-width:   3px;
+  --spinner-duration:       0.8s;
+
+  // ── Checkbox / Radio ─────────────────────────────────────────────────────────
+  --check-size-sm:  1rem;
+  --check-size-md:  1.125rem;
+  --check-size-lg:  1.375rem;
+  --check-radius:   var(--radius-sm);
+  --check-border:   var(--input-border-width) solid var(--input-border-color);
+  --check-bg:       var(--input-bg);
+  --check-checked-bg:    var(--color-brand-500);
+  --check-checked-border: var(--color-brand-500);
+  --check-mark-color:    var(--color-neutral-0);
+  --radio-radius:   var(--radius-pill);
+
+  // ── Toggle ───────────────────────────────────────────────────────────────────
+  --toggle-width-sm:  2.25rem;
+  --toggle-width-md:  2.75rem;
+  --toggle-width-lg:  3.5rem;
+  --toggle-height-sm: 1.25rem;
+  --toggle-height-md: 1.5rem;
+  --toggle-height-lg: 2rem;
+  --toggle-track-off: var(--color-neutral-300);
+  --toggle-track-on:  var(--color-brand-500);
+  --toggle-thumb:     var(--color-neutral-0);
+  --toggle-duration:  var(--duration-200);
+
+  // ── FormField ────────────────────────────────────────────────────────────────
+  --field-label-size:    var(--text-sm);
+  --field-label-weight:  var(--font-semibold);
+  --field-hint-size:     var(--text-sm);
+  --field-error-size:    var(--text-sm);
+  --field-gap:           var(--space-1-5);
+
+  // ── Alert ────────────────────────────────────────────────────────────────────
+  --alert-padding:       var(--space-4);
+  --alert-radius:        var(--radius-component);
+  --alert-border-width:  1px;
+  --alert-icon-size:     1rem;
+  --alert-title-weight:  var(--font-semibold);
+  --alert-gap:           var(--space-3);
+
+  // ── Card ─────────────────────────────────────────────────────────────────────
+  --card-bg:              var(--color-bg-surface);
+  --card-border:          1px solid var(--color-border-default);
+  --card-radius:          var(--radius-surface);
+  --card-shadow:          var(--shadow-sm);
+  --card-shadow-elevated: var(--shadow-lg);
+  --card-padding-sm:      var(--space-4);
+  --card-padding-md:      var(--space-6);
+  --card-padding-lg:      var(--space-8);
+
+  // ── Modal ────────────────────────────────────────────────────────────────────
+  --modal-radius:         var(--radius-surface);
+  --modal-shadow:         var(--shadow-2xl);
+  --modal-padding:        var(--space-6);
+  --modal-header-size:    var(--text-xl);
+  --modal-width-sm:       24rem;
+  --modal-width-md:       32rem;
+  --modal-width-lg:       44rem;
+  --modal-width-xl:       60rem;
+
+  // ── Pagination ───────────────────────────────────────────────────────────────
+  --pagination-item-size:   2.25rem;
+  --pagination-font-size:   var(--text-sm);
+  --pagination-radius:      var(--radius-component);
+  --pagination-gap:         var(--space-1);
+
+  // ── Divider ──────────────────────────────────────────────────────────────────
+  --divider-color:     var(--color-border-default);
+  --divider-thickness: 1px;
+  --divider-label-bg:  var(--color-bg-base);
+  --divider-label-size: var(--text-sm);
+  --divider-label-color: var(--color-text-muted);
+
+  // ── Icon ─────────────────────────────────────────────────────────────────────
+  --icon-size-xs:  0.75rem;
+  --icon-size-sm:  0.875rem;
+  --icon-size-md:  1rem;
+  --icon-size-lg:  1.25rem;
+  --icon-size-xl:  1.5rem;
+  --icon-size-2xl: 2rem;
+}

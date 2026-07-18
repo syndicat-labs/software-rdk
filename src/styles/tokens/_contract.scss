@@ -1,0 +1,154 @@
+// ─── Token Contract ────────────────────────────────────────────────────────────
+// This file is the semantic interface. It defines every token name a theme MUST
+// provide, with its role documented inline. Values here are fallback insurance —
+// they activate only if no [data-theme] attribute is present on an ancestor.
+//
+// DO NOT use these values to build features. Every theme provides its own
+// implementation via [data-theme="<name>"] in src/styles/themes/.
+//
+// Adding a new required token here is a breaking change to the contract.
+// All registered themes must be updated before the change ships.
+// Bump the contract version comment below and update token-contract.ts.
+//
+// Contract version: 1.0.0
+
+:root {
+
+  // ── Text ─────────────────────────────────────────────────────────────────────
+  // Primary readable text — headings, body copy, form values
+  --color-text-primary:    var(--color-neutral-900);
+  // Secondary text — supporting labels, sub-headings, less important data
+  --color-text-secondary:  var(--color-neutral-500);
+  // Muted text — placeholders, hints, timestamps, tertiary metadata
+  --color-text-muted:      var(--color-neutral-400);
+  // Disabled text — non-interactive labels and values
+  --color-text-disabled:   var(--color-neutral-300);
+  // Text on dark surfaces — guaranteed legibility over dark cards or dark nav
+  --color-text-inverse:    var(--color-neutral-0);
+  // Brand-tinted text — links, active states, branded labels
+  --color-text-brand:      var(--color-brand-600);
+  // Semantic status text
+  --color-text-danger:     var(--color-danger-600);
+  --color-text-success:    var(--color-success-700);
+  --color-text-warning:    var(--color-warning-700);
+  --color-text-info:       var(--color-info-700);
+
+  // ── Backgrounds ──────────────────────────────────────────────────────────────
+  // Page / canvas background — behind all surfaces
+  --color-bg-base:         var(--color-neutral-50);
+  // Default surface — cards, panels, content containers
+  --color-bg-surface:      var(--color-neutral-0);
+  // Elevated surface — popovers, dropdowns, floating panels above the surface
+  --color-bg-elevated:     var(--color-neutral-0);
+  // Recessed surface — sidebar wells, table striping, inset zones
+  --color-bg-sunken:       var(--color-neutral-100);
+  // Scrim behind modals and overlays
+  --color-bg-overlay:      rgba(15, 23, 42, 0.4);
+  // Brand fill — primary action backgrounds (buttons, selected chips)
+  --color-bg-brand:        var(--color-brand-500);
+  // Subtle brand tint — hover backgrounds, brand-flavored empty states
+  --color-bg-brand-subtle: var(--color-brand-50);
+  // Semantic status backgrounds
+  --color-bg-danger:       var(--color-danger-500);
+  --color-bg-danger-subtle: var(--color-danger-50);
+  --color-bg-success:      var(--color-success-500);
+  --color-bg-success-subtle: var(--color-success-50);
+  --color-bg-warning:      var(--color-warning-500);
+  --color-bg-warning-subtle: var(--color-warning-50);
+  --color-bg-info:         var(--color-info-500);
+  --color-bg-info-subtle:  var(--color-info-50);
+
+  // ── Borders ──────────────────────────────────────────────────────────────────
+  // Default dividers and container borders
+  --color-border-default:  var(--color-neutral-200);
+  // Strong dividers — section separators, table headers
+  --color-border-strong:   var(--color-neutral-300);
+  // Subtle dividers — low-emphasis separators
+  --color-border-muted:    var(--color-neutral-100);
+  // Brand border — focused inputs, selected states
+  --color-border-brand:    var(--color-brand-500);
+  // Semantic status borders
+  --color-border-danger:   var(--color-danger-400);
+  --color-border-success:  var(--color-success-500);
+  --color-border-warning:  var(--color-warning-400);
+  --color-border-info:     var(--color-info-400);
+  // Focus indicator border
+  --color-border-focus:    var(--color-brand-500);
+
+  // ── Interactive states ───────────────────────────────────────────────────────
+  // Hover tint over any interactive surface
+  --color-hover-overlay:   rgba(0 0 0 / 0.04);
+  // Active/pressed tint
+  --color-active-overlay:  rgba(0 0 0 / 0.08);
+  // Focus ring color, width, offset, and glow
+  --color-focus-ring:      var(--color-brand-500);
+  --color-focus-ring-width: 3px;
+  --color-focus-ring-offset: 2px;
+  --color-focus-ring-glow: rgba(99, 102, 241, 0.18);
+
+  // ── Status semantic aliases ──────────────────────────────────────────────────
+  // Grouped triplets: bg, border, text, icon — consumed by Alert, Badge, Toast
+  --color-status-success-bg:     var(--color-bg-success-subtle);
+  --color-status-success-border: var(--color-border-success);
+  --color-status-success-text:   var(--color-text-success);
+  --color-status-success-icon:   var(--color-success-500);
+
+  --color-status-warning-bg:     var(--color-bg-warning-subtle);
+  --color-status-warning-border: var(--color-border-warning);
+  --color-status-warning-text:   var(--color-text-warning);
+  --color-status-warning-icon:   var(--color-warning-500);
+
+  --color-status-danger-bg:      var(--color-bg-danger-subtle);
+  --color-status-danger-border:  var(--color-border-danger);
+  --color-status-danger-text:    var(--color-text-danger);
+  --color-status-danger-icon:    var(--color-danger-500);
+
+  --color-status-info-bg:        var(--color-bg-info-subtle);
+  --color-status-info-border:    var(--color-border-info);
+  --color-status-info-text:      var(--color-text-info);
+  --color-status-info-icon:      var(--color-info-500);
+
+  // ── Semantic spacing ─────────────────────────────────────────────────────────
+  // Component-level internal padding scale
+  --space-component-xs: var(--space-1);    // 4px  — tight internal padding
+  --space-component-sm: var(--space-2);    // 8px  — small component padding
+  --space-component-md: var(--space-3);    // 12px — default component padding
+  --space-component-lg: var(--space-4);    // 16px — generous component padding
+  // Layout-level gap and section spacing scale
+  --space-layout-xs:    var(--space-4);    // 16px — tight layout gap
+  --space-layout-sm:    var(--space-6);    // 24px — small layout gap
+  --space-layout-md:    var(--space-8);    // 32px — default layout gap
+  --space-layout-lg:    var(--space-12);   // 48px — large layout gap
+
+  // ── Semantic radii ───────────────────────────────────────────────────────────
+  // Border radii by surface role — not by size
+  --radius-component: var(--radius-lg);    // 8px  — inputs, buttons, small surfaces
+  --radius-surface:   var(--radius-xl);    // 12px — cards, modals, panels
+  --radius-pill:      var(--radius-full);  // badges, chips, toggles
+
+  // ── Navigation / sidebar surface ─────────────────────────────────────────────
+  // All themes must provide these — nav is a structurally separate surface
+  --color-nav-texture:            none;
+  --color-nav-bg:                 #0f0f1e;
+  --color-nav-text:               rgba(255, 255, 255, 0.55);
+  --color-nav-text-active:        #ffffff;
+  --color-nav-text-subtle:        rgba(255, 255, 255, 0.28);
+  --color-nav-brand-gradient:     linear-gradient(135deg, var(--color-brand-500), var(--color-violet-500));
+  --color-nav-active-bg:          rgba(99, 102, 241, 0.14);
+  --color-nav-active-indicator:   linear-gradient(180deg, var(--color-brand-500), var(--color-violet-500));
+  --color-nav-icon-active:        #818cf8;
+  --color-nav-icon-active-bg:     rgba(99, 102, 241, 0.2);
+  --color-nav-icon-hover-bg:      rgba(99, 102, 241, 0.12);
+  --color-nav-avatar-bg:          linear-gradient(135deg, var(--color-brand-500), var(--color-violet-500));
+
+  // ── Featured / hero surface ───────────────────────────────────────────────────
+  // Dark banner surface — welcome cards, hero sections, primary KPI cards
+  --color-surface-featured:       linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+  --color-surface-featured-border: rgba(99, 102, 241, 0.2);
+  --color-surface-featured-text:  #f1f5f9;
+  --color-surface-featured-muted: rgba(241, 245, 249, 0.65);
+
+  // ── Monospace data font ───────────────────────────────────────────────────────
+  // Semantic signal for machine-generated data: IDs, amounts, codes, timestamps
+  --font-data: 'JetBrains Mono', monospace;
+}

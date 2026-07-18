@@ -1,0 +1,157 @@
+// ─── Obsidian Theme Bridge ─────────────────────────────────────────────────────
+// Applies the Obsidian design language to any element bearing data-theme="obsidian".
+// Overrides RDK semantic tokens so every component that consumes --color-* or
+// --card-* automatically adopts Obsidian values — no component edits required.
+//
+// Apply scoped to a feature:  host: { 'attr.data-theme': 'obsidian' }
+// Apply globally to an app:   <html data-theme="obsidian">
+
+[data-theme="obsidian"] {
+
+  // ── Obsidian design tokens ───────────────────────────────────────────────────
+  // Canonical --obs-* values. Components in the Obsidian design system read these.
+  // The semantic bridge below maps them onto RDK's --color-* layer.
+
+  // Surfaces
+  --obs-surface-page:         #EBEBEB;
+  --obs-surface-card-light:   #FFFFFF;
+  --obs-surface-card-dark:    #111111;
+
+  // Text
+  --obs-text-primary:         #111111;
+  --obs-text-secondary:       #6B6B6B;
+  --obs-text-muted:           #AAAAAA;
+  --obs-text-on-dark:         #FFFFFF;
+  --obs-text-on-dark-muted:   #BBBBBB;
+
+  // Functional
+  --obs-badge-surface:        #2E2E2E;
+  --obs-btn-neutral:          rgba(235, 235, 235, 0.55);
+  --obs-btn-primary:          #FFFFFF;
+  --obs-btn-text:             #111111;
+  --obs-divider:              #CCCCCC;
+
+  // Shape
+  --obs-radius-card:          16px;
+  --obs-radius-pill:          9999px;
+
+  // Elevation
+  --obs-shadow-card-light:    0 4px 24px rgba(0, 0, 0, 0.08);
+  --obs-shadow-card-dark:     0 8px 32px rgba(0, 0, 0, 0.22);
+
+  // Typography
+  --obs-font-display:         'Inter', sans-serif;
+  --obs-font-heading:         'Montserrat', sans-serif;
+  --obs-font-data:            'JetBrains Mono', monospace;
+  --obs-size-display:         2.875rem;
+  --obs-size-heading-lg:      3rem;
+  --obs-size-heading-sm:      1.125rem;
+  --obs-size-body:            0.875rem;
+  --obs-size-caption:         0.6875rem;
+  --obs-size-btn:             0.9375rem;
+  --obs-size-data:            0.8125rem;
+
+  // Glass surfaces — backdrop-filter requires painted content behind the element
+  --obs-surface-glass:        rgba(255, 255, 255, 0.10);
+  --obs-surface-glass-light:  rgba(235, 235, 235, 0.55);
+  --obs-blur-glass:           8px;
+  --obs-blur-glass-heavy:     16px;
+  --obs-border-glass:         rgba(255, 255, 255, 0.15);
+  --obs-border-glass-light:   rgba(0, 0, 0, 0.08);
+
+  // Motion
+  --obs-duration-productive:  200ms;
+  --obs-duration-expressive:  350ms;
+  --obs-ease-standard:        cubic-bezier(0.4, 0, 0.2, 1);
+
+
+  // ── Semantic token bridge ────────────────────────────────────────────────────
+  // RDK semantic tokens → Obsidian values.
+  // Components read --color-* tokens and automatically get Obsidian's palette.
+
+  // Backgrounds
+  --color-bg-base:              var(--obs-surface-page);
+  --color-bg-surface:           var(--obs-surface-card-light);
+  --color-bg-elevated:          var(--obs-surface-card-light);
+  --color-bg-sunken:            #E0E0E0;
+  --color-bg-overlay:           rgba(0, 0, 0, 0.5);
+
+  // Text — pure neutral grays, no blue tint
+  --color-text-primary:         var(--obs-text-primary);
+  --color-text-secondary:       var(--obs-text-secondary);
+  --color-text-muted:           var(--obs-text-muted);
+  --color-text-disabled:        #CCCCCC;
+  --color-text-inverse:         var(--obs-text-on-dark);
+  // Brand text maps to primary — no decorative brand color in Obsidian layouts
+  --color-text-brand:           var(--obs-text-primary);
+
+  // Brand backgrounds — neutral dark replaces indigo in Obsidian
+  --color-bg-brand:             var(--obs-text-primary);
+  --color-bg-brand-subtle:      rgba(0, 0, 0, 0.05);
+
+  // Borders
+  --color-border-default:       var(--obs-divider);
+  --color-border-strong:        #B0B0B0;
+  --color-border-muted:         #E8E8E8;
+  --color-border-brand:         var(--obs-text-primary);
+  --color-border-focus:         var(--obs-text-primary);
+
+  // Focus ring — dark on light surface, clearly visible without brand blue
+  --color-focus-ring:           var(--obs-text-primary);
+  --color-focus-ring-glow:      rgba(0, 0, 0, 0.12);
+
+  // Interactive overlays — same physics, neutral tint
+  --color-hover-overlay:        rgba(0, 0, 0, 0.04);
+  --color-active-overlay:       rgba(0, 0, 0, 0.08);
+
+
+  // ── Component token bridge ───────────────────────────────────────────────────
+  // Card
+  --card-bg:                    var(--obs-surface-card-light);
+  --card-border:                1px solid var(--obs-divider);
+  --card-radius:                var(--obs-radius-card);
+  --card-shadow:                var(--obs-shadow-card-light);
+  --card-shadow-elevated:       var(--obs-shadow-card-dark);
+
+  // Radius scale — Obsidian uses 16px cards, 8px for interactive elements
+  --radius-surface:             var(--obs-radius-card);
+  --radius-component:           8px;
+  --radius-pill:                var(--obs-radius-pill);
+
+  // Interactive controls — replace brand blue with Obsidian dark
+  --spinner-fill-color:         var(--obs-text-primary);
+  --check-checked-bg:           var(--obs-text-primary);
+  --check-checked-border:       var(--obs-text-primary);
+  --toggle-track-on:            var(--obs-text-primary);
+
+  // Motion — Obsidian productive timing matches the base 200ms
+  --duration-productive:        var(--obs-duration-productive);
+
+
+  // ── Navigation bridge ────────────────────────────────────────────────────────
+  --color-nav-bg:                 var(--obs-surface-card-dark);
+  --color-nav-text:               rgba(255, 255, 255, 0.55);
+  --color-nav-text-active:        var(--obs-text-on-dark);
+  --color-nav-text-subtle:        rgba(255, 255, 255, 0.28);
+  // Fine grain carbon texture — fractalNoise at 0.75 frequency, 4 octaves, 6% opacity
+  --color-nav-texture:            url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.06'/></svg>");
+  --color-nav-brand-gradient:     var(--obs-text-on-dark);
+  --color-nav-active-bg:          rgba(255, 255, 255, 0.08);
+  --color-nav-active-indicator:   rgba(255, 255, 255, 0.6);
+  --color-nav-icon-active:        var(--obs-text-on-dark);
+  --color-nav-icon-active-bg:     rgba(255, 255, 255, 0.1);
+  --color-nav-icon-hover-bg:      rgba(255, 255, 255, 0.06);
+  --color-nav-avatar-bg:          var(--obs-badge-surface);
+
+  // ── Featured surface bridge ───────────────────────────────────────────────────
+  --color-surface-featured:       var(--obs-surface-card-dark);
+  --color-surface-featured-border: transparent;
+  --color-surface-featured-text:  var(--obs-text-on-dark);
+  --color-surface-featured-muted: var(--obs-text-on-dark-muted);
+
+  // ── Typography bridge ────────────────────────────────────────────────────────
+  // Overrides the legacy font vars consumed by body and headings in styles.scss.
+  --font-family:                var(--obs-font-display);
+  --display-font:               var(--obs-font-heading);
+  --font-data:                  var(--obs-font-data);
+}

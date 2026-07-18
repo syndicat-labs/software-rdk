@@ -1,0 +1,180 @@
+// ─── theEvolute ───────────────────────────────────────────────────────────────
+// First design language authored natively against the Design Language Protocol.
+// See docs/design-refs/DESIGN-LANGUAGE-PROTOCOL.md
+//
+// theEvolute exists to prove the protocol is language-agnostic, so it takes the
+// opposing position to Obsidian on every policy axis (protocol §3):
+//
+//   colour is expressive and CARRIES hierarchy      (obsidian: functional-only)
+//   semantic colour may tint surfaces               (obsidian: badge-only)
+//   emphasis surfaces are unbounded                 (obsidian: exactly one)
+//   density is comfortable                          (obsidian: high)
+//   expressive motion is allowed in transitions     (obsidian: task flows never)
+//   gradients are permitted decoration              (obsidian: illustration only)
+//   polarity is colour-led                          (obsidian: weight before colour)
+//   sections separate by ELEVATION                  (obsidian: surface inversion)
+//
+// Structurally that yields warm luminous neutrals, real shadow elevation instead
+// of inverted anchor cards, and a vivid teal/violet pairing that is allowed to
+// signal importance directly.
+//
+// L0 --evo-* tokens are private. They are valid ONLY inside this block; any
+// component reading them breaks under every other language. The block below
+// bridges them onto the full L1 contract.
+
+[data-theme="evolute"] {
+
+  // ── L0 · Private primitives ─────────────────────────────────────────────────
+  // Warm neutral ramp (stone-family) — deliberately warm, against Obsidian's
+  // cool mineral greys.
+  --evo-warm-0:    #ffffff;
+  --evo-warm-50:   #faf9f7;
+  --evo-warm-100:  #f2f0ec;
+  --evo-warm-200:  #e7e4de;
+  --evo-warm-300:  #d6d2c9;
+  --evo-warm-400:  #a8a29e;
+  --evo-warm-500:  #78716c;
+  --evo-warm-600:  #57534e;
+  --evo-warm-800:  #292524;
+  --evo-warm-900:  #1c1917;
+
+  // Primary — vivid teal. Permitted to carry hierarchy under this language.
+  --evo-teal-50:   #f0fdfa;
+  --evo-teal-400:  #2dd4bf;
+  --evo-teal-500:  #14b8a6;
+  --evo-teal-600:  #0d9488;
+  --evo-teal-700:  #0f766e;
+
+  // Secondary — violet, for gradient pairing and accent depth.
+  --evo-violet-400: #a78bfa;
+  --evo-violet-500: #8b5cf6;
+  --evo-violet-600: #7c3aed;
+
+  // Status ramps
+  --evo-success-50:  #ecfdf5;  --evo-success-500: #10b981;  --evo-success-700: #047857;
+  --evo-warning-50:  #fffbeb;  --evo-warning-500: #f59e0b;  --evo-warning-700: #b45309;
+  --evo-danger-50:   #fef2f2;  --evo-danger-400:  #f87171;
+  --evo-danger-500:  #ef4444;  --evo-danger-600:  #dc2626;
+  --evo-info-50:     #eff6ff;  --evo-info-400:    #60a5fa;
+  --evo-info-500:    #3b82f6;  --evo-info-700:    #1d4ed8;
+
+  // Elevation — this language's section rhythm device, in place of inversion.
+  --evo-elevation-raised:  0 1px 2px rgb(28 25 23 / 0.04), 0 2px 8px rgb(28 25 23 / 0.06);
+  --evo-elevation-float:   0 4px 12px rgb(28 25 23 / 0.08), 0 12px 32px rgb(28 25 23 / 0.10);
+
+  // Gradients — permitted decoration under this language.
+  --evo-gradient-brand:    linear-gradient(135deg, var(--evo-teal-500), var(--evo-violet-500));
+  --evo-gradient-featured: linear-gradient(135deg, #0f766e 0%, #14b8a6 45%, #7c3aed 100%);
+
+  // ── L1 · Contract bridge ────────────────────────────────────────────────────
+
+  // Text
+  --color-text-primary:    var(--evo-warm-900);
+  --color-text-secondary:  var(--evo-warm-600);
+  --color-text-muted:      var(--evo-warm-400);
+  --color-text-disabled:   var(--evo-warm-300);
+  --color-text-inverse:    var(--evo-warm-0);
+  --color-text-brand:      var(--evo-teal-600);
+  --color-text-danger:     var(--evo-danger-600);
+  --color-text-success:    var(--evo-success-700);
+  --color-text-warning:    var(--evo-warning-700);
+  --color-text-info:       var(--evo-info-700);
+
+  // Backgrounds
+  --color-bg-base:           var(--evo-warm-50);
+  --color-bg-surface:        var(--evo-warm-0);
+  --color-bg-elevated:       var(--evo-warm-0);
+  --color-bg-sunken:         var(--evo-warm-100);
+  --color-bg-overlay:        rgb(28 25 23 / 0.45);
+  --color-bg-brand:          var(--evo-teal-600);
+  --color-bg-brand-subtle:   var(--evo-teal-50);
+  --color-bg-danger:         var(--evo-danger-500);
+  --color-bg-danger-subtle:  var(--evo-danger-50);
+  --color-bg-success:        var(--evo-success-500);
+  --color-bg-success-subtle: var(--evo-success-50);
+  --color-bg-warning:        var(--evo-warning-500);
+  --color-bg-warning-subtle: var(--evo-warning-50);
+  --color-bg-info:           var(--evo-info-500);
+  --color-bg-info-subtle:    var(--evo-info-50);
+
+  // Borders
+  --color-border-default:  var(--evo-warm-200);
+  --color-border-strong:   var(--evo-warm-300);
+  --color-border-muted:    var(--evo-warm-100);
+  --color-border-brand:    var(--evo-teal-500);
+  --color-border-danger:   var(--evo-danger-400);
+  --color-border-success:  var(--evo-success-500);
+  --color-border-warning:  var(--evo-warning-500);
+  --color-border-info:     var(--evo-info-400);
+  --color-border-focus:    var(--evo-teal-500);
+
+  // Interactive states
+  --color-hover-overlay:    rgb(13 148 136 / 0.06);
+  --color-active-overlay:   rgb(13 148 136 / 0.12);
+  --color-focus-ring:       var(--evo-teal-500);
+  --color-focus-ring-width: 2px;
+  --color-focus-ring-offset: 2px;
+  --color-focus-ring-glow:  rgb(20 184 166 / 0.22);
+
+  // Status semantic aliases
+  --color-status-success-bg:     var(--evo-success-50);
+  --color-status-success-border: var(--evo-success-500);
+  --color-status-success-text:   var(--evo-success-700);
+  --color-status-success-icon:   var(--evo-success-500);
+
+  --color-status-warning-bg:     var(--evo-warning-50);
+  --color-status-warning-border: var(--evo-warning-500);
+  --color-status-warning-text:   var(--evo-warning-700);
+  --color-status-warning-icon:   var(--evo-warning-500);
+
+  --color-status-danger-bg:      var(--evo-danger-50);
+  --color-status-danger-border:  var(--evo-danger-400);
+  --color-status-danger-text:    var(--evo-danger-600);
+  --color-status-danger-icon:    var(--evo-danger-500);
+
+  --color-status-info-bg:        var(--evo-info-50);
+  --color-status-info-border:    var(--evo-info-400);
+  --color-status-info-text:      var(--evo-info-700);
+  --color-status-info-icon:      var(--evo-info-500);
+
+  // Semantic spacing — one step more generous than the contract default,
+  // implementing `density: comfortable`.
+  --space-component-xs: var(--space-1);
+  --space-component-sm: var(--space-3);
+  --space-component-md: var(--space-4);
+  --space-component-lg: var(--space-6);
+  --space-layout-xs:    var(--space-6);
+  --space-layout-sm:    var(--space-8);
+  --space-layout-md:    var(--space-12);
+  --space-layout-lg:    var(--space-16);
+
+  // Semantic radii — softer than the contract default.
+  --radius-component: var(--radius-lg);
+  --radius-surface:   var(--radius-2xl);
+  --radius-pill:      var(--radius-full);
+
+  // Navigation surface — light and elevated rather than a dark carbon well,
+  // consistent with `sectionRhythm: elevation`.
+  --color-nav-texture:          none;
+  --color-nav-bg:               var(--evo-warm-0);
+  --color-nav-text:             var(--evo-warm-600);
+  --color-nav-text-active:      var(--evo-warm-900);
+  --color-nav-text-subtle:      var(--evo-warm-400);
+  --color-nav-brand-gradient:   var(--evo-gradient-brand);
+  --color-nav-active-bg:        var(--evo-teal-50);
+  --color-nav-active-indicator: linear-gradient(180deg, var(--evo-teal-500), var(--evo-violet-500));
+  --color-nav-icon-active:      var(--evo-teal-600);
+  --color-nav-icon-active-bg:   rgb(20 184 166 / 0.14);
+  --color-nav-icon-hover-bg:    rgb(20 184 166 / 0.08);
+  --color-nav-avatar-bg:        var(--evo-gradient-brand);
+
+  // Featured surface — gradient rather than flat dark, permitted by
+  // `decoration: gradient-and-illustration`.
+  --color-surface-featured:        var(--evo-gradient-featured);
+  --color-surface-featured-border: rgb(20 184 166 / 0.28);
+  --color-surface-featured-text:   #f0fdfa;
+  --color-surface-featured-muted:  rgb(240 253 250 / 0.72);
+
+  // Monospace data font — scope is `data-and-code` under this language.
+  --font-data: 'JetBrains Mono', monospace;
+}

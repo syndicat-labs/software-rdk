@@ -1340,3 +1340,92 @@ A full post-mortem — including the mistakes made during the fix itself (a fore
 that timed out and emptied `node_modules`, a non-existent package version written into the
 manifest, and a misreading of how Jest applies the `global` coverage threshold) — is recorded in
 `progress.md` under "2026-07-18 — Retrospective".
+
+---
+
+## ADR Amendment 2026-07-18 — Design Language Protocol v1.0.0
+
+**Status:** Accepted · **Deciders:** Syndicat Labs · **Impact:** structural (design system layer)
+
+### Problem
+
+The RDK ships a versioned **token contract** — 84 semantic CSS custom properties every theme must
+implement. That contract governs *values*. It does not govern *rules*.
+
+Obsidian's most characteristic decisions are not values and cannot be expressed as custom
+properties: hierarchy is carried by weight/size/surface-contrast/position/opacity and never colour;
+exactly one dark card anchors a layout; monospace is semantic; functional colour is contained in
+pill badges; density is high; motion is productive or absent.
+
+Those rules therefore live as prose — in `docs/design-refs/DESIGN-SYSTEM.md` and in `CLAUDE.md`
+under *Core UI Principles (non-negotiable)*. **The prose is written as if universal, but it states
+one design language's position.** A second design language may legitimately hold that colour does
+carry hierarchy, or that density should be generous. Under the previous architecture such a
+language could not be described without contradicting documentation that presented itself as system
+law. The system and the opinions of the single language implemented in it were conflated.
+
+### Decision
+
+Adopt a **Design Language Protocol**, specified in `docs/design-refs/DESIGN-LANGUAGE-PROTOCOL.md`.
+It adds a third layer to the existing two:
+
+| Layer | Scope | Artefact |
+|---|---|---|
+| L0 Primitives | per-language, private | `--obs-*`, `--evo-*` |
+| L1 Contract | shared, versioned | `_contract.scss` · 84 tokens |
+| **L2 Policy** | **per-language, declarative** | **`design-language.ts` · 10 dimensions** |
+| L3 Composition | shared vocabulary | page + section archetypes |
+
+A **design language** implements L0+L1+L2. A **theme** is its L1 output. Components continue to read
+L1 only; nothing about component authoring changes.
+
+### Rationale
+
+Ten closed-union policy dimensions (`hierarchySignals`, `colorRole`, `functionalColorContainment`,
+`emphasisSurfaceBudget`, `monospaceScope`, `density`, `motion`, `decoration`, `polarityEncoding`,
+`sectionRhythm`). Every field is required — a default would smuggle one language's opinion back in
+as the system's, which is the failure being corrected. Closed unions rather than free text, because
+a policy that cannot be compared across languages is documentation, not protocol.
+
+### Validation strategy
+
+`theEvolute` is authored **protocol-native** and takes the opposing position to Obsidian on every
+axis (expressive colour carrying hierarchy, unbounded emphasis surfaces, comfortable density,
+elevation rather than surface-inversion rhythm). Obsidian and rdk-default are retrofitted **after**
+theEvolute proves the protocol holds — deliberately, so the protocol is validated against a language
+that did not shape it. Retrofitting first would let Obsidian's assumptions leak back in unexamined.
+
+### Enforcement — and its honest limits
+
+`scripts/check-theme-contract.mjs` (CI job `Architecture rules`) verifies every declared language
+names a registered theme, declares a private prefix and contract version, answers all ten
+dimensions, and declares only L1 contract tokens or its own L0 namespace. Themes without a policy
+are reported as a shrinking retrofit ratchet.
+
+Three tiers, stated plainly:
+
+- **Tier A — enforced now:** policy completeness, registry coherence, namespace isolation.
+- **Tier B — enforceable later:** `monospaceScope`, `functionalColorContainment` — require component
+  semantic-role metadata. Deferred; path recorded.
+- **Tier C — review-only:** `emphasisSurfaceBudget`, `density` — depend on rendered composition and
+  cannot be settled statically.
+
+This protocol makes design-language intent explicit, typed, and partially enforced. It does **not**
+make design correctness automatic. Claiming otherwise would repeat the error catalogued in
+`progress.md` — a gate believed to be doing work it was not.
+
+### Consequences
+
+**Positive.** A second design language is now expressible without contradicting system
+documentation. Policy divergence is reviewable in a diff rather than argued from prose. Namespace
+isolation between languages is mechanically enforced.
+
+**Accepted trade-offs.** Adding a language now requires a policy declaration, not just a token
+block. Two of the ten dimensions remain review-only. `CLAUDE.md`'s *Core UI Principles* section
+still describes Obsidian's rules as non-negotiable system law; on completion of the retrofit it
+should be re-scoped to "Obsidian's declared policy", with the genuinely language-independent rules
+(token discipline, no raw CSS values, behaviour/style separation, accessibility) retained as
+universal.
+
+**Deferred.** Obsidian and rdk-default retrofit; component semantic-role metadata for Tier B;
+L3 composition archetypes are specified as vocabulary but not yet expressed as components.

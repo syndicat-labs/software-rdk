@@ -38,6 +38,8 @@ import { AccordionShowcaseComponent } from './pages/organisms/accordion-showcase
 import { DatePickerShowcaseComponent } from './pages/organisms/date-picker-showcase/date-picker-showcase.component';
 import { FileUploadShowcaseComponent } from './pages/organisms/file-upload-showcase/file-upload-showcase.component';
 import { ComboboxShowcaseComponent } from './pages/organisms/combobox-showcase/combobox-showcase.component';
+// Protocol
+import { LanguageComparisonComponent } from './pages/language-comparison/language-comparison.component';
 
 export const SHOWCASE_ROUTES: Routes = [
   {
@@ -45,6 +47,12 @@ export const SHOWCASE_ROUTES: Routes = [
     component: ShowcaseLayoutComponent,
     children: [
       { path: '', redirectTo: 'atoms/button', pathMatch: 'full' },
+      // Protocol
+      {
+        path: 'protocol/languages',
+        component: LanguageComparisonComponent,
+        data: { title: 'Design Languages' },
+      },
       // Atoms
       { path: 'atoms/button', component: ButtonShowcaseComponent, data: { title: 'Button' } },
       { path: 'atoms/badge', component: BadgeShowcaseComponent, data: { title: 'Badge' } },

@@ -2,6 +2,13 @@ import { NavItem } from '../../layout/sidebar/sidebar.component';
 
 export const SHOWCASE_NAV_ITEMS: NavItem[] = [
   {
+    label: 'Protocol',
+    icon: 'pi pi-sitemap',
+    items: [
+      { label: 'Design Languages', icon: 'pi pi-palette', routerLink: '/showcase/protocol/languages' },
+    ],
+  },
+  {
     label: 'Components',
     icon: 'pi pi-th-large',
     items: [

@@ -494,7 +494,7 @@ Rate limit scope (per-user, per-IP) is enforced by the backend and surfaced via 
 | Threat | Mitigation |
 |---|---|
 | XSS via user-generated content rendered in templates | Angular template binding escapes by default; `SafeHtmlPipe` sanitizes explicit `innerHTML`; CSP header enforced at serving layer |
-| Token theft via XSS (localStorage access) | Mitigated by strict CSP; `HttpOnly` cookie alternative documented in §17 deferred items |
+| Token theft via XSS (localStorage access) | **Not mitigated.** CSP restricts which code may load; it does not restrict what same-origin code may read. Any script executing on the page reads `localStorage` directly. Closes only by migrating to `HttpOnly` cookies (§17). See amendment 2026-07-18 |
 | CSRF | Not applicable for Bearer token auth (no cookie-based auth); CSRF tokens not needed |
 | JWT tampering | Signature verification is backend-only; frontend reads but does not trust unsigned claims without re-validating against issuer |
 | Insecure token expiry (using expired token) | `TokenService.isTokenExpired()` checks `exp` claim before every request; proactive refresh at TTL < 60 s |
@@ -1117,9 +1117,39 @@ Jest 29 with `jest-preset-angular`. `@testing-library/angular` for component tes
 |---|---|---|---|---|---|---|---|
 | R-001 | PrimeNG breaks on Angular 19 update | M | H | 6 | Pin PrimeNG to a tested minor version; test on PrimeNG upgrade before accepting; monitor PrimeNG release notes | Dev Lead | Phase 1 start |
 | R-002 | Angular Signals API changes before stable maturity | L | M | 2 | Signals are stable as of Angular 17; low risk for Angular 19; monitor Angular changelog | Dev Lead | 90-day review |
-| R-003 | localStorage token storage XSS exposure | M | H | 6 | Strict CSP enforced at hosting layer; `HttpOnly` cookie alternative documented in §17; XSS prevention via SafeHtmlPipe | Security | Phase 0 complete |
+| R-003 | localStorage token storage XSS exposure | M | **H** | **9** | **UNMITIGATED — see amendment 2026-07-18 below.** CSP was previously recorded as the mitigation; it is not one. Only the migration to `HttpOnly; Secure; SameSite=Strict` cookies closes this. Detection (not mitigation) via `scripts/check-no-localstorage-auth.mjs` | Security | **Open** |
 | R-004 | Jest + jest-preset-angular incompatibility on Angular version bump | M | M | 4 | Pin Angular + Jest + jest-preset-angular to tested versions in lockfile; update together on minor Angular releases | Dev Lead | Each phase start |
 | R-005 | Consuming team does not implement CSP headers at serving layer | H | H | 9 | Document CSP requirement in README; CI build step validates `meta` CSP tag is present in `index.html` | Dev Lead | Phase 0 complete |
+
+#### Amendment 2026-07-18 — R-003 was recorded with a mitigation that does not mitigate
+
+**Superseded text.** R-003 previously read: *"Strict CSP enforced at hosting layer; `HttpOnly`
+cookie alternative documented in §17; XSS prevention via SafeHtmlPipe"*, scored M×H = 6, status
+*Phase 0 complete*. §16's threat table carried the matching claim, *"Mitigated by strict CSP"*.
+
+**Why it was wrong.** CSP constrains which resources the browser will *load and execute*. It places
+no restriction on what already-executing same-origin script may *read*. `localStorage` is readable
+by any JavaScript running on the page, so a single XSS — including one delivered through a
+CSP-permitted origin, or a compromised dependency already inside `script-src 'self'` — exfiltrates
+both tokens. `SafeHtmlPipe` reduces one XSS vector; it does not make token storage safe. The two
+controls address different stages and neither closes this risk.
+
+**Consequences of the error.** The risk was carried as *closed* since Phase 0. Residual risk was
+therefore understated, and the machine-level `[ABSOLUTE]` rule — *"Never store sensitive data in
+`localStorage`… the production-grade alternative for auth tokens is `HttpOnly; Secure;
+SameSite=Strict` cookies"* — was recorded as satisfied when it was breached.
+
+**Current position.** R-003 is reopened and rescored M×H = 9, status Open. The breach is real and
+live in `TokenService` (6 call sites). It is now *detected* by
+`scripts/check-no-localstorage-auth.mjs`, which runs in the `Architecture rules` CI gate with the
+existing call sites ratcheted — detection is not mitigation, and the ratchet may only shrink.
+
+**Resolution path.** Migrate to `HttpOnly; Secure; SameSite=Strict` cookies per §17. This requires
+the backend to set the cookie at login and the auth interceptor to stop attaching the bearer header
+(`withCredentials: true` instead). It also reopens **CSRF**, which §16 currently dismisses as *"not
+applicable for Bearer token auth"* — that dismissal is only valid while auth is header-based and
+must be revisited as part of the same change. No backend exists yet, so this is blocked on backend
+integration, not on frontend effort. Tracked as FLAG-11.
 
 ---
 

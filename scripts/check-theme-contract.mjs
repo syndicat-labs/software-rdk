@@ -146,24 +146,59 @@ for (const id of themeIds) {
   themeDeclarations.set(id, declarationsIn(source));
 }
 
-// ─── Rule E: L2 design-language policy (protocol §5, tier A) ────────────────
+// "Global" means any declaration outside a [data-theme] block — the primitive,
+// contract and component token layers plus styles.scss (which holds the legacy
+// --font-family / --display-font defaults). Theme files are excluded: their
+// declarations are conditional on the active language, which is the point of
+// rule B. Overriding a global token is exactly what theming is, so this set is
+// also what a language is permitted to declare (rule E).
+const globalTokens = new Set();
+for (const file of walk(STYLES_DIR)) {
+  if (file.startsWith(THEMES_DIR)) continue;
+  if (!/\.scss$/.test(file)) continue;
+  for (const token of declarationsIn(read(file))) globalTokens.add(token);
+}
+
+// ─── Rule E: design-language declaration (protocol §6, tier A) ──────────────
 // A policy layer that is not validated is prose with extra syntax. Every
 // declared language must name a registered theme, declare its private token
 // prefix, and answer every policy dimension — a missing dimension would let one
 // language's assumptions become an implicit default, which is precisely what
 // the protocol exists to prevent.
-const REQUIRED_POLICY_KEYS = [
-  'hierarchySignals',
+// The 18 agnostic slots. Closed set — adding one is a protocol MAJOR bump and
+// every registered language must re-answer before it ships.
+const REQUIRED_SLOTS = [
+  'surfaceBoundary',
+  'depthModel',
+  'darkStrategy',
+  'cornerPhilosophy',
+  'shapeCarriesBrand',
   'colorRole',
   'functionalColorContainment',
-  'emphasisSurfaceBudget',
+  'colorInHierarchy',
+  'polarityEncoding',
+  'typeRoleAssignment',
   'monospaceScope',
   'density',
+  'spaceAllocation',
+  'sectionRhythm',
   'motion',
   'decoration',
-  'polarityEncoding',
-  'sectionRhythm',
+  'emphasisSurfaceBudget',
+  'hierarchySignals',
 ];
+
+// Machine root defines the shape of a philosophy, never its content. `refuses`
+// and `slotRationale` are what make a language a paradigm rather than a palette.
+const REQUIRED_PHILOSOPHY_FIELDS = [
+  'thesis',
+  'optimizesFor',
+  'refuses',
+  'namedPatterns',
+  'slotRationale',
+];
+
+const EXPECTED_SLOT_COUNT = 18;
 
 const languageTs = read(LANGUAGE_TS);
 const languagesBlock = languageTs.match(/DESIGN_LANGUAGES[^=]*=\s*\[([\s\S]*?)\n\]/);
@@ -193,12 +228,27 @@ for (const entry of languageEntries) {
   if (!/contractVersion:\s*'[^']+'/.test(entry)) {
     fail(`Language "${id}" does not declare a contractVersion.`);
   }
-  const missingKeys = REQUIRED_POLICY_KEYS.filter((k) => !new RegExp(`\\b${k}\\s*:`).test(entry));
-  if (missingKeys.length) {
+  if (!/protocolVersion:\s*/.test(entry)) {
+    fail(`Language "${id}" does not declare a protocolVersion.`);
+  }
+
+  const missingSlots = REQUIRED_SLOTS.filter((k) => !new RegExp(`\\b${k}\\s*:`).test(entry));
+  if (missingSlots.length) {
     fail(
-      `Language "${id}" is missing ${missingKeys.length} required policy dimension(s). ` +
-        `An unanswered dimension becomes an implicit default:`,
-      missingKeys,
+      `Language "${id}" leaves ${missingSlots.length} of ${EXPECTED_SLOT_COUNT} slot(s) unanswered. ` +
+        `Silence is not an answer — an unanswered slot becomes an implicit default:`,
+      missingSlots,
+    );
+  }
+
+  const missingPhilosophy = REQUIRED_PHILOSOPHY_FIELDS.filter(
+    (k) => !new RegExp(`\\b${k}\\s*:`).test(entry),
+  );
+  if (missingPhilosophy.length) {
+    fail(
+      `Language "${id}" has an incomplete philosophy. Without these it is a palette, ` +
+        `not a paradigm:`,
+      missingPhilosophy,
     );
   }
   if (!themeIds.includes(id)) {
@@ -216,15 +266,20 @@ for (const [id, { prefix }] of declaredLanguages) {
   if (own.length === 0) {
     fail(`Language "${id}" declares privateTokenPrefix "${prefix}" but its theme declares none.`);
   }
-  // Closed rule rather than a cross-language comparison: every token a language
-  // declares must be either an L1 contract token or its OWN L0 private token.
-  // Comparing only against other *declared* languages would be inert until a
-  // second language is retrofitted, and would silently pass a foreign namespace
-  // in the meantime.
-  const foreign = [...declared].filter((t) => !t.startsWith(prefix) && !registeredTokens.has(t));
+  // Closed rule rather than a cross-language comparison: a language may declare
+  // its OWN L0 private tokens, or override any token declared in a global layer
+  // (contract, component or legacy). It may not declare anything else — notably
+  // another language's private namespace.
+  //
+  // Comparing only against other *declared* languages would be inert while just
+  // one language has a declaration, silently passing a foreign namespace until a
+  // second was retrofitted. The three-tier architecture is law, so component
+  // tokens must be permitted here: restricting to contract tokens alone wrongly
+  // rejected 9 legitimate --card-*/--toggle-*/--check-* overrides.
+  const foreign = [...declared].filter((t) => !t.startsWith(prefix) && !globalTokens.has(t));
   if (foreign.length) {
     fail(
-      `Language "${id}" declares ${foreign.length} token(s) that are neither L1 contract tokens ` +
+      `Language "${id}" declares ${foreign.length} token(s) that are neither globally declared ` +
         `nor its own "${prefix}" namespace:`,
       foreign.sort(),
     );
@@ -251,16 +306,6 @@ if (awaitingProtocol.length) {
 // overrides 42 fewer tokens than it inherits.
 
 // ─── Rules B & C: what components actually read ─────────────────────────────
-// "Global" means any declaration outside a [data-theme] block: the token layers
-// and styles.scss both qualify (styles.scss holds the legacy --font-family /
-// --display-font defaults). Theme files are excluded — their declarations are
-// conditional on the active theme, which is the whole point of rule B.
-const globalTokens = new Set();
-for (const file of walk(STYLES_DIR)) {
-  if (file.startsWith(THEMES_DIR)) continue;
-  if (!/\.scss$/.test(file)) continue;
-  for (const token of declarationsIn(read(file))) globalTokens.add(token);
-}
 
 const usages = new Map(); // token -> Set<file>
 for (const file of walk(APP_DIR)) {

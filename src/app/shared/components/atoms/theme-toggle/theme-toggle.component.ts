@@ -23,14 +23,19 @@ import { THEME_REGISTRY, type ThemeId } from '../../../../core/theme/token-contr
   template: `
     <label class="theme-select" [class.theme-select--on-dark]="dark()">
       <span class="theme-select__label">Language</span>
+      <!-- selected is bound on each option rather than value on the select:
+           the select's value is applied before the loop has produced its
+           options, so that binding silently falls back to the first entry and
+           the control then reports the wrong language. -->
       <select
         class="theme-select__control"
-        [value]="themeService.current()"
         (change)="onSelect($event)"
         aria-label="Select design language"
       >
         @for (theme of themes; track theme.id) {
-          <option [value]="theme.id">{{ theme.label }}</option>
+          <option [value]="theme.id" [selected]="theme.id === themeService.current()">
+            {{ theme.label }}
+          </option>
         }
       </select>
     </label>

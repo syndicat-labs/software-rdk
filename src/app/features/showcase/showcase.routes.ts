@@ -1,13 +1,5 @@
 import { Routes } from '@angular/router';
 import { ShowcaseLayoutComponent } from './showcase-layout/showcase-layout.component';
-import { PricingSectionComponent } from './pages/new-design-ideas/pricing-section/pricing-section.component';
-import { ErpDashboardComponent } from './pages/new-design-ideas/erp-dashboard/erp-dashboard.component';
-import { ErpOrdersComponent } from './pages/new-design-ideas/erp-orders/erp-orders.component';
-import { ErpInvoiceComponent } from './pages/new-design-ideas/erp-invoice/erp-invoice.component';
-import { PaymentCheckoutComponent } from './pages/new-design-ideas/payment-checkout/payment-checkout.component';
-import { PaymentTransactionsComponent } from './pages/new-design-ideas/payment-transactions/payment-transactions.component';
-import { InvoiceVariantsComponent } from './pages/new-design-ideas/invoice-variants/invoice-variants.component';
-import { FrostedGlassComponent } from './pages/new-design-ideas/frosted-glass/frosted-glass.component';
 // Atoms
 import { ButtonShowcaseComponent } from './pages/atoms/button-showcase/button-showcase.component';
 import { BadgeShowcaseComponent } from './pages/atoms/badge-showcase/badge-showcase.component';
@@ -40,6 +32,7 @@ import { FileUploadShowcaseComponent } from './pages/organisms/file-upload-showc
 import { ComboboxShowcaseComponent } from './pages/organisms/combobox-showcase/combobox-showcase.component';
 // Protocol
 import { LanguageComparisonComponent } from './pages/language-comparison/language-comparison.component';
+import { DesignIdeaHostComponent } from './design-ideas/design-idea-host.component';
 
 export const SHOWCASE_ROUTES: Routes = [
   // Deliberately outside ShowcaseLayoutComponent: the comparison renders one
@@ -55,6 +48,14 @@ export const SHOWCASE_ROUTES: Routes = [
     component: ShowcaseLayoutComponent,
     children: [
       { path: '', redirectTo: 'atoms/button', pathMatch: 'full' },
+      // New Design Ideas — one route, resolved per active design language.
+      // The host picks the variant matching the selected language and renders
+      // an explicit gap when that language has not expressed the idea.
+      {
+        path: 'new-design-ideas/:ideaId',
+        component: DesignIdeaHostComponent,
+        data: { title: 'New Design Ideas' },
+      },
       // Atoms
       { path: 'atoms/button', component: ButtonShowcaseComponent, data: { title: 'Button' } },
       { path: 'atoms/badge', component: BadgeShowcaseComponent, data: { title: 'Badge' } },
@@ -84,15 +85,6 @@ export const SHOWCASE_ROUTES: Routes = [
       { path: 'organisms/date-picker', component: DatePickerShowcaseComponent, data: { title: 'Date Picker' } },
       { path: 'organisms/file-upload', component: FileUploadShowcaseComponent, data: { title: 'File Upload' } },
       { path: 'organisms/combobox', component: ComboboxShowcaseComponent, data: { title: 'Combobox' } },
-      // New Design Ideas
-      { path: 'new-design-ideas/pricing-section', component: PricingSectionComponent, data: { title: 'Pricing Section' } },
-      { path: 'new-design-ideas/erp-dashboard',   component: ErpDashboardComponent,   data: { title: 'ERP Dashboard' } },
-      { path: 'new-design-ideas/erp-orders',      component: ErpOrdersComponent,      data: { title: 'ERP Orders' } },
-      { path: 'new-design-ideas/erp-invoice',          component: ErpInvoiceComponent,          data: { title: 'ERP Invoice' } },
-      { path: 'new-design-ideas/payment-checkout',     component: PaymentCheckoutComponent,     data: { title: 'Payment Checkout' } },
-      { path: 'new-design-ideas/payment-transactions', component: PaymentTransactionsComponent, data: { title: 'Transactions' } },
-      { path: 'new-design-ideas/invoice-variants',      component: InvoiceVariantsComponent,      data: { title: 'Invoice Variants' } },
-      { path: 'new-design-ideas/frosted-glass',         component: FrostedGlassComponent,         data: { title: 'Frosted Glass' } },
     ],
   },
 ];

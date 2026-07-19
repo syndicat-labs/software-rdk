@@ -1217,3 +1217,183 @@ showcase's secondary sidebar was removed.
 ### Still open
 
 FLAG-15 (Tier B polarity metadata) and `rdk-default`'s missing declaration are unchanged.
+
+---
+
+## 2026-07-18 (session 8) — rdk-default declared as "Modern"; retrofit complete
+
+### All three languages now declared
+
+`rdk-default` was the last entry in the protocol-retrofit ratchet. It now carries a full
+declaration — 18 slots plus philosophy — so **the ratchet is empty and the gate reports nothing
+outstanding.** Every registered language is protocol-native.
+
+**The id stays `rdk-default`**; only the label changed to **Modern**. The id is also the contract's
+reference implementation and the fallback `ThemeService` applies when nothing is stored, so renaming
+it would break both.
+
+### Modern's position
+
+Thesis: *"Convention is a feature. An interface should feel immediately familiar so attention goes
+to the work rather than to learning the interface."* It optimises for time-to-first-competence.
+
+Named patterns: **Conventional Affordance**, **Gradient Anchor**, **Soft Card**, **Signed and
+Coloured**. It sits between the other two on most axes — `colorRole: brand-led` (Obsidian
+functional-only, theEvolute expressive), `colorInHierarchy: supporting` (excluded / primary),
+`emphasisSurfaceBudget: 2` (1 / unbounded).
+
+`polarityEncoding: color-led` is permissible only because **Signed and Coloured** mandates the sign
+travels with the colour — the accessibility floor bounding the slot space, as designed.
+
+### The gate caught a false declaration
+
+Declaring `privateTokenPrefix: '--rdk-'` failed immediately: the theme declared **no** `--rdk-*`
+tokens, mapping contract tokens straight to shared primitives. Rather than exempt it, Modern was
+given a genuine L0 layer holding the values that are its own identity — the Space Grotesk / Plus
+Jakarta Sans faces, the Gradient Anchor, and its Soft Card elevation ramp — bridged onto the
+contract. The private layer is deliberately small: a language needs a private token only where it
+holds a value no other language should inherit.
+
+### Typography
+
+Barlow / Barlow Condensed were loaded but referenced by nothing once the legacy aliases were pointed
+at the contract. Replaced with **Space Grotesk** (display, heading) and **Plus Jakarta Sans** (body).
+
+Verified in-browser rather than by eye: both faces return 200 from gstatic, `document.fonts` reports
+all five families resolved, and computed `font-family` under `[data-theme="rdk-default"]` is
+`"Plus Jakarta Sans"`. **The first visual read was wrong** — the narrow geometric face was mistaken
+for a condensed fallback, which is exactly why the check was run.
+
+### Gate results
+
+| Gate | Result |
+|---|---|
+| lint · typecheck | exit 0 |
+| architecture | exit 0 — 90 tokens, 3 languages, **retrofit ratchet empty** |
+| test | **609 passed / 31 suites** (+10) · 98.10% stmt |
+
+The +10 comes from the per-language parameterised suites now running for three languages.
+
+### Still open
+
+FLAG-15 (Tier B polarity metadata) is the only protocol flag outstanding.
+
+---
+
+## 2026-07-18 (session 9) — New Design Ideas becomes per-language
+
+### The problem
+
+Every page under "New Design Ideas" was authored for Obsidian. Once the showcase stopped pinning
+`data-theme="obsidian"` (session 7), they rendered under every language — presenting Obsidian's
+structural choices (one dark anchor card, high density, contained illustration) as though they were
+shared by languages that explicitly refuse them. **A design idea carries a philosophy, so it cannot
+be re-skinned by swapping tokens.**
+
+### Structure
+
+A **design idea** is now a *problem* stated independently of any language —
+`src/app/features/showcase/design-ideas/design-idea.ts` — with zero or more per-language variants,
+lazily loaded. `DesignIdeaHostComponent` resolves the variant for the active language from one
+parameterised route (`new-design-ideas/:ideaId`), replacing eight hardcoded routes.
+
+**A missing variant renders as an explicit gap, never a substitute.** Showing Obsidian's pricing
+page under theEvolute would display a single dark anchor card under a language whose emphasis budget
+is unbounded, and label it as that language's position. The gap names which languages *have*
+expressed the idea, so it reads as information rather than an error.
+
+### Pricing Section — three philosophies, one problem
+
+| Language | Structure | Reference |
+|---|---|---|
+| **Obsidian** | Light ground, white cards, **one dark anchor**, contained illustration lower-right, hierarchy without colour | `pricing1.jpg` |
+| **Modern** | Conventional three-tier table with a "Most popular" marker; brand colour marks the tier rather than surface inversion; gradient closing band as the second permitted emphasis surface | — |
+| **theEvolute** | Flush numbered tiles `/01 /02 /03`, gradient anchor tile, checklist settling to the bottom edge, separation by elevation, **no privileged tier** | `pricing2.jpg` |
+
+Each follows from its declaration: Modern's `colorRole: brand-led` and `emphasisSurfaceBudget: 2`;
+theEvolute's `unbounded` budget, `sectionRhythm: elevation`, and the Chromatic Key pattern with the
+index numeral as the redundant non-colour cue.
+
+The other seven ideas remain Obsidian-only and now show the gap under the other two languages.
+
+### A bug the tests did not catch, and the test that now does
+
+The language selector displayed **"Modern"** while rendering theEvolute. `[value]` on a `<select>`
+is applied before `@for` has produced the options, so it silently fell back to the first entry.
+Fixed by binding `selected` on each option.
+
+**The existing test passed throughout.** It asserted `select.value === service.current()`, but the
+service default is also the first option, so "shows the first option" and "shows the active
+language" were indistinguishable. The new test persists a language that is *not* first — verified to
+fail against the old binding and pass against the fix.
+
+Also self-inflicted: the explanatory comment used backticks inside a backtick-delimited template
+literal, terminating the template. Caught by typecheck.
+
+### Gate results
+
+| Gate | Result |
+|---|---|
+| lint · typecheck | exit 0 |
+| architecture | exit 0 — 90 tokens, 3 languages |
+| test | **610 passed / 31 suites** · 98.10% stmt |
+| build:prod | exit 0 — each variant now its own lazy chunk |
+
+### Pending
+
+| Item | Priority | Notes |
+|---|---|---|
+| Variants for the other seven ideas | Medium | Each shows the gap under Modern and theEvolute today. |
+| FLAG-15 component role metadata | Medium | Still the only open protocol flag. |
+| Idea variant coverage in the gate | Low | Nothing asserts a registered idea's `load()` resolves. |
+
+---
+
+## 2026-07-19 — Implementation plan; ADR roadmap reconciled
+
+### Why now
+
+Nine sessions produced a strong governance and design-system layer. Meanwhile landing is 33 lines,
+dashboard 23, login 86 — stubs marked *High* priority on 2026-06-01 and untouched 48 days later.
+
+**The asymmetry is the risk, not any individual open flag.** A team cloning this today gets
+excellent CI, a rigorous design protocol, and no working pages. The governance layer is now more
+mature than the thing it governs.
+
+### `IMPLEMENTATION-PLAN.md`
+
+Closes audit proposal **P9** ("no Definition of Done, no per-phase exit gates, no evidence trail").
+Structure follows the workspace reference (`restaurant-management-system`).
+
+- **§2 Definition of Done** applying to every layer, including two rules this project earned the
+  hard way: *the surface was rendered and looked at* (gate-green is not design-reviewed), and the
+  **evidence rule** — a layer closes with actual command output, and a new gate must be shown
+  **observed failing** on a deliberate regression.
+- **L1** land outstanding work · **L2** product surface (dashboard → auth → landing) ·
+  **L3** backend + FLAG-11 · **L4** governance debt · **L5** protocol completion, gated behind L2.
+
+L5 is deliberately last. Further protocol refinement before the product surface exists would widen
+the gap the plan is meant to close.
+
+### ADR §16 reconciled
+
+The roadmap carried Phases 1 and 2 **unchecked long after the work landed** — a roadmap whose status
+is stale is indistinguishable from one nobody is following.
+
+| Phase | Was | Now |
+|---|---|---|
+| 1 — Shared Modules | `[ ]` | ✅ complete (32 components, 610 tests) |
+| 2 — Layout & Feature | `[ ]` | ⚠️ partial — layout shipped; the "fully-worked example feature" did not |
+| 3 — Storybook trigger | `[ ]` | trigger **fired** (>15 components; now 32) |
+
+Phase 2's gap is named explicitly: the showcase substituted for the worked feature, but a component
+catalogue demonstrates components in isolation, not Phase 0/1 patterns composed end to end. That gap
+is L2 in the plan.
+
+### Deferred with reasons
+
+**FLAG-15** and further design-idea variants — refinement of the layer already ahead.
+**FLAG-11** — genuinely blocked on a backend; detected and ratcheted meanwhile.
+**Reference-library renaming** — 545 images unified and 298 usefully named; 247 remain hash-named.
+Local vision inference proved marginal on this hardware (7.7 GB, no GPU): a 3B model held 3.9 GB RSS
+and thrashed the machine to 148 MB free. Recorded so the finding is not re-derived.

@@ -26,6 +26,23 @@ describe('ThemeToggleComponent', () => {
     expect(select.value).toBe(service.current());
   });
 
+  it('reflects a non-default language, not just the first option', async () => {
+    // The original assertion passed while the control was visibly wrong: the
+    // service default is also the first option, so "shows the first option" and
+    // "shows the active language" were indistinguishable. Persisting a language
+    // that is NOT first separates them.
+    const target = THEME_REGISTRY[THEME_REGISTRY.length - 1];
+    localStorage.setItem(STORAGE_KEY, target.id);
+
+    const { fixture } = await render(ThemeToggleComponent);
+    const service = fixture.debugElement.injector.get(ThemeService);
+    const select = screen.getByRole('combobox') as HTMLSelectElement;
+
+    expect(service.current()).toBe(target.id);
+    expect(select.value).toBe(target.id);
+    expect(select.selectedIndex).toBe(THEME_REGISTRY.length - 1);
+  });
+
   it('applies the chosen language to the service', async () => {
     const { fixture } = await render(ThemeToggleComponent);
     const service = fixture.debugElement.injector.get(ThemeService);

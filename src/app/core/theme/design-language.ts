@@ -133,6 +133,97 @@ export interface DesignLanguage {
 
 export const DESIGN_LANGUAGES = [
   {
+    // Labelled "Modern"; the id stays `rdk-default` because it is also the
+    // contract's reference implementation and the fallback ThemeService applies
+    // when nothing is stored. Renaming the id would break both.
+    id: 'rdk-default',
+    privateTokenPrefix: '--rdk-',
+    contractVersion: '1.1.0',
+    protocolVersion: PROTOCOL_VERSION,
+    philosophy: {
+      thesis:
+        'Convention is a feature. An interface should feel immediately familiar so attention goes to the work rather than to learning the interface.',
+      optimizesFor:
+        'Time-to-first-competence for someone who has never seen this product but has seen a hundred like it.',
+      refuses: [
+        'Novelty for its own sake — an unfamiliar pattern must earn its cost in learning.',
+        'Ambiguity about what is interactive; affordances look like what they do.',
+        'Meaning carried by a single channel — colour always travels with a sign, icon or label.',
+        'Hierarchy that only resolves at large viewport sizes.',
+        'Decoration that competes with the primary action on the screen.',
+      ],
+      namedPatterns: [
+        {
+          name: 'Conventional Affordance',
+          job: 'Make interactive elements recognisable without inspection',
+          rule: 'A control adopts the shape users already expect; deviation requires a stated reason',
+        },
+        {
+          name: 'Gradient Anchor',
+          job: 'Mark the single most important surface on a view',
+          rule: 'Brand gradient on the featured surface only — never as background texture',
+        },
+        {
+          name: 'Soft Card',
+          job: 'Separate a surface without hard division',
+          rule: 'A light border plus a shallow lift; neither alone carries the separation',
+        },
+        {
+          name: 'Signed and Coloured',
+          job: 'Encode polarity so it survives without colour',
+          rule: 'Colour leads, but the sign is always present — greyscale must not lose the meaning',
+        },
+      ],
+      slotRationale: {
+        colorRole:
+          'Brand-led rather than expressive: colour marks action and status by convention, which is what users already read.',
+        colorInHierarchy:
+          'Supporting, not primary — colour reinforces a hierarchy that size and weight already establish.',
+        polarityEncoding:
+          'Colour-led because that is the convention for financial polarity; the Signed and Coloured pattern discharges the WCAG 1.4.1 obligation.',
+        surfaceBoundary:
+          'Hybrid: the Soft Card pattern uses border and lift together, since either alone reads as a stronger statement than this language wants to make.',
+        typeRoleAssignment:
+          'Space Grotesk gives display and headings character; Plus Jakarta Sans keeps body copy comfortable, where those same details would tire the eye.',
+        emphasisSurfaceBudget:
+          'Two, not one: a view may legitimately have a primary anchor and a secondary call to action without either being noise.',
+        sectionRhythm:
+          'Surface inversion — the Gradient Anchor is the device, so sections separate by contrast against it.',
+        density:
+          'Comfortable is the convention users arrive already fluent in; high density is a specialist choice.',
+      },
+    },
+    slots: {
+      surfaceBoundary: 'hybrid',
+      depthModel: 'shadow',
+      darkStrategy: 'single-palette',
+      cornerPhilosophy: 'scaled-by-role',
+      shapeCarriesBrand: false,
+      colorRole: 'brand-led',
+      functionalColorContainment: 'surface-permitted',
+      colorInHierarchy: 'supporting',
+      polarityEncoding: 'color-led',
+      typeRoleAssignment: {
+        display: 'Space Grotesk',
+        heading: 'Space Grotesk',
+        body: 'Plus Jakarta Sans',
+        data: 'JetBrains Mono',
+      },
+      monospaceScope: 'data-only',
+      density: 'comfortable',
+      spaceAllocation: 'even-rhythm',
+      sectionRhythm: 'surface-inversion',
+      motion: {
+        productiveRangeMs: [150, 250],
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        expressiveAllowedIn: ['onboarding', 'empty-state', 'transitions'],
+      },
+      decoration: 'gradient-and-illustration',
+      emphasisSurfaceBudget: 2,
+      hierarchySignals: ['size', 'weight', 'surface-contrast', 'color', 'position'],
+    },
+  },
+  {
     id: 'obsidian',
     privateTokenPrefix: '--obs-',
     contractVersion: '1.1.0',

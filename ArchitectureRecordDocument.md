@@ -849,10 +849,14 @@ Gate condition: Phase 0 complete with CI green; Phase 1 coverage targets met.
 - [x] Layout: `AppShellComponent`, `SidebarComponent`, `HeaderComponent` — 80% tested
 - [ ] Example feature: lazy-loaded, demonstrates all Phase 0/1 patterns, signal store, RBAC guard, form with validators — 80% tested
 
-**Phase 2 is partial.** The layout shipped. The "fully-worked example feature" did not: the showcase
-substituted for it, and a component catalogue is not a worked feature — it demonstrates components
-in isolation, not the Phase 0/1 patterns composed end to end. Landing, login and dashboard remain
-stubs (33, 86 and 23 lines).
+**Phase 2 is partial — progressing.** The layout shipped. The "fully-worked example feature" did
+not: the showcase substituted for it, and a component catalogue is not a worked feature — it
+demonstrates components in isolation, not the Phase 0/1 patterns composed end to end.
+
+**Update 2026-07-19:** the dashboard (`features/dashboard/`) now composes those patterns end to end
+— signal store, typed error taxonomy surfaced through `ErrorDisplay`, loading/empty/error states,
+and shared organisms — across all three registered design languages. Landing (33 lines) and login
+(86 lines) remain stubs.
 
 This gap is the whole subject of **L2 — Product surface** in `IMPLEMENTATION-PLAN.md`.
 
@@ -1138,6 +1142,29 @@ Jest 29 with `jest-preset-angular`. `@testing-library/angular` for component tes
 | R-003 | localStorage token storage XSS exposure | M | **H** | **9** | **UNMITIGATED — see amendment 2026-07-18 below.** CSP was previously recorded as the mitigation; it is not one. Only the migration to `HttpOnly; Secure; SameSite=Strict` cookies closes this. Detection (not mitigation) via `scripts/check-no-localstorage-auth.mjs` | Security | **Open** |
 | R-004 | Jest + jest-preset-angular incompatibility on Angular version bump | M | M | 4 | Pin Angular + Jest + jest-preset-angular to tested versions in lockfile; update together on minor Angular releases | Dev Lead | Each phase start |
 | R-005 | Consuming team does not implement CSP headers at serving layer | H | H | 9 | Document CSP requirement in README; CI build step validates `meta` CSP tag is present in `index.html` | Dev Lead | Phase 0 complete |
+
+#### Amendment 2026-07-19 — testing strategy: a component with tests and no consumer is unverified
+
+**What happened.** `ErrorDisplayComponent` carried unit tests and 100% coverage in its directory,
+and its `severity` getter returned `string` where PrimeNG's `p-message` accepts a narrow union. The
+fault survived from authoring until 2026-07-19, when the dashboard became its first consumer in a
+compiled template and `ng serve` failed immediately.
+
+**Why the gates missed it.** `npm run typecheck` runs `tsc --noEmit`, which does **not** perform
+Angular template type-checking — that happens only in `ng build` / `ng serve`, and only for
+components actually reachable from a compiled template. The component's own tests instantiate it
+directly and never exercise the `[severity]` binding, so coverage was high and meaningless here.
+
+**Consequence for §19 (Testing strategy).** Directory coverage is not evidence that a component
+works. A shared component is verified when a **real surface consumes it in a compiled template**.
+This is a second instance of the pattern recorded in `progress.md`: coverage measures execution,
+not verification.
+
+**Action:** as L2 builds product surfaces, each shared component gains a genuine consumer. No new
+gate is proposed — `build:prod` already catches this class once a consumer exists, and the gap was
+the absence of consumers, not the absence of a check.
+
+---
 
 #### Amendment 2026-07-18 — R-003 was recorded with a mitigation that does not mitigate
 

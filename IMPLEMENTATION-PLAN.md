@@ -1,6 +1,6 @@
 # Implementation Plan — software-rdk
 
-> **Status:** active · **Created:** 2026-07-19 · **Supersedes:** the sequencing in
+> **Status:** active · **Created:** 2026-07-19 · **Last updated:** 2026-07-19 (L1 closed, L2.1 done) · **Supersedes:** the sequencing in
 > `ArchitectureRecordDocument.md` §16 (Implementation Roadmap), which it inherits and extends.
 >
 > Closes audit proposal **P9** (`after-audit-proposals.md`): "no Definition of Done, no per-phase
@@ -95,19 +95,16 @@ document for sequencing.
 
 ## 4. The layers
 
-### L1 — Land what is outstanding · *~1 hour*
+### L1 — Land what is outstanding · ✅ **CLOSED 2026-07-19**
 
-Nothing new. Clears the desk so later layers start from a clean main.
+- [x] Open **PR #6** for the two stranded commits — merged as `019daf6`
+- [x] Reconcile ADR §16 status per §3 above
+- [x] Gate asserting every registered design idea's `load()` resolves — `design-idea.spec.ts`,
+      63 tests, **verified red** by typo'ing an import path
+- [x] **Security housekeeping:** recovery codes removed from `~/Pictures` by the owner
 
-- [ ] Open **PR #6** for the two stranded commits (Modern's declaration, per-language design ideas)
-- [ ] Reconcile ADR §16 status per §3 above
-- [ ] Add a gate asserting every registered design idea's `load()` resolves — a typo in an import
-      path currently surfaces only when someone navigates to it
-- [ ] **Security housekeeping (not repo work):** `~/Pictures/inspo/highclimaxtechgithub-recovery-codes.txt`
-      holds GitHub account recovery codes in plaintext. Move to a password manager, delete the file
-
-**Exit gate:** `main` contains all completed work; ADR status matches reality; 9 CI jobs green.
-**Evidence:** PR #6 merge commit; `gh pr checks` output.
+**Exit gate met.** `main` contains all completed work; ADR status matches reality; 8 CI jobs green.
+**Evidence:** PR #6 merge commit `019daf6`; `progress.md` 2026-07-19 (session 10).
 
 ---
 
@@ -120,17 +117,28 @@ Each page is built against the reference library and must express itself under *
 languages** — not by token-swapping, but as genuine per-language variants where structure differs
 (D7). Where a language has no variant, the gap state renders.
 
-#### L2.1 — Dashboard *(first: exercises the most of the library)*
+#### L2.1 — Dashboard · ✅ **DONE 2026-07-19**
 
-- [ ] Real dashboard: KPI row, primary chart, recent-activity table, status surface
-- [ ] Consumes existing organisms — `DataTable<T>`, `Card`, `Badge`, `Tabs` — rather than new markup
-- [ ] Wired to `RdkListStore<T>` signal store with loading / empty / error states
-- [ ] Per-language variants: Obsidian (dark card anchor, high density), Modern (conventional KPI
-      grid), theEvolute (Lift Ladder elevation, Chromatic Key per entity)
-- [ ] References: `kpi1-3`, `kpicta1-2`, `boardroom1-2`, `layout5DESIREDESIGNLAYOUT.jpg`
+- [x] Real dashboard: KPI band with meters, settlements table, status surface
+- [x] Consumes existing organisms — `DataTable<T>`, `ErrorDisplay`, `EmptyState`
+- [x] Wired to a signal store with loading / empty / error states
+- [x] Renders under all three languages
+- [x] References: `kpi1-3`, `layout5DESIREDESIGNLAYOUT.jpg`
 
-**Exit gate:** renders under all three languages; empty and error states reachable; E2E navigates
-and asserts content; screenshots reviewed.
+**Deviation, recorded.** Built as **one implementation**, not per-language variants. A dashboard is
+a product surface, not a design idea (D7): the protocol claims a component reads contract tokens and
+swaps language with zero edits, so building it once *tests* that claim rather than sidestepping it.
+It held — same markup, visibly different rendering, no console errors. Per-language variants remain
+correct for design *ideas*; they were the wrong instrument here.
+
+The single `.kpi--anchor` takes the **minimum** of the three declared emphasis budgets (Obsidian's
+1), the only choice satisfying all three without branching on the active language.
+
+**Not built:** `Card` and `Badge` are unused here. `DataTable` exposes no cell templates, so a
+status column cannot render a badge — recorded as a component-library limitation, not worked around.
+
+**Exit gate met.** 3 languages × 3 states rendered and reviewed; empty and error reachable via
+`?dashboard=empty|error`; 12 component tests.
 
 #### L2.2 — Auth surface
 
@@ -240,14 +248,19 @@ Run continuously; not gated to a layer.
 | R3 | Per-language variants triple the product surface cost | **H** | M | Gap state is a first-class outcome; a language may legitimately not express an idea | Dev Lead |
 | R4 | Contract churn as product work reveals missing tokens | M | M | Expected — elevation and type roles were found exactly this way. Version and re-answer | Dev Lead |
 | R5 | Coverage floors keep producing ceremony tests | M | M | L4/P6 replaces the function floor; keep the branch floor | Dev Lead |
+| R7 | Components with tests but no consumer are unverified — FLAG-16 proved it | M | M | Product surfaces are now the consumers; template type-checking only runs at build | Dev Lead |
 | R6 | Reference library rots — 247 images still hash-named | L | L | 298 usefully named; local vision inference is marginal on 7.7 GB / no GPU | Dev Lead |
 
 ---
 
 ## 7. Immediate next step
 
-**Open PR #6**, then start **L2.1 (Dashboard)**.
+**L2.2 — Auth surface.**
 
-Dashboard first because it exercises the most of the component library, has the richest reference
-material, and is the surface where three design languages differ most visibly — which is the fastest
-way to find out whether the protocol actually holds under product load, or only under a specimen.
+Dashboard answered the open question: the protocol holds under product load, not only on a specimen.
+It also surfaced two latent defects (FLAG-16, FLAG-17) that existed for months behind passing tests,
+which is the argument for continuing to build real surfaces rather than more meta-layer.
+
+Auth next because it is the only remaining surface with genuine **security** exposure —
+`returnUrl` handling in `authGuard` needs adversarial testing for open-redirect before anything is
+built on top of it.

@@ -811,6 +811,14 @@ PII categories in this toolkit: none directly collected. The `AuthStore` stores 
 
 Each phase is a gate. The next phase does not begin until the current phase has passing tests at required coverage targets.
 
+> **Sequencing now lives in [`IMPLEMENTATION-PLAN.md`](./IMPLEMENTATION-PLAN.md)** (2026-07-19),
+> which inherits and extends this roadmap with a Definition of Done, per-layer exit gates and an
+> evidence rule. This section is retained as the historical record of Phases 0–3.
+>
+> **Status corrected 2026-07-19.** Phases 1 and 2 were carried unchecked long after the work
+> landed. Checkboxes below now reflect reality: Phase 1 complete, Phase 2 partial with the gap
+> named. A roadmap whose status is stale is indistinguishable from one nobody is following.
+
 ### Phase 0 — Foundation (zero user-facing features)
 
 - [x] Workspace setup: Angular 19, PrimeNG 17, Jest, Playwright, ESLint, Prettier, SCSS
@@ -825,25 +833,35 @@ Gate condition: Phase 0 is complete when all items above have 100% coverage and 
 
 ### Phase 1 — Shared Modules
 
-- [ ] Form validators: required-trim, email, strong-password, match-fields — 100% tested
-- [ ] Form utilities: `FormErrorHandler`, `FormUtils` — 100% tested
-- [ ] Shared components: `LoadingSpinnerComponent`, `ErrorDisplayComponent`, `EmptyStateComponent`, `ConfirmDialogComponent` — 80% tested
-- [ ] Shared pipes: `SafeHtmlPipe`, `TruncatePipe` — 100% tested
-- [ ] Shared directives: `HasPermissionDirective`, `AutoFocusDirective` — 100% tested
+- [x] Form validators: required-trim, email, strong-password, match-fields — 100% tested
+- [x] Form utilities: `FormErrorHandler`, `FormUtils` — 100% tested
+- [x] Shared components: `LoadingSpinnerComponent`, `ErrorDisplayComponent`, `EmptyStateComponent`, `ConfirmDialogComponent` — 80% tested
+- [x] Shared pipes: `SafeHtmlPipe`, `TruncatePipe` — 100% tested
+- [x] Shared directives: `HasPermissionDirective`, `AutoFocusDirective` — 100% tested
+
+Delivered well beyond this list: 32 shared components across atoms/molecules/organisms, six pipes,
+five directives, 610 tests.
 
 Gate condition: Phase 0 complete with CI green; Phase 1 coverage targets met.
 
 ### Phase 2 — Layout & Feature Pattern
 
-- [ ] Layout: `AppShellComponent`, `SidebarComponent`, `HeaderComponent` — 80% tested
+- [x] Layout: `AppShellComponent`, `SidebarComponent`, `HeaderComponent` — 80% tested
 - [ ] Example feature: lazy-loaded, demonstrates all Phase 0/1 patterns, signal store, RBAC guard, form with validators — 80% tested
+
+**Phase 2 is partial.** The layout shipped. The "fully-worked example feature" did not: the showcase
+substituted for it, and a component catalogue is not a worked feature — it demonstrates components
+in isolation, not the Phase 0/1 patterns composed end to end. Landing, login and dashboard remain
+stubs (33, 86 and 23 lines).
+
+This gap is the whole subject of **L2 — Product surface** in `IMPLEMENTATION-PLAN.md`.
 
 Gate condition: Phase 1 complete; Phase 2 features load in `ng serve` without errors.
 
 ### Phase 3 — Optional Enhancements (deferred)
 
 - [ ] NgRx optional integration: `RdkStoreInterface`, migration guide
-- [ ] Storybook component catalogue (trigger: > 15 shared components)
+- [ ] Storybook component catalogue (trigger: > 15 shared components — **fired**, now 32)
 - [ ] Angular Universal SSR (trigger: FCP performance requirement)
 - [ ] i18n runtime translation layer (trigger: non-English locale requirement)
 

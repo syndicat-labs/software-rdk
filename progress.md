@@ -1346,3 +1346,54 @@ literal, terminating the template. Caught by typecheck.
 | Variants for the other seven ideas | Medium | Each shows the gap under Modern and theEvolute today. |
 | FLAG-15 component role metadata | Medium | Still the only open protocol flag. |
 | Idea variant coverage in the gate | Low | Nothing asserts a registered idea's `load()` resolves. |
+
+---
+
+## 2026-07-19 — Implementation plan; ADR roadmap reconciled
+
+### Why now
+
+Nine sessions produced a strong governance and design-system layer. Meanwhile landing is 33 lines,
+dashboard 23, login 86 — stubs marked *High* priority on 2026-06-01 and untouched 48 days later.
+
+**The asymmetry is the risk, not any individual open flag.** A team cloning this today gets
+excellent CI, a rigorous design protocol, and no working pages. The governance layer is now more
+mature than the thing it governs.
+
+### `IMPLEMENTATION-PLAN.md`
+
+Closes audit proposal **P9** ("no Definition of Done, no per-phase exit gates, no evidence trail").
+Structure follows the workspace reference (`restaurant-management-system`).
+
+- **§2 Definition of Done** applying to every layer, including two rules this project earned the
+  hard way: *the surface was rendered and looked at* (gate-green is not design-reviewed), and the
+  **evidence rule** — a layer closes with actual command output, and a new gate must be shown
+  **observed failing** on a deliberate regression.
+- **L1** land outstanding work · **L2** product surface (dashboard → auth → landing) ·
+  **L3** backend + FLAG-11 · **L4** governance debt · **L5** protocol completion, gated behind L2.
+
+L5 is deliberately last. Further protocol refinement before the product surface exists would widen
+the gap the plan is meant to close.
+
+### ADR §16 reconciled
+
+The roadmap carried Phases 1 and 2 **unchecked long after the work landed** — a roadmap whose status
+is stale is indistinguishable from one nobody is following.
+
+| Phase | Was | Now |
+|---|---|---|
+| 1 — Shared Modules | `[ ]` | ✅ complete (32 components, 610 tests) |
+| 2 — Layout & Feature | `[ ]` | ⚠️ partial — layout shipped; the "fully-worked example feature" did not |
+| 3 — Storybook trigger | `[ ]` | trigger **fired** (>15 components; now 32) |
+
+Phase 2's gap is named explicitly: the showcase substituted for the worked feature, but a component
+catalogue demonstrates components in isolation, not Phase 0/1 patterns composed end to end. That gap
+is L2 in the plan.
+
+### Deferred with reasons
+
+**FLAG-15** and further design-idea variants — refinement of the layer already ahead.
+**FLAG-11** — genuinely blocked on a backend; detected and ratcheted meanwhile.
+**Reference-library renaming** — 545 images unified and 298 usefully named; 247 remain hash-named.
+Local vision inference proved marginal on this hardware (7.7 GB, no GPU): a 3B model held 3.9 GB RSS
+and thrashed the machine to 148 MB free. Recorded so the finding is not re-derived.

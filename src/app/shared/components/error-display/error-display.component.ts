@@ -4,6 +4,9 @@ import { MessageModule } from 'primeng/message';
 import { ButtonModule } from 'primeng/button';
 import { AppError, ErrorCode } from '../../../core/errors/errors.types';
 
+/** PrimeNG's accepted p-message severities. */
+type MessageSeverity = 'success' | 'info' | 'warn' | 'error' | 'secondary' | 'contrast';
+
 @Component({
   selector: 'rdk-error-display',
   standalone: true,
@@ -42,7 +45,12 @@ export class ErrorDisplayComponent {
   @Input() showRetry = true;
   @Output() retry = new EventEmitter<void>();
 
-  get severity(): string {
+  // Narrowed to PrimeNG's own union rather than `string`. The returned values
+  // were always valid, but the wide type only failed template type-checking
+  // once a real page consumed this component — unit tests instantiate it
+  // directly and never exercise the binding. The dashboard was its first
+  // consumer in a compiled template, ~9 months after it was written.
+  get severity(): MessageSeverity {
     if (!this.error) return 'error';
     const authCodes: ErrorCode[] = [
       ErrorCode.AUTH_TOKEN_EXPIRED,

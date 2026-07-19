@@ -1397,3 +1397,75 @@ is L2 in the plan.
 **Reference-library renaming** — 545 images unified and 298 usefully named; 247 remain hash-named.
 Local vision inference proved marginal on this hardware (7.7 GB, no GPU): a 3B model held 3.9 GB RSS
 and thrashed the machine to 148 MB free. Recorded so the finding is not re-derived.
+
+---
+
+## 2026-07-19 (session 10) — L1 closed; L2.1 Dashboard is a real page
+
+First execution against `IMPLEMENTATION-PLAN.md`.
+
+### L1 — closed
+
+- **PR #6 merged.** Modern's declaration and per-language design ideas are on `main`.
+- **Design-idea load gate** (`design-idea.spec.ts`, 63 tests): every registered variant's `load()`
+  is executed, so a typo'd import path fails CI instead of waiting to be stumbled upon. **Verified
+  red** by typo'ing a path.
+- Recovery codes removed from `~/Pictures` by the user.
+
+### Framework before feature — `createListStore`
+
+`RdkListStore<T>` shipped as an **interface with no implementation**: a team cloning this toolkit
+received a contract and nothing to instantiate, so every feature would invent its own
+loading/error/empty handling — the duplication the interface existed to prevent.
+
+`createListStore<T>()` (17 tests, error paths first) adds:
+
+- `loaded` distinct from `isEmpty` — *"not fetched yet"* and *"fetched, nothing there"* are
+  different states, and rendering an empty state for the former tells the user the wrong thing
+- **items retained on a failed refresh** — replacing a populated table with an error wipes context
+  the user may still need
+- identity via `idOf` rather than assuming an `id` field
+
+### L2.1 — Dashboard
+
+Real page: KPI band with meters, settlements table, empty and error states, refresh. Consumes
+`DataTable`, `ErrorDisplay`, `EmptyState` and the new store. `?dashboard=empty|error` makes the
+non-happy states reachable in a running app, because those are the states that rot unseen.
+
+**Built as ONE implementation, not per-language variants** — a deliberate deviation from the plan's
+wording. A dashboard is a product surface, not a design idea: the protocol's claim is that a
+component reads contract tokens and swaps language with zero edits, so this page *tests* that claim
+rather than sidestepping it. Verified across all three languages: same markup, visibly different
+rendering, no console errors. **Swap invariance holds under product load, not just on a specimen.**
+
+The single `.kpi--anchor` takes the minimum of the three declared emphasis budgets (Obsidian's 1),
+which is the only choice satisfying all three without branching on the active language.
+
+### Two latent bugs the page exposed
+
+**FLAG-16 — `ErrorDisplayComponent` never compiled in a real template.** Its `severity` getter
+returned `string` where PrimeNG's `p-message` expects a narrow union. `npm run typecheck` passed —
+`tsc --noEmit` does not run Angular template type-checking — and the component's unit tests
+instantiate it directly without exercising the binding. **The dashboard was its first consumer in a
+compiled template**, and `ng serve` failed immediately. Narrowed to a `MessageSeverity` type.
+
+*Lesson: a component with tests and no consumer is not verified.*
+
+**FLAG-17 — duplicate `<h1>`.** `AppShellComponent` renders the page title from route data; the
+dashboard rendered its own heading too. Two `h1` elements break the document outline for screen
+readers. The page now feeds the shell (`data.title`) instead of duplicating it, with a test
+asserting the surface renders **no** heading of its own.
+
+### Gate results
+
+| Gate | Result |
+|---|---|
+| lint · typecheck | exit 0 |
+| architecture (tokens · contrast · storage) | exit 0 — 90 tokens, 3 languages |
+| test | **702 passed / 34 suites** (+92) · 98.49% lines |
+| build:prod | exit 0 |
+| rendered + reviewed | 3 languages × 3 states, no console errors |
+
+### Next
+
+L2.2 auth surface, then L2.3 landing.

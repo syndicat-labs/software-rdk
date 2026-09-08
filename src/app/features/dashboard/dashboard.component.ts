@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { ThemeService, ThemeId } from '../../core/theme/theme.service';
+import { ThemeService } from '../../core/theme/theme.service';
 import { THEME_REGISTRY } from '../../core/theme/token-contract';
 import { DashboardStore } from './dashboard.store';
 import { DashboardLayoutStore } from '../../core/dashboard-layout/dashboard-layout.store';
 import { DashboardLayoutService } from '../../core/dashboard-layout/dashboard-layout.service';
+import { DashboardUiService } from '../../core/dashboard-layout/dashboard-ui.service';
 import { LoggingService } from '../../core/logging/logging.service';
 import { DashboardModernComponent } from './variants/dashboard-modern.component';
 import { DashboardObsidianComponent } from './variants/dashboard-obsidian.component';
@@ -12,9 +13,12 @@ import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { ErrorDisplayComponent } from '../../shared/components/error-display/error-display.component';
 import { ButtonComponent } from '../../shared/components/atoms/button/button.component';
-import { NgComponentOutlet } from '@angular/common';
+import { WidgetCatalogDrawerComponent } from '../../shared/components/organisms/widget-catalog-drawer/widget-catalog-drawer.component';
+import { WidgetConfigDrawerComponent } from '../../shared/components/organisms/widget-config-drawer/widget-config-drawer.component';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
+import { WIDGET_REGISTRY } from '../../core/dashboard-layout/widget-registry';
 import { AppError } from '../../core/errors/errors.types';
-import type { Type } from '@angular/core';
+import type { WidgetInstance } from '../../core/dashboard-layout/dashboard-layout.model';
 
 /**
  * Host for the dashboard surface. Resolves the active design language's
@@ -33,11 +37,16 @@ import type { Type } from '@angular/core';
   selector: 'rdk-dashboard',
   standalone: true,
   imports: [
-    NgComponentOutlet,
+    DashboardModernComponent,
+    DashboardObsidianComponent,
+    DashboardEvoluteComponent,
     LoadingSpinnerComponent,
     EmptyStateComponent,
     ErrorDisplayComponent,
     ButtonComponent,
+    WidgetCatalogDrawerComponent,
+    WidgetConfigDrawerComponent,
+    ConfirmDialogComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -58,6 +67,7 @@ import type { Type } from '@angular/core';
 
     @if (editMode()) {
       <div class="db__editbar" role="toolbar" aria-label="Edit dashboard">
+        <rdk-button variant="secondary" size="sm" (clicked)="openCatalog()" data-testid="dashboard-add">Add widget</rdk-button>
         <rdk-button variant="secondary" size="sm" (clicked)="undo()" data-testid="dashboard-undo">Undo</rdk-button>
         <rdk-button variant="secondary" size="sm" (clicked)="resetLayout()" data-testid="dashboard-reset">Reset</rdk-button>
         <rdk-button variant="primary" size="sm" (clicked)="toggleEdit()" data-testid="dashboard-done">Done</rdk-button>
@@ -69,10 +79,30 @@ import type { Type } from '@angular/core';
       <rdk-error-display [error]="err" (retry)="retryPersist()" data-testid="dashboard-persist-error" />
     }
 
-    @if (loadedVariant(); as variant) {
-      <ng-container *ngComponentOutlet="variant.component; inputs: variant.inputs" />
-    } @else if (variant()) {
-      <p class="db__state">Loading widget…</p>
+    @if (theme.current() === 'rdk-default') {
+      <rdk-dashboard-modern
+        [metrics]="store.metrics()"
+        [transactions]="store.items()"
+        [loading]="store.loading()"
+        [layout]="layoutStore.orderedWidgets()"
+        [editMode]="layoutStore.editMode()"
+      />
+    } @else if (theme.current() === 'obsidian') {
+      <rdk-dashboard-obsidian
+        [metrics]="store.metrics()"
+        [transactions]="store.items()"
+        [loading]="store.loading()"
+        [layout]="layoutStore.orderedWidgets()"
+        [editMode]="layoutStore.editMode()"
+      />
+    } @else if (theme.current() === 'evolute') {
+      <rdk-dashboard-evolute
+        [metrics]="store.metrics()"
+        [transactions]="store.items()"
+        [loading]="store.loading()"
+        [layout]="layoutStore.orderedWidgets()"
+        [editMode]="layoutStore.editMode()"
+      />
     } @else {
       <section class="db__gap">
         <h2 class="db__gap-title">{{ activeLabel() }} has not expressed a dashboard</h2>
@@ -97,6 +127,30 @@ import type { Type } from '@angular/core';
         data-testid="dashboard-empty"
       />
     }
+
+    <rdk-widget-catalog-drawer
+      [visible]="ui.catalogVisible()"
+      (closed)="ui.closeCatalog()"
+      (add)="onAddWidget($event)"
+    />
+
+    <rdk-widget-config-drawer
+      [visible]="ui.configVisible()"
+      [widgetTitle]="ui.configWidgetId() ?? ''"
+      [initialTitle]="ui.configInitialTitle()"
+      (closed)="ui.closeConfig()"
+      (save)="onSaveConfig($event)"
+    />
+
+    <rdk-confirm-dialog
+      [visible]="ui.confirmVisible()"
+      title="Remove widget?"
+      message="This will remove the widget from your dashboard. You can add it again from the catalog."
+      confirmLabel="Remove"
+      cancelLabel="Cancel"
+      (confirmed)="onConfirmRemove()"
+      (cancelled)="ui.closeConfirm()"
+    />
   `,
   styles: [
     `
@@ -171,11 +225,13 @@ import type { Type } from '@angular/core';
   ],
 })
 export class DashboardComponent {
-  private readonly theme = inject(ThemeService);
-  private readonly store = inject(DashboardStore);
-  private readonly layoutStore = inject(DashboardLayoutStore);
+  protected readonly theme = inject(ThemeService);
+  protected readonly store = inject(DashboardStore);
+  protected readonly layoutStore = inject(DashboardLayoutStore);
+  protected readonly ui = inject(DashboardUiService);
   private readonly layoutService = inject(DashboardLayoutService);
   private readonly logger = inject(LoggingService);
+  private readonly widgetRegistry = inject(WIDGET_REGISTRY, { optional: true });
 
   protected readonly loading = this.store.loading;
   protected readonly error = this.store.error;
@@ -188,31 +244,6 @@ export class DashboardComponent {
   protected readonly activeLabel = computed(
     () => THEME_REGISTRY.find((t) => t.id === this.theme.current())?.label ?? this.theme.current(),
   );
-
-  private readonly variantTypes: Readonly<Record<ThemeId, Type<unknown> | undefined>> = {
-    'rdk-default': DashboardModernComponent,
-    obsidian: DashboardObsidianComponent,
-    evolute: DashboardEvoluteComponent,
-  };
-
-  protected readonly variant = computed(
-    () => this.variantTypes[this.theme.current()] ?? undefined,
-  );
-
-  protected readonly loadedVariant = computed(() => {
-    const component = this.variant();
-    if (!component) return undefined;
-    return {
-      component,
-      inputs: {
-        metrics: this.store.metrics(),
-        transactions: this.store.items(),
-        loading: this.store.loading(),
-        layout: this.layoutStore.orderedWidgets(),
-        editMode: this.layoutStore.editMode(),
-      },
-    };
-  });
 
   constructor() {
     this.store.load();
@@ -243,6 +274,51 @@ export class DashboardComponent {
     this.logger.info('features/dashboard', 'dashboard.layout.reset');
   }
 
+  protected openCatalog(): void {
+    this.ui.openCatalog();
+  }
+
+  protected onAddWidget(widgetId: string): void {
+    const definition = this.findDefinition(widgetId);
+    const colSpan = (definition?.defaultColSpan ?? 3) as import('../../core/dashboard-layout/dashboard-layout.model').ColSpan;
+    const instance: WidgetInstance = {
+      id: `w-${widgetId}-${Date.now()}`,
+      widgetId: widgetId as unknown as WidgetInstance['widgetId'],
+      colSpan,
+      order: this.layoutStore.layout().widgets.length,
+    };
+    this.layoutStore.addWidget(instance);
+    this.persistLayout();
+    this.ui.closeCatalog();
+    this.logger.info('features/dashboard', 'dashboard.layout.added', { widgetId });
+  }
+
+  protected onSaveConfig(event: { title: string }): void {
+    const widgetId = this.ui.configWidgetId();
+    if (!widgetId) return;
+    const layout = this.layoutStore.layout();
+    const target = layout.widgets.find((w) => w.widgetId === widgetId || w.id === widgetId);
+    if (!target) return;
+    const updatedWidgets = layout.widgets.map((w) =>
+      w.id === target.id ? { ...w, config: { ...(w.config ?? {}), title: event.title } } : w,
+    );
+    this.layoutStore.setLayout({ ...layout, widgets: updatedWidgets, updatedAt: new Date().toISOString() });
+    this.persistLayout();
+    this.ui.closeConfig();
+    this.logger.info('features/dashboard', 'dashboard.layout.configured', { widgetId, title: event.title });
+  }
+
+  protected onConfirmRemove(): void {
+    const metricId = this.ui.confirmRemove();
+    if (!metricId) return;
+    const instance = this.layoutStore.layout().widgets.find((w) => w.widgetId === metricId || w.id === metricId);
+    if (instance) {
+      this.layoutStore.removeWidget(instance.id);
+      this.persistLayout();
+      this.logger.info('features/dashboard', 'dashboard.layout.removed', { widgetId: metricId });
+    }
+  }
+
   protected retry(): void {
     this.store.reset();
     this.store.load();
@@ -251,6 +327,15 @@ export class DashboardComponent {
   protected retryPersist(): void {
     this.persistErrorSignal.set(null);
     this.persistLayout();
+  }
+
+  private findDefinition(widgetId: string): { id: string; defaultColSpan: number } | null {
+    if (!this.widgetRegistry) return null;
+    const raw = this.widgetRegistry as unknown as readonly unknown[];
+    const flattened = raw.length > 0 && Array.isArray(raw[0])
+      ? (raw as unknown as readonly (readonly { id: string; defaultColSpan: number }[])[]).flat()
+      : (raw as readonly { id: string; defaultColSpan: number }[]);
+    return flattened.find((d) => d.id === widgetId) ?? null;
   }
 
   private hydrateLayout(): void {

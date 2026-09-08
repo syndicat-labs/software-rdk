@@ -10,6 +10,8 @@ import { environment } from '../environments/environment';
 import { rdkHttpInterceptors, devMockAuthInterceptor } from './core/http/interceptors';
 import { NAV_ITEMS } from './layout/nav-items.token';
 import { SHOWCASE_NAV_ITEMS } from './features/showcase/showcase.nav';
+import { DEFAULT_WIDGET_DEFINITIONS } from './core/dashboard-layout/default-widgets';
+import { provideWidgets } from './core/dashboard-layout/widget-registry';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,5 +38,6 @@ export const appConfig: ApplicationConfig = {
     }),
     { provide: APP_CONFIG, useValue: environment },
     { provide: NAV_ITEMS, useValue: SHOWCASE_NAV_ITEMS, multi: true },
+    ...provideWidgets(...DEFAULT_WIDGET_DEFINITIONS),
   ],
 };

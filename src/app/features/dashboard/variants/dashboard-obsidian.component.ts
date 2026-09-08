@@ -6,6 +6,7 @@ import { BadgeComponent } from '../../../shared/components/atoms/badge/badge.com
 import { DashboardGridComponent, GridWidgetView } from '../../../shared/components/organisms/dashboard-grid/dashboard-grid.component';
 import { DashboardLayoutStore } from '../../../core/dashboard-layout/dashboard-layout.store';
 import { DashboardLayoutService } from '../../../core/dashboard-layout/dashboard-layout.service';
+import { DashboardUiService } from '../../../core/dashboard-layout/dashboard-ui.service';
 import { LoggingService } from '../../../core/logging/logging.service';
 import type { WidgetInstance, ColSpan } from '../../../core/dashboard-layout/dashboard-layout.model';
 
@@ -59,6 +60,7 @@ const STATUS_BADGE: Record<DashboardTransaction['status'], 'success' | 'warning'
         (dropped)="onDropped($event)"
         (resized)="onResized($event)"
         (removed)="onRemoved($event)"
+        (configured)="onConfigured($event)"
       />
 
       <rdk-card variant="default" padding="none" class="dbo__panel">
@@ -171,6 +173,7 @@ export class DashboardObsidianComponent {
 
   private readonly layoutStore = inject(DashboardLayoutStore);
   private readonly layoutService = inject(DashboardLayoutService);
+  private readonly ui = inject(DashboardUiService);
   private readonly logger = inject(LoggingService);
 
   readonly Math = Math;
@@ -179,15 +182,20 @@ export class DashboardObsidianComponent {
   readonly money = money;
 
   protected readonly views = computed<readonly GridWidgetView[]>(() => {
-    const layout = this.layout.length > 0 ? this.layout : this.metrics.map((m, index) => ({ id: `w-${m.id}`, widgetId: m.id as unknown as WidgetInstance['widgetId'], colSpan: 3 as ColSpan, order: index }));
+    const layout = this.layout.length > 0 ? this.layout : (this.metrics.map((m, index) => ({ id: `w-${m.id}`, widgetId: m.id as unknown as WidgetInstance['widgetId'], colSpan: 3 as ColSpan, order: index, config: undefined } as WidgetInstance)));
     const metricMap = new Map(this.metrics.map((m) => [m.id, m]));
     return [...layout]
       .sort((a, b) => a.order - b.order)
-      .map((instance) => ({
-        instance,
-        metric: metricMap.get(instance.widgetId as string),
-        featured: instance.widgetId === 'orders',
-      }));
+      .map((instance) => {
+        const base = metricMap.get(instance.widgetId as string);
+        if (!base) return { instance, metric: undefined, featured: instance.widgetId === 'orders' } as GridWidgetView;
+        const title = (instance.config?.['title'] as string) ?? base.label;
+        return {
+          instance,
+          metric: { ...base, label: title },
+          featured: instance.widgetId === 'orders',
+        };
+      });
   });
 
   protected onDropped(event: CdkDragDrop<WidgetInstance>): void {
@@ -203,11 +211,13 @@ export class DashboardObsidianComponent {
   }
 
   protected onRemoved(metricId: string): void {
+    this.ui.requestRemove(metricId);
+  }
+
+  protected onConfigured(metricId: string): void {
     const instance = this.layout.find((w) => w.widgetId === metricId);
-    if (instance) {
-      this.layoutStore.removeWidget(instance.id);
-      this.persist();
-    }
+    const title = (instance?.config?.['title'] as string) ?? metricId;
+    this.ui.openConfig(metricId, title);
   }
 
   private persist(): void {

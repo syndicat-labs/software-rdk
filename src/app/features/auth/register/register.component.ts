@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { APP_CONFIG } from '../../../core/config/app-config.token';
 import { AppError } from '../../../core/errors/errors.types';
 import { requiredTrimValidator } from '../../../shared/forms/validators/required-trim.validator';
 import { emailValidator } from '../../../shared/forms/validators/email.validator';
+import { strongPasswordValidator } from '../../../shared/forms/validators/strong-password.validator';
+import { matchFieldsValidator } from '../../../shared/forms/validators/match-fields.validator';
 import { applyServerErrors, getErrorMessage } from '../../../shared/forms/form-error-handler';
 import { FormFieldComponent } from '../../../shared/components/molecules/form-field/form-field.component';
 import { InputComponent } from '../../../shared/components/molecules/input/input.component';
@@ -13,15 +15,16 @@ import { ButtonComponent } from '../../../shared/components/atoms/button/button.
 import { AlertComponent } from '../../../shared/components/molecules/alert/alert.component';
 
 const EMAIL_MAX = 254;
+const NAME_MAX = 80;
 
 /**
- * Sign-in surface. Rebuilt on the shared form molecules and validation
- * contract: `requiredTrim` + `email` validators, server field errors mapped
- * back onto their controls via `applyServerErrors`, and a banner for
- * non-field failures.
+ * Account creation surface. Registration is a real surface (not deferred):
+ * it submits to `AuthService.register`, which signs the user in on success.
+ * Client-side validation uses the strong-password contract and a confirm
+ * field that must match.
  */
 @Component({
-  selector: 'rdk-login',
+  selector: 'rdk-register',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -36,8 +39,8 @@ const EMAIL_MAX = 254;
     <main class="auth">
       <section class="auth__card">
         <header class="auth__header">
-          <h1 class="auth__title">Sign in</h1>
-          <p class="auth__sub">Welcome back. Enter your details to continue.</p>
+          <h1 class="auth__title">Create account</h1>
+          <p class="auth__sub">Enter your details to get started.</p>
         </header>
 
         @if (banner(); as message) {
@@ -46,14 +49,30 @@ const EMAIL_MAX = 254;
 
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
           <rdk-form-field
+            label="Full name"
+            [error]="getErrorMessage(form, 'name', labels)"
+            [required]="true"
+            [id]="'register-name'"
+          >
+            <rdk-input
+              formControlName="name"
+              inputId="register-name"
+              type="text"
+              autocomplete="name"
+              placeholder="Jane Doe"
+              [maxLength]="NAME_MAX"
+            />
+          </rdk-form-field>
+
+          <rdk-form-field
             label="Email"
             [error]="getErrorMessage(form, 'email', labels)"
             [required]="true"
-            [id]="'login-email'"
+            [id]="'register-email'"
           >
             <rdk-input
               formControlName="email"
-              inputId="login-email"
+              inputId="register-email"
               type="email"
               inputmode="email"
               autocomplete="email"
@@ -66,20 +85,31 @@ const EMAIL_MAX = 254;
             label="Password"
             [error]="getErrorMessage(form, 'password', labels)"
             [required]="true"
-            [id]="'login-password'"
+            [id]="'register-password'"
           >
             <rdk-input
               formControlName="password"
-              inputId="login-password"
+              inputId="register-password"
               type="password"
-              autocomplete="current-password"
-              placeholder="Your password"
+              autocomplete="new-password"
+              placeholder="At least 8 characters"
             />
           </rdk-form-field>
 
-          <div class="auth__row">
-            <a class="auth__link" routerLink="/password-reset">Forgot password?</a>
-          </div>
+          <rdk-form-field
+            label="Confirm password"
+            [error]="getErrorMessage(form, 'confirm', labels)"
+            [required]="true"
+            [id]="'register-confirm'"
+          >
+            <rdk-input
+              formControlName="confirm"
+              inputId="register-confirm"
+              type="password"
+              autocomplete="new-password"
+              placeholder="Repeat your password"
+            />
+          </rdk-form-field>
 
           <rdk-button
             type="submit"
@@ -88,13 +118,13 @@ const EMAIL_MAX = 254;
             [loading]="loading()"
             [disabled]="form.invalid"
           >
-            {{ loading() ? 'Signing in…' : 'Sign in' }}
+            {{ loading() ? 'Creating account…' : 'Create account' }}
           </rdk-button>
         </form>
 
         <p class="auth__foot">
-          No account?
-          <a class="auth__link" routerLink="/register">Create one</a>
+          Already have an account?
+          <a class="auth__link" routerLink="/login">Sign in</a>
         </p>
       </section>
     </main>
@@ -148,11 +178,6 @@ const EMAIL_MAX = 254;
         gap: var(--space-layout-sm);
       }
 
-      .auth__row {
-        display: flex;
-        justify-content: flex-end;
-      }
-
       .auth__banner {
         margin-bottom: var(--space-component-sm);
       }
@@ -177,23 +202,33 @@ const EMAIL_MAX = 254;
     `,
   ],
 })
-export class LoginComponent {
+export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
   private readonly config = inject(APP_CONFIG);
 
   protected readonly EMAIL_MAX = EMAIL_MAX;
+  protected readonly NAME_MAX = NAME_MAX;
 
   protected readonly loading = signal(false);
   protected readonly banner = signal('');
-  protected readonly labels: Record<string, string> = { email: 'Email', password: 'Password' };
+  protected readonly labels: Record<string, string> = {
+    name: 'Full name',
+    email: 'Email',
+    password: 'Password',
+    confirm: 'Confirm password',
+  };
 
-  protected readonly form = this.fb.nonNullable.group({
-    email: ['', [requiredTrimValidator, emailValidator, Validators.maxLength(EMAIL_MAX)]],
-    password: ['', requiredTrimValidator],
-  });
+  protected readonly form = this.fb.nonNullable.group(
+    {
+      name: ['', [requiredTrimValidator, Validators.maxLength(NAME_MAX)]],
+      email: ['', [requiredTrimValidator, emailValidator, Validators.maxLength(EMAIL_MAX)]],
+      password: ['', [requiredTrimValidator, strongPasswordValidator]],
+      confirm: ['', requiredTrimValidator],
+    },
+    { validators: matchFieldsValidator('password', 'confirm') },
+  );
 
   protected readonly getErrorMessage = getErrorMessage;
 
@@ -201,11 +236,11 @@ export class LoginComponent {
     if (this.form.invalid) return;
     this.loading.set(true);
     this.banner.set('');
-    const { email: username, password } = this.form.getRawValue();
+    const { name, email: username, password } = this.form.getRawValue();
 
-    this.auth.login({ username, password }).subscribe({
+    this.auth.register({ name, username, password }).subscribe({
       next: () => {
-        void this.router.navigateByUrl(this.redirectTarget());
+        void this.router.navigateByUrl(this.config.auth.postLoginRoute);
         this.loading.set(false);
       },
       error: (e: AppError) => {
@@ -217,18 +252,5 @@ export class LoginComponent {
         this.loading.set(false);
       },
     });
-  }
-
-  /**
-   * The `returnUrl` query parameter is only honoured when it is a same-origin
-   * relative path. Absolute URLs and scheme/protocol-relative strings are
-   * rejected to prevent an open redirect.
-   */
-  private redirectTarget(): string {
-    const candidate = this.route?.snapshot?.queryParamMap?.get('returnUrl') ?? null;
-    if (candidate && candidate.startsWith('/') && !candidate.startsWith('//') && !candidate.includes(':')) {
-      return candidate;
-    }
-    return this.config.auth.postLoginRoute;
   }
 }

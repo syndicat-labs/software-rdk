@@ -18,6 +18,20 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'register',
+    loadComponent: () =>
+      import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
+    data: { public: true },
+    canActivate: [authGuard],
+  },
+  {
+    path: 'password-reset',
+    loadComponent: () =>
+      import('./features/auth/password-reset/password-reset.component').then((m) => m.PasswordResetComponent),
+    data: { public: true },
+    canActivate: [authGuard],
+  },
+  {
     path: 'app',
     component: AppShellComponent,
     canActivate: [authGuard],

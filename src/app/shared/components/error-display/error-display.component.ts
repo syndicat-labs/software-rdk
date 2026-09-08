@@ -42,7 +42,7 @@ export class ErrorDisplayComponent {
   @Input() showRetry = true;
   @Output() retry = new EventEmitter<void>();
 
-  get severity(): string {
+  get severity(): 'error' | 'warn' {
     if (!this.error) return 'error';
     const authCodes: ErrorCode[] = [
       ErrorCode.AUTH_TOKEN_EXPIRED,

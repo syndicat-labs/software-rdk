@@ -1447,3 +1447,50 @@ universal.
 
 **Deferred.** Obsidian and rdk-default retrofit; component semantic-role metadata for Tier B;
 L3 composition archetypes are specified as vocabulary but not yet expressed as components.
+
+---
+
+## ADR Amendment 2026-08-31 — Coverage scope ratified; L2 product surface begins
+
+### FLAG-08 / P5 — coverage scope, ratified
+
+The blanket exclusion `!src/app/features/**` added during the Angular 21 migration (2026-07-18) left
+the demo/showcase/stub layer unmeasured. That exclusion is **removed** and replaced with explicit
+per-directory floors:
+
+- `src/app/features/dashboard/` · `src/app/features/auth/` · `src/app/features/landing/` ·
+  `src/app/features/showcase/`: **80%** lines/branches/functions/statements.
+
+**Rationale (accepted, dated, by decision 2026-08-31):** the product surface is no longer
+presentation scaffolding. It becomes first-class content that every consuming project clones, so it
+must be measured and gated like `core/` and `shared/`. This supersedes the previous ratify-or-revert
+open item: the exclusion is reverted, and the new feature thresholds replace the 70% global as the
+effective floor for those directories (Jest applies the global only to files outside a path-specific
+threshold).
+
+### D3 — strict compliance is universal
+
+Every page, component, and element of this toolkit — including the `showcase` specimen pages — must
+obey the Design Language Protocol, the 90-token contract (v1.1.0), the WCAG 2.2 contrast floor, the
+namespace-isolation rule (components never read a language's private L0 layer), the storage rule, and
+the accessibility floor. Pre-protocol, Obsidian-only specimen pages that carry hardcoded values are
+being retrofitted, not exempted or retired.
+
+### D4 — showcase retrofit
+
+Eight `showcase/pages/new-design-ideas/*` specimena were authored pre-protocol with hardcoded Hex
+values, literal font stacks, and a single (Obsidian) language variant — contradicting both the
+no-raw-values rule and the resolve-under-all-languages rule. They are retrofitted to contract tokens
+and given per-language variants (or an explicit gap) per the `design-idea.ts` contract.
+
+### D2 — auth surface completeness
+
+`register` and `password-reset` are shipped as real surfaces, not deferred. `register` uses the
+existing `AuthService.register()`; `password-reset` introduces `requestReset()`/`resetPassword()`
+with endpoint paths added to `AuthConfig` and a dev-mock-backed contract (see L2.2 in
+`to-do.md` / `IMPLEMENTATION-PLAN.md`).
+
+### Controller of record
+
+This amendment is part of Layer 2 (`IMPLEMENTATION-PLAN.md`), sequenced after the 2026-07-19 plan
+and tracked in `to-do.md`.

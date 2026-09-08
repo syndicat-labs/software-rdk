@@ -35,6 +35,8 @@ export const devMockAuthInterceptor: HttpInterceptorFn = (req, next) => {
   const logoutUrl = base + config.auth.logoutPath;
   const refreshUrl = base + config.auth.refreshPath;
   const registerUrl = base + config.auth.registerPath;
+  const requestResetUrl = base + config.auth.requestResetPath;
+  const resetPasswordUrl = base + config.auth.resetPasswordPath;
 
   if (req.method !== 'POST') {
     return next(req);
@@ -85,6 +87,15 @@ export const devMockAuthInterceptor: HttpInterceptorFn = (req, next) => {
         user: { id: TEST_USER_ID, email: TEST_EMAIL, name: 'Test User', roles: ['user'] },
       },
     }));
+  }
+
+  if (req.url === requestResetUrl) {
+    // Always acknowledge with 200 to avoid leaking whether an address is registered.
+    return of(new HttpResponse({ status: 200 }));
+  }
+
+  if (req.url === resetPasswordUrl) {
+    return of(new HttpResponse({ status: 200 }));
   }
 
   return next(req);

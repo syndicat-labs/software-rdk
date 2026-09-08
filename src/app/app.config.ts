@@ -12,6 +12,7 @@ import { NAV_ITEMS } from './layout/nav-items.token';
 import { SHOWCASE_NAV_ITEMS } from './features/showcase/showcase.nav';
 import { DEFAULT_WIDGET_DEFINITIONS } from './core/dashboard-layout/default-widgets';
 import { provideWidgets } from './core/dashboard-layout/widget-registry';
+import { APP_NAV_ITEMS } from './features/app.nav';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,6 +38,7 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     { provide: APP_CONFIG, useValue: environment },
+    { provide: NAV_ITEMS, useValue: APP_NAV_ITEMS, multi: true },
     { provide: NAV_ITEMS, useValue: SHOWCASE_NAV_ITEMS, multi: true },
     ...provideWidgets(...DEFAULT_WIDGET_DEFINITIONS),
   ],

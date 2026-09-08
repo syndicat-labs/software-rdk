@@ -43,6 +43,11 @@ export const routes: Routes = [
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
         data: { title: 'Dashboard' },
       },
+      {
+        path: 'profile',
+        loadComponent: () => import('./features/profile/profile.component').then((m) => m.ProfileComponent),
+        data: { title: 'Profile' },
+      },
     ],
   },
   {

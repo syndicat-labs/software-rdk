@@ -1,10 +1,16 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, computed, inject } from '@angular/core';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { DashboardMetric, DashboardTransaction } from '../dashboard.store';
 import { BadgeComponent } from '../../../shared/components/atoms/badge/badge.component';
 import {
   DataTableComponent,
   ColumnDef,
 } from '../../../shared/components/organisms/data-table/data-table.component';
+import { DashboardGridComponent, GridWidgetView } from '../../../shared/components/organisms/dashboard-grid/dashboard-grid.component';
+import { DashboardLayoutStore } from '../../../core/dashboard-layout/dashboard-layout.store';
+import { DashboardLayoutService } from '../../../core/dashboard-layout/dashboard-layout.service';
+import { LoggingService } from '../../../core/logging/logging.service';
+import type { WidgetInstance, ColSpan } from '../../../core/dashboard-layout/dashboard-layout.model';
 
 function money(amount: number, currency: string): string {
   const symbol = currency === 'GBP' ? '\u00A3' : `${currency} `;
@@ -53,23 +59,18 @@ interface TransactionRow {
 @Component({
   selector: 'rdk-dashboard-evolute',
   standalone: true,
-  imports: [BadgeComponent, DataTableComponent],
+  imports: [BadgeComponent, DataTableComponent, DashboardGridComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="de">
-      <div class="de__kpis">
-        @for (kpi of metrics; track kpi.id) {
-          <article class="de__kpi">
-            <span class="de__kpi-dot" aria-hidden="true"></span>
-            <span class="de__kpi-label">{{ kpi.label }}</span>
-            <span class="de__kpi-value">{{ kpi.value }}</span>
-            <span class="de__kpi-delta" [class.de__kpi-delta--down]="kpi.delta < 0">
-              {{ kpi.delta >= 0 ? '\u2191' : '\u2193' }} {{ Math.abs(kpi.delta) }}%
-              <span class="de__kpi-unit">{{ kpi.unit }}</span>
-            </span>
-          </article>
-        }
-      </div>
+      <rdk-dashboard-grid
+        [views]="views()"
+        [editMode]="editMode"
+        variant="evolute"
+        (dropped)="onDropped($event)"
+        (resized)="onResized($event)"
+        (removed)="onRemoved($event)"
+      />
 
       <div class="de__insight" role="note">
         <span class="de__insight-key" aria-hidden="true"></span>
@@ -100,36 +101,6 @@ interface TransactionRow {
         display: block;
         padding: var(--space-layout-md);
         background: var(--color-bg-base);
-      }
-
-      /* KPI strip — first elevation step. */
-      .de__kpis {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-        gap: var(--space-layout-xs);
-        margin-bottom: var(--space-layout-md);
-      }
-
-      .de__kpi {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-component-xs);
-        background: var(--color-bg-surface);
-        border-radius: var(--radius-surface);
-        box-shadow: var(--elevation-raised);
-        padding: var(--space-component-lg);
-      }
-
-      /* Chromatic Key — a hue, once assigned, is never reused in this product. */
-      .de__kpi:nth-child(1) .de__kpi-dot { background: var(--color-bg-brand); }
-      .de__kpi:nth-child(2) .de__kpi-dot { background: var(--color-bg-info); }
-      .de__kpi:nth-child(3) .de__kpi-dot { background: var(--color-bg-success); }
-      .de__kpi:nth-child(4) .de__kpi-dot { background: var(--color-bg-warning); }
-
-      .de__kpi-dot {
-        width: 0.75rem;
-        height: 0.75rem;
-        border-radius: var(--radius-pill);
       }
 
       .de__kpi-label {
@@ -214,10 +185,52 @@ export class DashboardEvoluteComponent {
   @Input() metrics: DashboardMetric[] = [];
   @Input() transactions: DashboardTransaction[] = [];
   @Input() loading = false;
+  @Input() layout: readonly WidgetInstance[] = [];
+  @Input() editMode = false;
+
+  private readonly layoutStore = inject(DashboardLayoutStore);
+  private readonly layoutService = inject(DashboardLayoutService);
+  private readonly logger = inject(LoggingService);
 
   readonly Math = Math;
   readonly STATUS_LABEL = STATUS_LABEL;
   readonly STATUS_BADGE = STATUS_BADGE;
+
+  protected readonly views = computed<readonly GridWidgetView[]>(() => {
+    const layout = this.layout.length > 0 ? this.layout : this.metrics.map((m, index) => ({ id: `w-${m.id}`, widgetId: m.id as unknown as WidgetInstance['widgetId'], colSpan: 3 as ColSpan, order: index }));
+    const metricMap = new Map(this.metrics.map((m) => [m.id, m]));
+    return [...layout]
+      .sort((a, b) => a.order - b.order)
+      .map((instance) => ({
+        instance,
+        metric: metricMap.get(instance.widgetId as string),
+        featured: false,
+      }));
+  });
+
+  protected onDropped(event: CdkDragDrop<WidgetInstance>): void {
+    this.layoutStore.move(event.previousIndex, event.currentIndex);
+    this.persist();
+    this.logger.info('features/dashboard', 'dashboard.layout.reordered', { from: event.previousIndex, to: event.currentIndex });
+  }
+
+  protected onResized(event: { id: string; colSpan: ColSpan }): void {
+    this.layoutStore.resize(event.id, event.colSpan);
+    this.persist();
+    this.logger.info('features/dashboard', 'dashboard.layout.resized', { id: event.id, colSpan: event.colSpan });
+  }
+
+  protected onRemoved(metricId: string): void {
+    const instance = this.layout.find((w) => w.widgetId === metricId);
+    if (instance) {
+      this.layoutStore.removeWidget(instance.id);
+      this.persist();
+    }
+  }
+
+  private persist(): void {
+    this.layoutService.save(this.layoutStore.layout()).subscribe({ error: () => undefined });
+  }
 
   protected get statuses(): DashboardTransaction['status'][] {
     return ['paid', 'pending', 'failed', 'refunded'];

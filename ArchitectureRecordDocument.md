@@ -1494,3 +1494,25 @@ with endpoint paths added to `AuthConfig` and a dev-mock-backed contract (see L2
 
 This amendment is part of Layer 2 (`IMPLEMENTATION-PLAN.md`), sequenced after the 2026-07-19 plan
 and tracked in `to-do.md`.
+
+---
+
+## ADR Amendment 2026-09-08 — T7 Draggable & Modifiable KPI Cards
+
+### Decisions
+
+| # | Concern | Decision |
+|---|---|---|
+| A | Library | `@angular/cdk/drag-drop` as primary (zero new dep, bundle ~0 KB). `angular-gridster2`/`gridstack` deferred behind feature flag `dashboardGrid: 'cdk' \| 'gridster'` — escalation only if free-form resize + collision is required. |
+| B | Layout model | `DashboardLayout { version, updatedAt, widgets: WidgetInstance[] }` where `WidgetInstance { id, widgetId, colSpan, order, config? }` with closed union `colSpan: 3|4|6|12` (12-col grid). No free pixels. |
+| C | Widget registry | `WidgetRegistry` (core, `providedIn: 'root'`) + `provideWidgets()` factory; `WidgetDefinition<TConfig>` owns `id, component, defaultSize, configSchema, permissions, title`. |
+| D | Persistence | `DashboardLayoutService` → `ApiClient.put('/api/v1/dashboard/layout')` with `request-id` + retry honouring `Retry-After`. Fallback to `localStorage['rdk_dashboard_layout_v1']` when offline; reconcile on next save. Layout is non-sensitive (FLAG-11 ratchet unaffected) but cap at 10 KB and validate at boundary. |
+| E | Personalisation | Per-user layout persisted; per-role seed as default template (admin publishes template, user overrides). Last-write-wins v1; `version` field for future OT/CRDT. |
+| F | Error taxonomy | Add `DASHBOARD_LAYOUT_INVALID` (400) + `DASHBOARD_PERSIST_FAILED` (5xx) to `errors.types.ts`. |
+| G | Design protocol | Variants keep thesis; position is **data** (`layout: WidgetInstance[]` input), not template. No variant rewrites position logic. Gap state (`dashboard.component.ts:44`) unchanged. |
+
+**Answers to T7 open questions (Q1–Q7):** all default to *Recommended* per `to-do-dashboard-draggable.md:106` — reorder+resize+add/remove+config, backend+localStorage fallback, fixed 12-col, per-user, dashboard-only v1, open registry, explicit Edit mode. Each deviation would be an ADR amendment.
+
+**Consequences:** `core/dashboard-layout/` becomes a new bounded context (model, validator, store, service, registry). `DashboardStore` retains metrics/transactions as source of truth; `DashboardLayoutStore` owns presentation order/size. Variants consume `layout: WidgetInstance[]` without duplicating position logic.
+
+**Deferred:** `gridster` escalation, cross-route `WidgetHost` (T7.4), free-form collision.

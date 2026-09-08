@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, computed, inject } from '@angular/core';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { DashboardMetric, DashboardTransaction } from '../dashboard.store';
 import { CardComponent } from '../../../shared/components/organisms/card/card.component';
 import { BadgeComponent } from '../../../shared/components/atoms/badge/badge.component';
@@ -6,6 +7,11 @@ import {
   DataTableComponent,
   ColumnDef,
 } from '../../../shared/components/organisms/data-table/data-table.component';
+import { DashboardGridComponent, GridWidgetView } from '../../../shared/components/organisms/dashboard-grid/dashboard-grid.component';
+import { DashboardLayoutStore } from '../../../core/dashboard-layout/dashboard-layout.store';
+import { DashboardLayoutService } from '../../../core/dashboard-layout/dashboard-layout.service';
+import { LoggingService } from '../../../core/logging/logging.service';
+import type { WidgetInstance, ColSpan } from '../../../core/dashboard-layout/dashboard-layout.model';
 
 function money(amount: number, currency: string): string {
   const symbol = currency === 'GBP' ? '\u00A3' : `${currency} `;
@@ -55,22 +61,18 @@ interface TransactionRow {
 @Component({
   selector: 'rdk-dashboard-modern',
   standalone: true,
-  imports: [CardComponent, BadgeComponent, DataTableComponent],
+  imports: [CardComponent, BadgeComponent, DataTableComponent, DashboardGridComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="dm">
-      <div class="dm__kpis">
-        @for (kpi of metrics; track kpi.id) {
-          <article class="dm__kpi" [class.dm__kpi--featured]="kpi.id === 'revenue'">
-            <span class="dm__kpi-label">{{ kpi.label }}</span>
-            <span class="dm__kpi-value">{{ kpi.value }}</span>
-            <span class="dm__kpi-delta" [class.dm__kpi-delta--down]="kpi.delta < 0">
-              {{ kpi.delta >= 0 ? '\u2191' : '\u2193' }} {{ Math.abs(kpi.delta) }}%
-              <span class="dm__kpi-unit">{{ kpi.unit }}</span>
-            </span>
-          </article>
-        }
-      </div>
+      <rdk-dashboard-grid
+        [views]="views()"
+        [editMode]="editMode"
+        variant="modern"
+        (dropped)="onDropped($event)"
+        (resized)="onResized($event)"
+        (removed)="onRemoved($event)"
+      />
 
       <div class="dm__status" role="list" aria-label="Status summary">
         @for (status of statuses; track status) {
@@ -95,52 +97,6 @@ interface TransactionRow {
         display: block;
         padding: var(--space-layout-md);
         background: var(--color-bg-base);
-      }
-
-      .dm__kpis {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-        gap: var(--space-layout-xs);
-      }
-
-      /* Soft Card: border and lift together, neither alone. */
-      .dm__kpi {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-component-xs);
-        background: var(--color-bg-surface);
-        border: 1px solid var(--color-border-default);
-        border-radius: var(--radius-surface);
-        box-shadow: var(--elevation-raised);
-        padding: var(--space-component-lg);
-      }
-
-      .dm__kpi--featured {
-        box-shadow: var(--elevation-float);
-        border-color: var(--color-border-brand);
-      }
-
-      .dm__kpi-label {
-        color: var(--color-text-secondary);
-        font-size: 0.8125rem;
-        letter-spacing: 0.02em;
-      }
-      .dm__kpi-value {
-        color: var(--color-text-primary);
-        font-family: var(--font-data);
-        font-size: 1.75rem;
-        line-height: 1.1;
-      }
-      .dm__kpi-delta {
-        color: var(--color-text-success);
-        font-family: var(--font-data);
-        font-size: 0.8125rem;
-      }
-      .dm__kpi-delta--down {
-        color: var(--color-text-danger);
-      }
-      .dm__kpi-unit {
-        color: var(--color-text-muted);
       }
 
       .dm__status {
@@ -174,10 +130,54 @@ export class DashboardModernComponent {
   @Input() metrics: DashboardMetric[] = [];
   @Input() transactions: DashboardTransaction[] = [];
   @Input() loading = false;
+  @Input() layout: readonly WidgetInstance[] = [];
+  @Input() editMode = false;
+
+  private readonly layoutStore = inject(DashboardLayoutStore);
+  private readonly layoutService = inject(DashboardLayoutService);
+  private readonly logger = inject(LoggingService);
 
   readonly Math = Math;
   readonly STATUS_LABEL = STATUS_LABEL;
   readonly STATUS_BADGE = STATUS_BADGE;
+
+  protected readonly views = computed<readonly GridWidgetView[]>(() => {
+    const layout = this.layout.length > 0 ? this.layout : this.metrics.map((m, index) => ({ id: `w-${m.id}`, widgetId: m.id as unknown as WidgetInstance['widgetId'], colSpan: 3 as ColSpan, order: index }));
+    const metricMap = new Map(this.metrics.map((m) => [m.id, m]));
+    return [...layout]
+      .sort((a, b) => a.order - b.order)
+      .map((instance) => ({
+        instance,
+        metric: metricMap.get(instance.widgetId as string),
+        featured: instance.widgetId === 'revenue',
+      }));
+  });
+
+  protected onDropped(event: CdkDragDrop<WidgetInstance>): void {
+    this.layoutStore.move(event.previousIndex, event.currentIndex);
+    this.persist();
+    this.logger.info('features/dashboard', 'dashboard.layout.reordered', { from: event.previousIndex, to: event.currentIndex });
+  }
+
+  protected onResized(event: { id: string; colSpan: ColSpan }): void {
+    this.layoutStore.resize(event.id, event.colSpan);
+    this.persist();
+    this.logger.info('features/dashboard', 'dashboard.layout.resized', { id: event.id, colSpan: event.colSpan });
+  }
+
+  protected onRemoved(metricId: string): void {
+    const instance = this.layout.find((w) => w.widgetId === metricId);
+    if (instance) {
+      this.layoutStore.removeWidget(instance.id);
+      this.persist();
+    }
+  }
+
+  private persist(): void {
+    this.layoutService.save(this.layoutStore.layout()).subscribe({
+      error: () => undefined,
+    });
+  }
 
   protected get statuses(): DashboardTransaction['status'][] {
     return ['paid', 'pending', 'failed', 'refunded'];

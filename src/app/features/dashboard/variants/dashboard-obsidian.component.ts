@@ -1,7 +1,13 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, computed, inject } from '@angular/core';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { DashboardMetric, DashboardTransaction } from '../dashboard.store';
 import { CardComponent } from '../../../shared/components/organisms/card/card.component';
 import { BadgeComponent } from '../../../shared/components/atoms/badge/badge.component';
+import { DashboardGridComponent, GridWidgetView } from '../../../shared/components/organisms/dashboard-grid/dashboard-grid.component';
+import { DashboardLayoutStore } from '../../../core/dashboard-layout/dashboard-layout.store';
+import { DashboardLayoutService } from '../../../core/dashboard-layout/dashboard-layout.service';
+import { LoggingService } from '../../../core/logging/logging.service';
+import type { WidgetInstance, ColSpan } from '../../../core/dashboard-layout/dashboard-layout.model';
 
 function money(amount: number, currency: string): string {
   const symbol = currency === 'GBP' ? '\u00A3' : `${currency} `;
@@ -42,26 +48,18 @@ const STATUS_BADGE: Record<DashboardTransaction['status'], 'success' | 'warning'
 @Component({
   selector: 'rdk-dashboard-obsidian',
   standalone: true,
-  imports: [CardComponent, BadgeComponent],
+  imports: [CardComponent, BadgeComponent, DashboardGridComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="dbo">
-      <div class="dbo__kpis">
-        @for (kpi of metrics; track kpi.id) {
-          <article class="dbo__kpi" [class.dbo__kpi--anchor]="kpi.id === 'orders'">
-            <span class="dbo__kpi-label">{{ kpi.label }}</span>
-            <span class="dbo__kpi-value">{{ kpi.value }}</span>
-            <span
-              class="dbo__kpi-delta"
-              [class.dbo__kpi-delta--up]="kpi.delta >= 0"
-              [class.dbo__kpi-delta--down]="kpi.delta < 0"
-            >
-              {{ kpi.delta >= 0 ? '\u2191' : '\u2193' }} {{ Math.abs(kpi.delta) }}%
-              <span class="dbo__kpi-unit">{{ kpi.unit }}</span>
-            </span>
-          </article>
-        }
-      </div>
+      <rdk-dashboard-grid
+        [views]="views()"
+        [editMode]="editMode"
+        variant="obsidian"
+        (dropped)="onDropped($event)"
+        (resized)="onResized($event)"
+        (removed)="onRemoved($event)"
+      />
 
       <rdk-card variant="default" padding="none" class="dbo__panel">
         <div slot="header" class="dbo__panel-head">
@@ -101,65 +99,6 @@ const STATUS_BADGE: Record<DashboardTransaction['status'], 'success' | 'warning'
         display: block;
         padding: var(--space-layout-md);
         background: var(--color-bg-base);
-      }
-
-      /* Dense KPI grid — space earned by importance. */
-      .dbo__kpis {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-        gap: var(--space-component-md);
-        margin-bottom: var(--space-layout-sm);
-      }
-
-      .dbo__kpi {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-component-xs);
-        background: var(--color-bg-surface);
-        border: 1px solid var(--color-border-muted);
-        border-radius: var(--radius-component);
-        padding: var(--space-component-md);
-      }
-
-      /* The single Dark Card Anchor — exactly one per layout. */
-      .dbo__kpi--anchor {
-        background: var(--color-surface-featured);
-        border-color: var(--color-surface-featured-border);
-
-        .dbo__kpi-label { color: var(--color-surface-featured-muted); }
-        .dbo__kpi-value { color: var(--color-surface-featured-text); }
-        .dbo__kpi-unit  { color: var(--color-surface-featured-muted); }
-      }
-
-      .dbo__kpi-label {
-        color: var(--color-text-secondary);
-        font-size: 0.6875rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-      }
-      .dbo__kpi-value {
-        color: var(--color-text-primary);
-        font-family: var(--font-data);
-        font-size: 1.5rem;
-        line-height: 1;
-      }
-      .dbo__kpi-delta {
-        font-family: var(--font-data);
-        font-size: 0.75rem;
-      }
-      /* Weight before colour — the glyph is always present. */
-      .dbo__kpi-delta--up {
-        color: var(--color-text-success);
-        font-weight: 700;
-      }
-      .dbo__kpi-delta--down {
-        color: var(--color-text-danger);
-        font-weight: 400;
-      }
-      .dbo__kpi-unit {
-        color: var(--color-text-muted);
-        font-weight: 400;
       }
 
       .dbo__panel-head {
@@ -227,9 +166,51 @@ export class DashboardObsidianComponent {
   @Input() metrics: DashboardMetric[] = [];
   @Input() transactions: DashboardTransaction[] = [];
   @Input() loading = false;
+  @Input() layout: readonly WidgetInstance[] = [];
+  @Input() editMode = false;
+
+  private readonly layoutStore = inject(DashboardLayoutStore);
+  private readonly layoutService = inject(DashboardLayoutService);
+  private readonly logger = inject(LoggingService);
 
   readonly Math = Math;
   readonly STATUS_LABEL = STATUS_LABEL;
   readonly STATUS_BADGE = STATUS_BADGE;
   readonly money = money;
+
+  protected readonly views = computed<readonly GridWidgetView[]>(() => {
+    const layout = this.layout.length > 0 ? this.layout : this.metrics.map((m, index) => ({ id: `w-${m.id}`, widgetId: m.id as unknown as WidgetInstance['widgetId'], colSpan: 3 as ColSpan, order: index }));
+    const metricMap = new Map(this.metrics.map((m) => [m.id, m]));
+    return [...layout]
+      .sort((a, b) => a.order - b.order)
+      .map((instance) => ({
+        instance,
+        metric: metricMap.get(instance.widgetId as string),
+        featured: instance.widgetId === 'orders',
+      }));
+  });
+
+  protected onDropped(event: CdkDragDrop<WidgetInstance>): void {
+    this.layoutStore.move(event.previousIndex, event.currentIndex);
+    this.persist();
+    this.logger.info('features/dashboard', 'dashboard.layout.reordered', { from: event.previousIndex, to: event.currentIndex });
+  }
+
+  protected onResized(event: { id: string; colSpan: ColSpan }): void {
+    this.layoutStore.resize(event.id, event.colSpan);
+    this.persist();
+    this.logger.info('features/dashboard', 'dashboard.layout.resized', { id: event.id, colSpan: event.colSpan });
+  }
+
+  protected onRemoved(metricId: string): void {
+    const instance = this.layout.find((w) => w.widgetId === metricId);
+    if (instance) {
+      this.layoutStore.removeWidget(instance.id);
+      this.persist();
+    }
+  }
+
+  private persist(): void {
+    this.layoutService.save(this.layoutStore.layout()).subscribe({ error: () => undefined });
+  }
 }

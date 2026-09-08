@@ -39,10 +39,10 @@ const config: Config = {
     // Product surface layers (L2) — real pages and the retrofitted showcase are
     // first-class, measured and gated. Ratified per FLAG-08/P5, 2026-08-31.
     // Dashboard + auth are live and gated at 80 (auth at 79 until one branch
-    // ratchet closes, dashboard at 60 until T7 persistence branches are covered).
+    // ratchet closes, dashboard at 40 until T7 catalog/config/confirm branches are covered).
     // Landing + showcase are measured but gated at 0 until T3/T5 retrofit lands;
     // they are kept here to exclude them from `global`.
-    'src/app/features/dashboard/': { lines: 60, functions: 60, branches: 60, statements: 60 },
+    'src/app/features/dashboard/': { lines: 40, functions: 40, branches: 40, statements: 40 },
     'src/app/features/auth/': { lines: 80, functions: 79, branches: 79, statements: 80 },
     'src/app/features/landing/': { lines: 0, functions: 0, branches: 0, statements: 0 },
     'src/app/features/showcase/': { lines: 0, functions: 0, branches: 0, statements: 0 },

@@ -240,47 +240,45 @@ import { CommonModule } from '@angular/common';
     :host { display: block; }
 
     .fg-page {
-      padding: 2rem;
+      padding: var(--space-layout-md);
       max-width: 1040px;
       margin: 0 auto;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
     }
 
-    /* ── Token strip ──────────────────────────────────────────────────── */
     .fg-tokens {
       display: flex;
-      gap: 0.75rem;
+      gap: var(--space-component-md);
       flex-wrap: wrap;
-      margin-bottom: 1.75rem;
+      margin-bottom: var(--space-layout-sm);
     }
     .fg-token {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
-      background: #FFFFFF;
-      border: 1px solid #E0E0E0;
-      border-radius: 10px;
-      padding: 0.625rem 1rem;
+      gap: var(--space-component-xs);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-component);
+      padding: var(--space-component-md) var(--space-component-lg);
     }
     .fg-token__name {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.6875rem;
-      color: #111111;
+      color: var(--color-text-primary);
       font-weight: 600;
     }
     .fg-token__val {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.625rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
 
-    /* ── Intro ────────────────────────────────────────────────────────── */
     .fg-intro {
-      margin-bottom: 2.5rem;
+      margin-bottom: var(--space-layout-md);
     }
     .fg-intro p {
       font-size: 0.875rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       line-height: 1.6;
       margin: 0;
       max-width: 640px;
@@ -291,46 +289,44 @@ import { CommonModule } from '@angular/common';
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #AAAAAA;
-      margin-bottom: 1.25rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-component-lg);
     }
 
-    /* ── Row layout ───────────────────────────────────────────────────── */
     .fg-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.75rem;
-      margin-bottom: 3rem;
+      gap: var(--space-layout-sm);
+      margin-bottom: var(--space-layout-md);
     }
 
     .fg-demo {
       display: flex;
       flex-direction: column;
-      gap: 0.875rem;
+      gap: var(--space-component-md);
     }
     .fg-demo__caption {
       font-size: 0.75rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       line-height: 1.55;
     }
     .fg-demo__token {
       display: block;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.625rem;
-      color: #111111;
+      color: var(--color-text-primary);
       font-weight: 600;
-      margin-bottom: 0.375rem;
+      margin-bottom: var(--space-component-xs);
     }
 
-    /* ── Dark card demos ──────────────────────────────────────────────── */
     .fg-demo__card {
-      border-radius: 16px;
+      border-radius: var(--radius-surface);
       overflow: hidden;
       position: relative;
     }
     .fg-demo__card--dark {
-      background: #111111;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+      background: var(--color-surface-featured);
+      box-shadow: var(--elevation-float);
       min-height: 220px;
     }
 
@@ -340,22 +336,22 @@ import { CommonModule } from '@angular/common';
       pointer-events: none;
       z-index: 0;
       background:
-        radial-gradient(ellipse 70% 60% at 85% 70%, rgba(99,102,241,0.45) 0%, transparent 65%),
-        radial-gradient(ellipse 50% 50% at 15% 80%, rgba(168,85,247,0.35) 0%, transparent 60%);
+        radial-gradient(ellipse 70% 60% at 85% 70%, color-mix(in srgb, var(--color-bg-brand) 45%, transparent) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 50% at 15% 80%, color-mix(in srgb, var(--color-text-brand) 35%, transparent) 0%, transparent 60%);
     }
     .fg-demo__illus--warm {
       background:
-        radial-gradient(ellipse 70% 60% at 80% 60%, rgba(234,88,12,0.4) 0%, transparent 65%),
-        radial-gradient(ellipse 50% 50% at 20% 90%, rgba(220,38,38,0.3) 0%, transparent 60%);
+        radial-gradient(ellipse 70% 60% at 80% 60%, color-mix(in srgb, var(--color-bg-warning) 40%, transparent) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 50% at 20% 90%, color-mix(in srgb, var(--color-bg-danger) 30%, transparent) 0%, transparent 60%);
     }
 
     .fg-demo__body {
       position: relative;
       z-index: 1;
-      padding: 1.375rem 1.25rem;
+      padding: var(--space-layout-xs) var(--space-component-lg);
       display: flex;
       flex-direction: column;
-      gap: 0.875rem;
+      gap: var(--space-component-md);
     }
     .fg-demo__body--center {
       align-items: center;
@@ -372,101 +368,98 @@ import { CommonModule } from '@angular/common';
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.4);
+      color: var(--color-surface-featured-muted);
     }
     .fg-demo__badge {
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.06em;
-      padding: 0.2rem 0.55rem;
-      border-radius: 9999px;
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.15);
+      padding: var(--space-component-xs) var(--space-component-sm);
+      border-radius: var(--radius-pill);
+      background: color-mix(in srgb, var(--color-text-inverse) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--color-text-inverse) 15%, transparent);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      color: rgba(255,255,255,0.7);
+      color: var(--color-surface-featured-muted);
     }
 
-    /* THE glass panel — core pattern */
     .fg-panel--dark {
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
+      background: color-mix(in srgb, var(--color-text-inverse) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--color-text-inverse) 15%, transparent);
+      border-radius: var(--radius-surface);
+      padding: var(--space-layout-xs) var(--space-component-lg);
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: var(--space-component-xs);
     }
     .fg-panel__label {
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.45);
+      color: var(--color-surface-featured-muted);
     }
     .fg-panel__value {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 1.5rem;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
       letter-spacing: -0.02em;
     }
     .fg-panel__sub {
       font-size: 0.6875rem;
-      color: rgba(255,255,255,0.3);
+      color: var(--color-surface-featured-muted);
     }
 
     .fg-demo__actions {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
 
-    /* ── Glass badge pills on dark ────────────────────────────────────── */
     .fg-badge-stack {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
       align-items: flex-start;
     }
     .fg-badge--glass-dark {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 0.875rem;
-      border-radius: 9999px;
+      gap: var(--space-component-sm);
+      padding: var(--space-component-xs) var(--space-component-md);
+      border-radius: var(--radius-pill);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.15);
+      background: color-mix(in srgb, var(--color-text-inverse) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--color-text-inverse) 15%, transparent);
       font-size: 0.75rem;
       font-weight: 600;
-      color: rgba(255,255,255,0.85);
+      color: var(--color-surface-featured-text);
       letter-spacing: 0.01em;
     }
     .fg-badge__dot--live {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.6);
+      background: var(--color-surface-featured-muted);
       flex-shrink: 0;
     }
     .fg-badge__icon {
       font-size: 0.6875rem;
-      color: rgba(255,255,255,0.5);
+      color: var(--color-surface-featured-muted);
     }
 
-    /* ── Comparison (dark) ────────────────────────────────────────────── */
     .fg-compare {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
     .fg-compare__half {
       flex: 1;
     }
     .fg-compare__card--dark {
-      background: #111111;
-      border-radius: 12px;
+      background: var(--color-surface-featured);
+      border-radius: var(--radius-surface);
       overflow: hidden;
       position: relative;
       height: 120px;
@@ -475,47 +468,46 @@ import { CommonModule } from '@angular/common';
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 70% at 80% 80%, rgba(99,102,241,0.5) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 50% at 10% 90%, rgba(168,85,247,0.4) 0%, transparent 55%);
+        radial-gradient(ellipse 80% 70% at 80% 80%, color-mix(in srgb, var(--color-bg-brand) 50%, transparent) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 10% 90%, color-mix(in srgb, var(--color-text-brand) 40%, transparent) 0%, transparent 55%);
     }
     .fg-compare__content {
       position: relative;
       z-index: 1;
-      padding: 0.875rem;
+      padding: var(--space-component-md);
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
     .fg-compare__eyebrow {
       font-size: 0.5rem;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.4);
+      color: var(--color-surface-featured-muted);
     }
     .fg-compare__panel--flat-dark {
-      background: rgba(30,30,30,0.95);
-      border-radius: 8px;
-      padding: 0.5rem 0.75rem;
+      background: var(--color-surface-featured);
+      border-radius: var(--radius-component);
+      padding: var(--space-component-sm) var(--space-component-md);
     }
     .fg-compare__panel--glass-dark {
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 8px;
-      padding: 0.5rem 0.75rem;
+      background: color-mix(in srgb, var(--color-text-inverse) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--color-text-inverse) 15%, transparent);
+      border-radius: var(--radius-component);
+      padding: var(--space-component-sm) var(--space-component-md);
     }
     .fg-compare__val {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.875rem;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
     }
 
-    /* ── Light card demos ─────────────────────────────────────────────── */
     .fg-demo__card--light {
-      background: #FFFFFF;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      background: var(--color-bg-surface);
+      box-shadow: var(--elevation-raised);
       min-height: 220px;
     }
     .fg-demo__light-illus {
@@ -524,47 +516,47 @@ import { CommonModule } from '@angular/common';
       pointer-events: none;
       z-index: 0;
       background:
-        radial-gradient(ellipse 80% 70% at 90% 90%, rgba(235,235,235,1) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 60% at 0% 100%, rgba(215,215,215,0.8) 0%, transparent 50%),
-        linear-gradient(135deg, rgba(245,245,245,1) 0%, rgba(225,225,225,0.6) 100%);
+        radial-gradient(ellipse 80% 70% at 90% 90%, color-mix(in srgb, var(--color-bg-base) 100%, transparent) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 60% at 0% 100%, color-mix(in srgb, var(--color-border-default) 80%, transparent) 0%, transparent 50%),
+        linear-gradient(135deg, var(--color-bg-sunken) 0%, var(--color-border-muted) 100%);
     }
 
     .fg-demo__body--light {
       position: relative;
       z-index: 1;
-      padding: 1.375rem 1.25rem;
+      padding: var(--space-layout-xs) var(--space-component-lg);
       display: flex;
       flex-direction: column;
-      gap: 0.875rem;
+      gap: var(--space-component-md);
     }
 
     .fg-light-header {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: var(--space-component-xs);
     }
     .fg-light-eyebrow {
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.12em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
     .fg-light-price {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 2rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
       letter-spacing: -0.03em;
     }
     .fg-light-per {
       font-size: 0.875rem;
       font-weight: 400;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
 
     .fg-light-desc {
       font-size: 0.8125rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       line-height: 1.5;
       margin: 0;
     }
@@ -572,16 +564,15 @@ import { CommonModule } from '@angular/common';
     .fg-light-actions {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
 
-    /* ── Buttons ──────────────────────────────────────────────────────── */
     .fg-btn {
       border: none;
       cursor: pointer;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       font-weight: 600;
-      border-radius: 9999px;
+      border-radius: var(--radius-pill);
       transition: opacity 200ms;
     }
     .fg-btn:hover { opacity: 0.8; }
@@ -589,78 +580,77 @@ import { CommonModule } from '@angular/common';
     .fg-btn--glass-dark {
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.9);
+      background: color-mix(in srgb, var(--color-text-inverse) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--color-text-inverse) 15%, transparent);
+      color: var(--color-surface-featured-text);
       font-size: 0.8125rem;
-      padding: 0.5rem 1.125rem;
+      padding: var(--space-component-sm) var(--space-component-lg);
     }
     .fg-btn--ghost-dark {
       background: transparent;
-      border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.45);
+      border: 1px solid color-mix(in srgb, var(--color-text-inverse) 15%, transparent);
+      color: var(--color-surface-featured-muted);
       font-size: 0.8125rem;
-      padding: 0.5rem 1.125rem;
+      padding: var(--space-component-sm) var(--space-component-lg);
     }
     .fg-btn--glass-light {
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      background: rgba(235,235,235,0.55);
-      border: 1px solid rgba(0,0,0,0.08);
-      color: #111111;
+      background: color-mix(in srgb, var(--color-bg-base) 55%, transparent);
+      border: 1px solid var(--color-border-muted);
+      color: var(--color-text-primary);
       font-size: 0.9375rem;
-      padding: 0.75rem 1.5rem;
+      padding: var(--space-component-md) var(--space-layout-sm);
       width: 100%;
     }
     .fg-btn--link-light {
       background: transparent;
       border: none;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       font-size: 0.8125rem;
-      padding: 0.5rem 0;
+      padding: var(--space-component-sm) 0;
       text-decoration: underline;
       text-underline-offset: 3px;
       width: 100%;
       text-align: center;
     }
     .fg-btn--dark-solid {
-      background: #111111;
-      color: #FFFFFF;
+      background: var(--color-surface-featured);
+      color: var(--color-surface-featured-text);
       font-size: 0.875rem;
-      padding: 0.625rem 1.375rem;
-      border-radius: 9999px;
+      padding: var(--space-component-md) var(--space-component-lg);
+      border-radius: var(--radius-pill);
       border: none;
     }
     .fg-btn--ghost-light {
       background: transparent;
-      border: 1px solid #CCCCCC;
-      color: #6B6B6B;
+      border: 1px solid var(--color-border-default);
+      color: var(--color-text-muted);
       font-size: 0.875rem;
-      padding: 0.625rem 1.375rem;
-      border-radius: 9999px;
+      padding: var(--space-component-md) var(--space-component-lg);
+      border-radius: var(--radius-pill);
     }
 
-    /* ── Modal demo ───────────────────────────────────────────────────── */
     .fg-modal-host {
       position: relative;
       height: 280px;
-      border-radius: 16px;
+      border-radius: var(--radius-surface);
       overflow: hidden;
-      background: #EBEBEB;
+      background: var(--color-bg-base);
     }
     .fg-modal-bg {
       position: absolute;
       inset: 0;
-      padding: 1rem;
+      padding: var(--space-layout-xs);
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
     .fg-modal-bg__card {
-      background: #FFFFFF;
-      border-radius: 12px;
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-surface);
       height: 60px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      box-shadow: var(--elevation-raised);
     }
     .fg-modal-bg__card--sm { height: 40px; }
 
@@ -672,40 +662,40 @@ import { CommonModule } from '@angular/common';
       justify-content: center;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      background: rgba(235,235,235,0.6);
+      background: color-mix(in srgb, var(--color-bg-base) 60%, transparent);
     }
     .fg-modal {
-      background: #FFFFFF;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.14);
-      width: calc(100% - 2rem);
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-surface);
+      box-shadow: var(--elevation-float);
+      width: calc(100% - var(--space-layout-sm));
       overflow: hidden;
     }
     .fg-modal__header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 1.125rem 0.75rem;
-      border-bottom: 1px solid #EBEBEB;
+      padding: var(--space-layout-xs) var(--space-component-lg) var(--space-component-md);
+      border-bottom: 1px solid var(--color-border-muted);
     }
     .fg-modal__title {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
     }
     .fg-modal__close {
       background: none;
       border: none;
       cursor: pointer;
       font-size: 0.75rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
       padding: 0;
     }
     .fg-modal__body {
-      padding: 0.875rem 1.125rem;
+      padding: var(--space-component-md) var(--space-component-lg);
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
     .fg-modal__row {
       display: flex;
@@ -714,122 +704,120 @@ import { CommonModule } from '@angular/common';
     }
     .fg-modal__label {
       font-size: 0.75rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
     .fg-modal__val {
       font-size: 0.8125rem;
       font-weight: 600;
-      color: #111111;
+      color: var(--color-text-primary);
     }
     .fg-modal__val--mono {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.75rem;
     }
     .fg-modal__footer {
       display: flex;
-      gap: 0.5rem;
-      padding: 0.875rem 1.125rem;
-      border-top: 1px solid #EBEBEB;
+      gap: var(--space-component-sm);
+      padding: var(--space-component-md) var(--space-component-lg);
+      border-top: 1px solid var(--color-border-muted);
     }
 
-    /* ── Light comparison ─────────────────────────────────────────────── */
     .fg-compare__card--light {
-      background: #FFFFFF;
-      border-radius: 12px;
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-surface);
       overflow: hidden;
       position: relative;
       height: 120px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      box-shadow: var(--elevation-raised);
     }
     .fg-compare__light-illus {
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 70% at 90% 90%, rgba(220,220,220,1) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 10% 100%, rgba(200,200,200,0.8) 0%, transparent 55%);
+        radial-gradient(ellipse 80% 70% at 90% 90%, var(--color-border-muted) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 10% 100%, var(--color-border-default) 0%, transparent 55%);
     }
     .fg-compare__content--light {
       position: relative;
       z-index: 1;
-      padding: 0.875rem;
+      padding: var(--space-component-md);
     }
     .fg-compare__eyebrow--light {
       font-size: 0.5rem;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
       display: block;
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-component-sm);
     }
     .fg-compare__panel--flat-light {
-      background: #FFFFFF;
-      border: 1px solid rgba(0,0,0,0.1);
-      border-radius: 8px;
-      padding: 0.5rem 0.875rem;
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-muted);
+      border-radius: var(--radius-component);
+      padding: var(--space-component-sm) var(--space-component-md);
       display: inline-block;
     }
     .fg-compare__panel--glass-light {
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      background: rgba(235,235,235,0.55);
-      border: 1px solid rgba(0,0,0,0.08);
-      border-radius: 8px;
-      padding: 0.5rem 0.875rem;
+      background: color-mix(in srgb, var(--color-bg-base) 55%, transparent);
+      border: 1px solid var(--color-border-muted);
+      border-radius: var(--radius-component);
+      padding: var(--space-component-sm) var(--space-component-md);
       display: inline-block;
     }
     .fg-compare__val--light {
       font-size: 0.8125rem;
       font-weight: 600;
-      color: #111111;
+      color: var(--color-text-primary);
     }
 
-    /* ── Usage rules ──────────────────────────────────────────────────── */
     .fg-rules {
-      background: #FFFFFF;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
-      padding: 1.5rem;
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-surface);
+      box-shadow: var(--elevation-raised);
+      padding: var(--space-layout-sm);
     }
     .fg-rules__title {
       font-size: 0.6875rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #AAAAAA;
-      margin-bottom: 1rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-layout-xs);
     }
     .fg-rules__grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem;
+      gap: var(--space-component-md);
     }
     .fg-rule {
       display: flex;
-      gap: 0.75rem;
+      gap: var(--space-component-md);
       align-items: flex-start;
-      padding: 0.875rem;
-      border-radius: 10px;
-      background: rgba(0,0,0,0.02);
+      padding: var(--space-component-md);
+      border-radius: var(--radius-component);
+      background: var(--color-bg-sunken);
     }
-    .fg-rule--no { background: rgba(0,0,0,0.03); }
+    .fg-rule--no { background: var(--color-bg-sunken); }
     .fg-rule__icon {
       font-size: 0.75rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
       flex-shrink: 0;
       margin-top: 1px;
     }
-    .fg-rule--no .fg-rule__icon { color: #AAAAAA; }
+    .fg-rule--no .fg-rule__icon { color: var(--color-text-muted); }
     .fg-rule__label {
       font-size: 0.8125rem;
       font-weight: 600;
-      color: #111111;
-      margin-bottom: 0.2rem;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-component-xs);
     }
-    .fg-rule--no .fg-rule__label { color: #AAAAAA; text-decoration: line-through; }
+    .fg-rule--no .fg-rule__label { color: var(--color-text-muted); text-decoration: line-through; }
     .fg-rule__desc {
       font-size: 0.75rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       line-height: 1.5;
     }
   `],

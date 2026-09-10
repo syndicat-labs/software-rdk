@@ -1397,3 +1397,84 @@ is L2 in the plan.
 **Reference-library renaming** — 545 images unified and 298 usefully named; 247 remain hash-named.
 Local vision inference proved marginal on this hardware (7.7 GB, no GPU): a 3B model held 3.9 GB RSS
 and thrashed the machine to 148 MB free. Recorded so the finding is not re-derived.
+
+---
+
+## 2026-09-09 — Four new design languages; machine-root registry declares software-rdk as the implementation source
+
+### What landed
+
+Four protocol-native design languages are authored in `design-language.ts` and the machine-root
+registry (`/home/work/build-blueprint/registry/`), with software-rdk as their `implementationRef`:
+
+- **gokul** (full) — Ops-as-editorial. Hairline Rule + Display Figure + Ink Well; square corners,
+  flat + border surfaces; display `Montserrat`, data `JetBrains Mono` at `data-and-code` scope;
+  `expressiveAllowedIn: ['never']`.
+- **paper** (full) — Warm paper, acid-yellow **Highlighter Mark**; `Plus Jakarta Sans` body, border
+  section rhythm, comfortable density.
+- **noir** (variant of paper) — Night palette: warm-desaturated, accent collapses to warm-white
+  (**White Highlighter**); owns `darkStrategy`/`colorRole`/`colorInHierarchy`, inherits paper's
+  type/density/corner.
+- **launchline-obsidian** (variant of obsidian) — Terminal/deck: display `JetBrains Mono`,
+  unrestricted mono scope, compact density, **Deck Cut** (never-expressive motion); inherits
+  obsidian's restraint axes.
+
+`THEME_REGISTRY` grew to **7 languages** (token-contract.ts). No contract bump: still v1.1.0,
+90 tokens; all four map to contract tokens. Themes: `src/styles/themes/_gokul|_paper|_noir|
+_launchline-obsidian.scss` (hand-aligned non-Prettier by house convention; shared fonts only).
+
+### Variant-lineage tests
+
+`design-language.spec.ts` now asserts the variant contract: shares parent private namespace, shares
+non-typographic type signature, noir owns the night axes (differs on the three colour slots, equal on
+density/corner), launchline inherits obsidian restraint (differs on density/mono/display), and a
+variant is never a wholesale duplicate.
+
+### Showcase + screenshots
+
+Four flagship pricing variants (`pricing-gokul|paper|noir|launchline.component.ts`) registered under
+`pricing-section`; `design-idea.ts` gap state covers the other ideas for the new languages. The
+registry-driven language-comparison page covers all seven with no change. Both screenshot harnesses
+gained `CHROME_PATH` (system Chrome; Playwright's Chromium download failed) and the `LANGUAGES` list
+extended to 7. Captured with zero console errors:
+
+- `test-results/design-ideas/` — pricing-section × 7 languages + erp-dashboard gap states
+- `test-results/language-comparison/` — 7 panels
+
+FLAG-06 note: the rendered half is now captured for all seven languages under the new-design-ideas and
+comparison pages; direct screenshot-diffing against `docs/design-refs/` remains open.
+
+### Gate results (all green)
+
+```
+$ npm run typecheck        — exit 0
+$ npm run lint:rules       — exit 0
+    check-theme-contract   — 90 contract tokens, 7 themes, 242 tokens read, all resolvable
+    check-contrast         — 7 languages, AA (4.5+) — gokul muted #8b8a90, noir warm-400 #9d9482
+                        post-tuned; status + inverse + focus-ring pairs verified
+    check-no-localstorage-auth — 6 pre-existing FLAG-11 ratchet entries, unchanged
+$ npx jest --runInBand     — 776 passed / 45 suites   (design-language spec alone: 84+)
+$ npm run build            — exit 0 (pre-existing showcase budget warnings only: invoice-variants, frosted-glass)
+```
+
+Machine root:
+
+```
+$ bash scripts/lint-standards.sh   — ALL GATES PASS
+    [design-language-registry] OK: registry structure valid, 7 languages, declaration files present
+    [retrieval-current] ✓  RAG chunks regenerate identically (138 chunks, 26 sources)
+$ node scripts/build-chunks.mjs    — built 138 chunks from 26 sources
+```
+
+Registry files: `registry/{gokul,paper,noir,launchline-obsidian}.json` = full 18-slot declarations,
+`variantOf` where applicable, `implementationRef: software-rdk`, `status: declared`. `MANIFEST.json`
+repinned for the 6 changed files. Decisions recorded in the 2026-09-09 ADR amendment (D-A: id stays
+`rdk-default`; D-B: implementationRef flip with provenance in `declarationNote`; D-C: gap state on
+dashboard/landing).
+
+### Notes for review
+
+- Screenshots were captured by the harness; the model cannot visually verify PNGs — the render
+  evidence is: zero console errors in the capture browser, contract-gate resolution of all 242
+  component-read tokens under all 7 languages, and static contrast checks. Human review of
+  `test-results/design-ideas/*.png` still applies the render-and-look rule.

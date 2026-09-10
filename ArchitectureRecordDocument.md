@@ -1516,3 +1516,53 @@ and tracked in `to-do.md`.
 **Consequences:** `core/dashboard-layout/` becomes a new bounded context (model, validator, store, service, registry). `DashboardStore` retains metrics/transactions as source of truth; `DashboardLayoutStore` owns presentation order/size. Variants consume `layout: WidgetInstance[]` without duplicating position logic.
 
 **Deferred:** `gridster` escalation, cross-route `WidgetHost` (T7.4), free-form collision.
+
+---
+
+## ADR Amendment 2026-09-09 — Four new design languages; software-rdk becomes the registry's reference implementation
+
+### Context
+
+The machine-root registry (`/home/work/build-blueprint/registry/`, authoritative for the 18-slot
+Design Language Protocol) held four stub declarations whose `implementationRef` pointed at external
+inspiration sites (`devportfolio.example`, `openhandsweb.com`, `launchline-website-inspo`) with all
+slots null. This amendment resolves which project is the implementation source and registers four new
+languages in `software-rdk`.
+
+### Decisions
+
+| # | Concern | Decision |
+|---|---|---|
+| A | Modern's id | The DLP id **stays `rdk-default`** (label "Modern"). The id is also the contract reference theme and the `ThemeService` fallback when nothing is stored, so renaming would break both. |
+| B | Implementation source | `implementationRef` for `gokul`, `paper`, `noir`, `launchline-obsidian` flips to **`software-rdk`** — they are implemented here, not at the inspiration sites. Provenance is preserved in each declaration's `declarationNote`. |
+| C | Product surfaces | The four new languages exist in the registry and the showcase, not as product surfaces: dashboard and landing show the **explicit gap state** for them (no substitute rendering, per D7). Auth/data surfaces are unaffected. |
+
+### Registered languages (2026-09-09)
+
+| id | Basis | Variant of | Notes |
+|---|---|---|---|
+| `gokul` | full declaration | — | Ops-as-editorial: hairline rules, square corners, `Montserrat/Inter/JetBrains Mono`, mono scope `data-and-code`, flat + border surfaces |
+| `paper` | full declaration | — | Warm paper, acid-yellow Highlighter Mark, `Plus Jakarta Sans` body |
+| `noir` | variant | `paper` | Night palette owns the dark; accent collapses to warm-white; shares `--oh-*` namespace, inherits typography/density |
+| `launchline-obsidian` | variant | `obsidian` | Terminal/deck: mono display, unrestricted mono scope, compact density, Deck Cut (no expressive motion) |
+
+All four are protocol-native (18 slots + philosophy), share no new contract tokens (contract stays
+v1.1.0, 90 tokens), and were added to `THEME_REGISTRY` as 7 total. Variants per protocol §7 declare
+only a shared private namespace + global tokens; `noir`/`launchline-obsidian` introduce no `--oh-*`
+uniqueness and no `--ll-*` tokens (rule E).
+
+### Registry consequences
+
+`registry/{gokul,paper,noir,launchline-obsidian}.json` carry full declarations with
+`implementationRef: software-rdk`, `status: declared`, and `variantOf` where applicable.
+`registry/index.json` flips the same four `implementationRef` fields. Retrieval chunks and
+`MANIFEST.json` are regenerated and repinned; `scripts/lint-standards.sh` reports
+"7 languages, declaration files present" green. Gate status (Tier A/B/C) remains `pending` — this
+amendment declares the languages and their implementation home; it does not pass the language gates.
+
+### Accepted constraints
+
+- Fonts limited to the five families already loaded in `src/index.html` (Inter, JetBrains Mono,
+  Montserrat 700–900, Plus Jakarta Sans, Space Grotesk).
+- No contract bump: all four use `protocolVersion` 1.1.0-compatible slots.
+- Showcase variants read contract tokens only; showcase is exempt from rule C's private-token ban.

@@ -9,6 +9,7 @@ import { mkdirSync } from 'node:fs';
 // dev mock interceptor accepts b64url tokens shaped like the real thing.
 
 const BASE = process.env['BASE_URL'] ?? 'http://localhost:4200';
+const CHROME = process.env['CHROME_PATH'];
 const OUT = 'test-results/language-comparison';
 
 function mockJwt(): string {
@@ -24,7 +25,7 @@ function mockJwt(): string {
 
 async function main(): Promise<void> {
   mkdirSync(OUT, { recursive: true });
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(CHROME ? { executablePath: CHROME } : {});
   const page = await browser.newPage({ viewport: { width: 1600, height: 1200 } });
 
   const errors: string[] = [];

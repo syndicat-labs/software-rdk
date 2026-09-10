@@ -1,0 +1,171 @@
+// ─── Launchline Obsidian ───────────────────────────────────────────────────────
+// Variant of Obsidian — terminal/deck showcase. Restraint as law; mono becomes
+// the interface voice, density tightens, the display resets to the prompt.
+// Shares the --obs-* namespace with its parent per protocol §7
+// (registry: launchline-obsidian.variantOf = obsidian). See design-language.ts.
+//
+// The block below bridges them onto the full L1 contract.
+
+[data-theme="launchline-obsidian"] {
+
+  // ── L0 · Private primitives ─────────────────────────────────────────────────
+  // Terminal ink ramp — not pure black: pure black traps sub-pixel rendering.
+  --obs-terminal-950:  #08080b;
+  --obs-terminal-900:  #0c0c10;
+  --obs-terminal-850:  #14141a;
+  --obs-terminal-800:  #1b1b23;
+  --obs-terminal-700:  #26262f;
+  --obs-terminal-600:  #3a3a46;
+  --obs-terminal-500:  #8a8a97;
+  --obs-terminal-300:  #b9b9c4;
+  --obs-terminal-100:  #d6d6dd;
+  --obs-terminal-50:   #f4f4f7;
+
+  // Status ramps — the deck stays monochrome-disciplined; state is read in
+  // badges, so status hues are desaturated and confined.
+  --obs-success-300:  #7ee0ab;  --obs-success-600:  #1e7d48;  --obs-success-subtle: #0f2b1c;
+  --obs-warning-300:  #e8c46a;  --obs-warning-600:  #a8841f;  --obs-warning-subtle: #2c2310;
+  --obs-danger-300:   #ef9c9c;  --obs-danger-600:   #b3261e;  --obs-danger-subtle:  #2c1212;
+  --obs-info-300:     #9dcaef;  --obs-info-600:     #1c5c8a;  --obs-info-subtle:    #0f2233;
+
+  // Elevation — depthModel: shadow, but a terminal lift is a hairline highlight,
+  // not application chrome.
+  --obs-elevation-raised:  0 1px 0 rgb(244 244 247 / 0.04), 0 2px 8px rgb(0 0 0 / 0.35);
+  --obs-elevation-float:   0 8px 24px rgb(0 0 0 / 0.45);
+  --obs-elevation-overlay: 0 16px 48px rgb(0 0 0 / 0.6);
+
+  // ── L1 · Contract bridge ────────────────────────────────────────────────────
+
+  // Text — hierarchy without colour: structure, alignment and weight carry rank.
+  --color-text-primary:    var(--obs-terminal-50);
+  --color-text-secondary:  var(--obs-terminal-300);
+  --color-text-muted:      var(--obs-terminal-500);
+  --color-text-disabled:   var(--obs-terminal-600);
+  --color-text-inverse:    var(--obs-terminal-900);
+  --color-text-brand:      var(--obs-terminal-100);
+  --color-text-danger:     var(--obs-danger-300);
+  --color-text-success:    var(--obs-success-300);
+  --color-text-warning:    var(--obs-warning-300);
+  --color-text-info:       var(--obs-info-300);
+
+  // Backgrounds — the runway: dark terminal surfaces; the anchor card inverts.
+  --color-bg-base:         var(--obs-terminal-900);
+  --color-bg-surface:      var(--obs-terminal-850);
+  --color-bg-elevated:     var(--obs-terminal-800);
+  --color-bg-sunken:       var(--obs-terminal-950);
+  --color-bg-overlay:      rgb(0 0 0 / 0.6);
+  --color-bg-brand:        var(--obs-terminal-50);
+  --color-bg-brand-subtle: var(--obs-terminal-800);
+  --color-bg-danger:       var(--obs-danger-600);
+  --color-bg-danger-subtle:  var(--obs-danger-subtle);
+  --color-bg-success:      var(--obs-success-600);
+  --color-bg-success-subtle: var(--obs-success-subtle);
+  --color-bg-warning:      var(--obs-warning-600);
+  --color-bg-warning-subtle: var(--obs-warning-subtle);
+  --color-bg-info:         var(--obs-info-600);
+  --color-bg-info-subtle:  var(--obs-info-subtle);
+
+  // Borders — shallow rules on the runway; the prompt line is never bordered
+  // by colour.
+  --color-border-default:  var(--obs-terminal-700);
+  --color-border-strong:   var(--obs-terminal-600);
+  --color-border-muted:    var(--obs-terminal-850);
+  --color-border-brand:    var(--obs-terminal-50);
+  --color-border-danger:   var(--obs-danger-600);
+  --color-border-success:  var(--obs-success-600);
+  --color-border-warning:  var(--obs-warning-600);
+  --color-border-info:     var(--obs-info-600);
+  --color-border-focus:    var(--obs-terminal-50);
+
+  // Interactive states — focus is the prompt band: white on ink.
+  --color-hover-overlay:    rgb(244 244 247 / 0.05);
+  --color-active-overlay:   rgb(244 244 247 / 0.10);
+  --color-focus-ring:       var(--obs-terminal-50);
+  --color-focus-ring-width: 2px;
+  --color-focus-ring-offset: 2px;
+  --color-focus-ring-glow:  rgb(244 244 247 / 0.12);
+
+  // Status semantic aliases
+  --color-status-success-bg:     var(--color-bg-success-subtle);
+  --color-status-success-border: var(--color-border-success);
+  --color-status-success-text:   var(--color-text-success);
+  --color-status-success-icon:   var(--obs-success-600);
+
+  --color-status-warning-bg:     var(--color-bg-warning-subtle);
+  --color-status-warning-border: var(--color-border-warning);
+  --color-status-warning-text:   var(--color-text-warning);
+  --color-status-warning-icon:   var(--obs-warning-600);
+
+  --color-status-danger-bg:      var(--color-bg-danger-subtle);
+  --color-status-danger-border:  var(--color-border-danger);
+  --color-status-danger-text:    var(--color-text-danger);
+  --color-status-danger-icon:    var(--obs-danger-600);
+
+  --color-status-info-bg:        var(--color-bg-info-subtle);
+  --color-status-info-border:    var(--color-border-info);
+  --color-status-info-text:      var(--color-text-info);
+  --color-status-info-icon:      var(--obs-info-600);
+
+  // Semantic spacing — density: compact. A deck fits more runway per screen
+  // (spaceAllocation: earned-by-importance).
+  --space-component-xs: var(--space-0-5);
+  --space-component-sm: var(--space-1);
+  --space-component-md: var(--space-2);
+  --space-component-lg: var(--space-3);
+  --space-layout-xs:    var(--space-3);
+  --space-layout-sm:    var(--space-4);
+  --space-layout-md:    var(--space-6);
+  --space-layout-lg:    var(--space-8);
+
+  // Semantic radii — uniform, terminal-minimal.
+  --radius-component: 4px;
+  --radius-surface:   4px;
+  --radius-pill:      var(--radius-full);
+
+  // Navigation surface — the tray: one step below the page.
+  --color-nav-texture:          none;
+  --color-nav-bg:               var(--obs-terminal-950);
+  --color-nav-text:             var(--obs-terminal-300);
+  --color-nav-text-active:      var(--obs-terminal-50);
+  --color-nav-text-subtle:      var(--obs-terminal-500);
+  --color-nav-brand-gradient:   var(--obs-terminal-50);
+  --color-nav-active-bg:        rgb(244 244 247 / 0.08);
+  --color-nav-active-indicator: var(--obs-terminal-50);
+  --color-nav-icon-active:      var(--obs-terminal-50);
+  --color-nav-icon-active-bg:   rgb(244 244 247 / 0.12);
+  --color-nav-icon-hover-bg:    rgb(244 244 247 / 0.06);
+  --color-nav-avatar-bg:        var(--obs-terminal-700);
+
+  // Featured surface — inherited Dark Card Anchor: the near-black inverted
+  // well that pins the decision-critical figure (sectionRhythm:
+  // surface-inversion, emphasisSurfaceBudget: 1).
+  --color-surface-featured:        var(--obs-terminal-950);
+  --color-surface-featured-border: var(--obs-terminal-600);
+  --color-surface-featured-text:   var(--obs-terminal-50);
+  --color-surface-featured-muted:  rgb(244 244 247 / 0.6);
+
+  // Elevation — the terminal lift ladder: hairline highlight, then depth.
+  --elevation-raised:   var(--obs-elevation-raised);
+  --elevation-float:    var(--obs-elevation-float);
+  --elevation-overlay:  var(--obs-elevation-overlay);
+
+  // ── Component token bridge ───────────────────────────────────────────────────
+  --card-bg:                    var(--color-bg-surface);
+  --card-border:                1px solid var(--color-border-default);
+  --card-radius:                var(--radius-surface);
+  --card-shadow:                var(--elevation-raised);
+  --card-shadow-elevated:       var(--elevation-float);
+
+  --spinner-fill-color:         var(--obs-terminal-50);
+  --check-checked-bg:           var(--obs-terminal-50);
+  --check-checked-border:       var(--obs-terminal-50);
+  --toggle-track-on:            var(--obs-terminal-50);
+
+  // Typography — typeRoleAssignment: JetBrains Mono at display scale resets
+  // the deck to the prompt; prose stays proportional (monospaceScope:
+  // unrestricted).
+  --font-display: 'JetBrains Mono', monospace;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-data: 'JetBrains Mono', monospace;
+}

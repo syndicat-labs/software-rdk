@@ -1,0 +1,171 @@
+// ─── Gokul ─────────────────────────────────────────────────────────────────────
+// Ops-terminal design language — square geometry, flat ink surfaces, hairlines
+// as boundaries, one paper figure per view. See design-language.ts.
+//
+// L0 --gok-* tokens are private. They are valid ONLY inside this block; any
+// component reading them breaks under every other language. The block below
+// bridges them onto the full L1 contract.
+
+[data-theme="gokul"] {
+
+  // ── L0 · Private primitives ─────────────────────────────────────────────────
+  // Ink ramp — the canvas recedes so the figure advances. Not pure black:
+  // pure black traps sub-pixel text rendering on dark surfaces.
+  --gok-ink-950:   #0a0a0d;
+  --gok-ink-900:   #0e0e11;
+  --gok-ink-850:   #17171c;
+  --gok-ink-800:   #202027;
+  --gok-ink-750:   #2b2b33;
+  --gok-ink-700:   #3c3c46;
+  --gok-ink-500:   #87868c;
+  --gok-ink-300:   #b6b5ad;
+  --gok-ink-100:   #d6d5ce;
+  --gok-ink-50:    #f2f1ec;
+
+  // Status ramps — desaturated, confined to badges (functionalColorContainment:
+  // badge-only). Text tones are bright enough to read on both ink surfaces and
+  // the dark-tinted status grounds.
+  --gok-success-300: #7adead;  --gok-success-600: #1e7d48;  --gok-success-subtle: #123524;
+  --gok-warning-300: #e8c76a;  --gok-warning-600: #a8841f;  --gok-warning-subtle: #3a2c10;
+  --gok-danger-300:  #f09797;  --gok-danger-600:  #b3261e;  --gok-danger-subtle:  #3a1111;
+  --gok-info-300:    #9cd0ef;  --gok-info-600:    #1c5c8a;  --gok-info-subtle:    #102737;
+
+  // Elevation — flat language: no lift, boundaries are hairlines.
+  --gok-elevation-shadows: none;
+
+  // ── L1 · Contract bridge ────────────────────────────────────────────────────
+
+  // Text — lightest ink on the darkest ground; colour is never a rank signal
+  // (colorRole: functional-only).
+  --color-text-primary:    var(--gok-ink-50);
+  --color-text-secondary:  var(--gok-ink-300);
+  --color-text-muted:      #8b8a90;
+  --color-text-disabled:   var(--gok-ink-700);
+  --color-text-inverse:    var(--gok-ink-900);
+  --color-text-brand:      var(--gok-ink-100);
+  --color-text-danger:     var(--gok-danger-300);
+  --color-text-success:    var(--gok-success-300);
+  --color-text-warning:    var(--gok-warning-300);
+  --color-text-info:       var(--gok-info-300);
+
+  // Backgrounds — ink well: base recedes, paper is reserved for the featured
+  // figure (named pattern: Ink Well).
+  --color-bg-base:         var(--gok-ink-900);
+  --color-bg-surface:      var(--gok-ink-850);
+  --color-bg-elevated:     var(--gok-ink-800);
+  --color-bg-sunken:       var(--gok-ink-950);
+  --color-bg-overlay:      rgb(0 0 0 / 0.6);
+  --color-bg-brand:        var(--gok-ink-50);
+  --color-bg-brand-subtle: var(--gok-ink-800);
+  --color-bg-danger:       var(--gok-danger-600);
+  --color-bg-danger-subtle:  var(--gok-danger-subtle);
+  --color-bg-success:      var(--gok-success-600);
+  --color-bg-success-subtle: var(--gok-success-subtle);
+  --color-bg-warning:      var(--gok-warning-600);
+  --color-bg-warning-subtle: var(--gok-warning-subtle);
+  --color-bg-info:         var(--gok-info-600);
+  --color-bg-info-subtle:  var(--gok-info-subtle);
+
+  // Borders — Hairline Rule: a true-colour hairline; a heavier rule means a
+  // real boundary (surfaceBoundary: border).
+  --color-border-default:  var(--gok-ink-750);
+  --color-border-strong:   var(--gok-ink-700);
+  --color-border-muted:    var(--gok-ink-850);
+  --color-border-brand:    var(--gok-ink-50);
+  --color-border-danger:   var(--gok-danger-600);
+  --color-border-success:  var(--gok-success-600);
+  --color-border-warning:  var(--gok-warning-600);
+  --color-border-info:     var(--gok-info-600);
+  --color-border-focus:    var(--gok-ink-50);
+
+  // Interactive states — terminal focus is a paper band on ink, never decorative.
+  --color-hover-overlay:    rgb(242 241 236 / 0.05);
+  --color-active-overlay:   rgb(242 241 236 / 0.09);
+  --color-focus-ring:       var(--gok-ink-50);
+  --color-focus-ring-width: 2px;
+  --color-focus-ring-offset: 2px;
+  --color-focus-ring-glow:  rgb(242 241 236 / 0.15);
+
+  // Status semantic aliases
+  --color-status-success-bg:     var(--color-bg-success-subtle);
+  --color-status-success-border: var(--color-border-success);
+  --color-status-success-text:   var(--color-text-success);
+  --color-status-success-icon:   var(--gok-success-600);
+
+  --color-status-warning-bg:     var(--color-bg-warning-subtle);
+  --color-status-warning-border: var(--color-border-warning);
+  --color-status-warning-text:   var(--color-text-warning);
+  --color-status-warning-icon:   var(--gok-warning-600);
+
+  --color-status-danger-bg:      var(--color-bg-danger-subtle);
+  --color-status-danger-border:  var(--color-border-danger);
+  --color-status-danger-text:    var(--color-text-danger);
+  --color-status-danger-icon:    var(--gok-danger-600);
+
+  --color-status-info-bg:        var(--color-bg-info-subtle);
+  --color-status-info-border:    var(--color-border-info);
+  --color-status-info-text:      var(--color-text-info);
+  --color-status-info-icon:      var(--gok-info-600);
+
+  // Semantic spacing — density: high. Ops density is earned (spaceAllocation:
+  // earned-by-importance); compact rows fit more state.
+  --space-component-xs: var(--space-0-5);
+  --space-component-sm: var(--space-1);
+  --space-component-md: var(--space-2);
+  --space-component-lg: var(--space-3);
+  --space-layout-xs:    var(--space-3);
+  --space-layout-sm:    var(--space-4);
+  --space-layout-md:    var(--space-6);
+  --space-layout-lg:    var(--space-8);
+
+  // Semantic radii — cornerPhilosophy: square. The terminal and the print
+  // column share square corners; no geometry rounds the data.
+  --radius-component: 0px;
+  --radius-surface:   0px;
+  --radius-pill:      0px;
+
+  // Navigation surface — same ink well, one tone darker than the page.
+  --color-nav-texture:          none;
+  --color-nav-bg:               var(--gok-ink-950);
+  --color-nav-text:             var(--gok-ink-300);
+  --color-nav-text-active:      var(--gok-ink-50);
+  --color-nav-text-subtle:      var(--gok-ink-500);
+  --color-nav-brand-gradient:   linear-gradient(180deg, var(--gok-ink-50), var(--gok-ink-300));
+  --color-nav-active-bg:        rgb(242 241 236 / 0.08);
+  --color-nav-active-indicator: var(--gok-ink-50);
+  --color-nav-icon-active:      var(--gok-ink-50);
+  --color-nav-icon-active-bg:   rgb(242 241 236 / 0.12);
+  --color-nav-icon-hover-bg:    rgb(242 241 236 / 0.06);
+  --color-nav-avatar-bg:        var(--gok-ink-750);
+
+  // Featured surface — lifted paper, reserved for the one Display Figure per
+  // view (emphasisSurfaceBudget: 1). Ink on paper: dark figure, paper ground.
+  --color-surface-featured:        var(--gok-ink-50);
+  --color-surface-featured-border: var(--gok-ink-700);
+  --color-surface-featured-text:   var(--gok-ink-900);
+  --color-surface-featured-muted:  rgb(14 14 17 / 0.62);
+
+  // Elevation — depthModel: flat. Separation is ink tone and hairline; no lift.
+  --elevation-raised:  none;
+  --elevation-float:   none;
+  --elevation-overlay: none;
+
+  // ── Component token bridge ───────────────────────────────────────────────────
+  --card-bg:                    var(--color-bg-surface);
+  --card-border:                1px solid var(--color-border-default);
+  --card-radius:                var(--radius-surface);
+  --card-shadow:                none;
+  --card-shadow-elevated:       none;
+
+  --spinner-fill-color:         var(--gok-ink-50);
+  --check-checked-bg:           var(--gok-ink-50);
+  --check-checked-border:       var(--gok-ink-50);
+  --toggle-track-on:            var(--gok-ink-50);
+
+  // Typography — typeRoleAssignment: Montserrat at display scale, Inter as the
+  // neutral wire, JetBrains Mono stating the figures.
+  --font-display: 'Montserrat', sans-serif;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-data: 'JetBrains Mono', monospace;
+}

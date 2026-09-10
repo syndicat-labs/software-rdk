@@ -1,0 +1,165 @@
+// ─── Noir ──────────────────────────────────────────────────────────────────────
+// Variant of Paper — night reading. Warm-desaturated, the acid-yellow accent
+// collapses to white, paper layers remain as dark sheets. Shares the --oh-*
+// namespace with its parent per protocol §7 (registry: noir.variantOf = paper).
+// See design-language.ts.
+//
+// The block below bridges them onto the full L1 contract.
+
+[data-theme="noir"] {
+
+  // ── L0 · Private primitives ─────────────────────────────────────────────────
+  // Warm night ink ramp — base is a warm ink; surfaces step up one tone at a
+  // time, never to pure black (named pattern: Warm Night Ground).
+  --oh-night-950:   #161310;
+  --oh-night-900:   #1d1a15;
+  --oh-night-850:   #26221c;
+  --oh-night-800:   #302a22;
+  --oh-night-700:   #3a342b;
+  --oh-night-500:   #6b6251;
+  --oh-warm-400:    #9d9482;
+  --oh-warm-300:    #b4ac9b;
+  --oh-warm-100:    #d6cdbb;
+  --oh-warm-50:     #e9e4d8;
+
+  // Status ramps — warm-desaturated at night; text tones read on both the night
+  // surfaces and the tinted grounds.
+  --oh-success-300: #8fd9ac;  --oh-success-600: #2a8f58;  --oh-success-subtle: #1c2b21;
+  --oh-warning-300: #e2c37a;  --oh-warning-600: #a8841f;  --oh-warning-subtle: #2e2513;
+  --oh-danger-300:  #eda1a1;  --oh-danger-600:  #b3261e;  --oh-danger-subtle:  #301a1a;
+  --oh-info-300:    #a3c4de;  --oh-info-600:    #2b5a83;  --oh-info-subtle:    #162330;
+
+  // ── L1 · Contract bridge ────────────────────────────────────────────────────
+
+  // Text — the paper hierarchy left after the highlight collapses: identity in
+  // weight and scale, never colour (colorInHierarchy: excluded).
+  --color-text-primary:    var(--oh-warm-50);
+  --color-text-secondary:  var(--oh-warm-300);
+  --color-text-muted:      var(--oh-warm-400);
+  --color-text-disabled:   var(--oh-night-500);
+  --color-text-inverse:    var(--oh-night-900);
+  --color-text-brand:      var(--oh-warm-100);
+  --color-text-danger:     var(--oh-danger-300);
+  --color-text-success:    var(--oh-success-300);
+  --color-text-warning:    var(--oh-warning-300);
+  --color-text-info:       var(--oh-info-300);
+
+  // Backgrounds — warm ink sheets, adjacent not stacked.
+  --color-bg-base:         var(--oh-night-900);
+  --color-bg-surface:      var(--oh-night-850);
+  --color-bg-elevated:     var(--oh-night-800);
+  --color-bg-sunken:       var(--oh-night-950);
+  --color-bg-overlay:      rgb(0 0 0 / 0.55);
+  --color-bg-brand:        var(--oh-warm-50);
+  --color-bg-brand-subtle: var(--oh-night-800);
+  --color-bg-danger:       var(--oh-danger-600);
+  --color-bg-danger-subtle:  var(--oh-danger-subtle);
+  --color-bg-success:      var(--oh-success-600);
+  --color-bg-success-subtle: var(--oh-success-subtle);
+  --color-bg-warning:      var(--oh-warning-600);
+  --color-bg-warning-subtle: var(--oh-warning-subtle);
+  --color-bg-info:         var(--oh-info-600);
+  --color-bg-info-subtle:  var(--oh-info-subtle);
+
+  // Borders — the Newsprint Column carries into the dark, unchanged: sheets
+  // still separate by rule (surfaceBoundary: border).
+  --color-border-default:  var(--oh-night-700);
+  --color-border-strong:   var(--oh-night-500);
+  --color-border-muted:    var(--oh-night-850);
+  --color-border-brand:    var(--oh-warm-50);
+  --color-border-danger:   var(--oh-danger-600);
+  --color-border-success:  var(--oh-success-600);
+  --color-border-warning:  var(--oh-warning-600);
+  --color-border-info:     var(--oh-info-600);
+  --color-border-focus:    var(--oh-warm-50);
+
+  // Interactive states — white focus band at night.
+  --color-hover-overlay:    rgb(233 228 216 / 0.05);
+  --color-active-overlay:   rgb(233 228 216 / 0.10);
+  --color-focus-ring:       var(--oh-warm-50);
+  --color-focus-ring-width: 2px;
+  --color-focus-ring-offset: 2px;
+  --color-focus-ring-glow:  rgb(233 228 216 / 0.12);
+
+  // Status semantic aliases
+  --color-status-success-bg:     var(--color-bg-success-subtle);
+  --color-status-success-border: var(--color-border-success);
+  --color-status-success-text:   var(--color-text-success);
+  --color-status-success-icon:   var(--oh-success-600);
+
+  --color-status-warning-bg:     var(--color-bg-warning-subtle);
+  --color-status-warning-border: var(--color-border-warning);
+  --color-status-warning-text:   var(--color-text-warning);
+  --color-status-warning-icon:   var(--oh-warning-600);
+
+  --color-status-danger-bg:      var(--color-bg-danger-subtle);
+  --color-status-danger-border:  var(--color-border-danger);
+  --color-status-danger-text:    var(--color-text-danger);
+  --color-status-danger-icon:    var(--oh-danger-600);
+
+  --color-status-info-bg:        var(--color-bg-info-subtle);
+  --color-status-info-border:    var(--color-border-info);
+  --color-status-info-text:      var(--color-text-info);
+  --color-status-info-icon:      var(--oh-info-600);
+
+  // Semantic spacing — inherited from paper: even night rhythm, no compaction
+  // of furniture (density: comfortable, spaceAllocation: even-rhythm).
+  --space-component-xs: var(--space-1);
+  --space-component-sm: var(--space-2);
+  --space-component-md: var(--space-3);
+  --space-component-lg: var(--space-5);
+  --space-layout-xs:    var(--space-5);
+  --space-layout-sm:    var(--space-8);
+  --space-layout-md:    var(--space-12);
+  --space-layout-lg:    var(--space-16);
+
+  // Semantic radii — inherited from paper: uniform, small corners.
+  --radius-component: 2px;
+  --radius-surface:   2px;
+  --radius-pill:      var(--radius-full);
+
+  // Navigation surface — one step warmer-darker than the page.
+  --color-nav-texture:          none;
+  --color-nav-bg:               var(--oh-night-950);
+  --color-nav-text:             var(--oh-warm-300);
+  --color-nav-text-active:      var(--oh-warm-50);
+  --color-nav-text-subtle:      var(--oh-warm-400);
+  --color-nav-brand-gradient:   linear-gradient(180deg, var(--oh-warm-50), var(--oh-warm-300));
+  --color-nav-active-bg:        rgb(233 228 216 / 0.08);
+  --color-nav-active-indicator: var(--oh-warm-50);
+  --color-nav-icon-active:      var(--oh-warm-50);
+  --color-nav-icon-active-bg:   rgb(233 228 216 / 0.12);
+  --color-nav-icon-hover-bg:    rgb(233 228 216 / 0.06);
+  --color-nav-avatar-bg:        var(--oh-night-700);
+
+  // Featured surface — the White Highlighter: warm-white on warm-ink, no hue
+  // allowed back (emphasisSurfaceBudget: 1).
+  --color-surface-featured:        var(--oh-warm-50);
+  --color-surface-featured-border: var(--oh-night-500);
+  --color-surface-featured-text:   var(--oh-night-900);
+  --color-surface-featured-muted:  rgb(29 26 21 / 0.65);
+
+  // Elevation — flat, as on paper.
+  --elevation-raised:  none;
+  --elevation-float:   none;
+  --elevation-overlay: none;
+
+  // ── Component token bridge ───────────────────────────────────────────────────
+  --card-bg:                    var(--color-bg-surface);
+  --card-border:                1px solid var(--color-border-default);
+  --card-radius:                var(--radius-surface);
+  --card-shadow:                none;
+  --card-shadow-elevated:       none;
+
+  --spinner-fill-color:         var(--oh-warm-50);
+  --check-checked-bg:           var(--oh-warm-50);
+  --check-checked-border:       var(--oh-warm-50);
+  --toggle-track-on:            var(--oh-warm-50);
+
+  // Typography — faces inherited from paper; the night deviation lives in
+  // surfaces, not in type (typeRoleAssignment inherited).
+  --font-display: 'Montserrat', sans-serif;
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body:    'Plus Jakarta Sans', sans-serif;
+  --font-data: 'JetBrains Mono', monospace;
+}

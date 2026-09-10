@@ -136,34 +136,31 @@ const TRANSACTIONS: Transaction[] = [
   `,
   styles: [`
     .tx-page {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: var(--space-component-lg);
     }
 
-    // ── Balance strip ─────────────────────────────────────────────────────────
     .tx-page__balances {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
+      gap: var(--space-layout-xs);
     }
 
     .bal-card {
-      background: #FFFFFF;
-      border-radius: 14px;
-      padding: 1.25rem 1.5rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-surface);
+      padding: var(--space-component-lg) var(--space-layout-sm);
+      box-shadow: var(--elevation-raised);
       display: flex;
       flex-direction: column;
-      gap: 0.375rem;
-
+      gap: var(--space-component-xs);
       &--dark {
-        background: #111111;
-
-        .bal-card__label { color: #555555; }
-        .bal-card__value { color: #FFFFFF; }
-        .bal-card__sub   { color: #555555; }
+        background: var(--color-surface-featured);
+        .bal-card__label { color: var(--color-surface-featured-muted); }
+        .bal-card__value { color: var(--color-surface-featured-text); }
+        .bal-card__sub   { color: var(--color-surface-featured-muted); }
       }
     }
 
@@ -172,29 +169,28 @@ const TRANSACTIONS: Transaction[] = [
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.07em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
 
     .bal-card__value {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 1.625rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
       letter-spacing: -0.03em;
       line-height: 1;
     }
 
     .bal-card__sub {
       font-size: 0.75rem;
-      color: #AAAAAA;
-      margin-top: 0.125rem;
+      color: var(--color-text-muted);
+      margin-top: var(--space-component-xs);
     }
 
-    // ── Toolbar ───────────────────────────────────────────────────────────────
     .tx-page__toolbar {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: var(--space-layout-xs);
       flex-wrap: wrap;
     }
 
@@ -206,81 +202,77 @@ const TRANSACTIONS: Transaction[] = [
 
     .tx-search__icon {
       position: absolute;
-      left: 0.875rem;
+      left: var(--space-component-md);
       top: 50%;
       transform: translateY(-50%);
       font-size: 0.8125rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
       pointer-events: none;
     }
 
     .tx-search__input {
       width: 100%;
       height: 2.5rem;
-      padding: 0 1rem 0 2.375rem;
-      font-family: 'Inter', sans-serif;
+      padding: 0 var(--space-layout-xs) 0 var(--space-layout-sm);
+      font-family: var(--font-body);
       font-size: 0.875rem;
-      color: #111111;
-      background: #FFFFFF;
-      border: 1px solid #E0E0E0;
-      border-radius: 9999px;
+      color: var(--color-text-primary);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-pill);
       outline: none;
       box-sizing: border-box;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
-
-      &::placeholder { color: #AAAAAA; }
+      &::placeholder { color: var(--color-text-muted); }
       &:focus {
-        border-color: #111111;
-        box-shadow: 0 0 0 3px rgba(17,17,17,0.06);
+        border-color: var(--color-border-focus);
+        box-shadow: 0 0 0 var(--color-focus-ring-width) var(--color-focus-ring-glow);
       }
     }
 
     .tx-filters {
       display: flex;
-      gap: 0.375rem;
+      gap: var(--space-component-xs);
     }
 
     .tx-filter {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       font-size: 0.8125rem;
       font-weight: 500;
-      color: #6B6B6B;
-      background: #FFFFFF;
-      border: 1px solid #E0E0E0;
-      border-radius: 9999px;
-      padding: 0.375rem 0.875rem;
+      color: var(--color-text-muted);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-pill);
+      padding: var(--space-component-xs) var(--space-component-md);
       cursor: pointer;
       text-transform: capitalize;
       transition: all 0.15s ease;
-
-      &:hover:not(&--active) { border-color: #AAAAAA; color: #111111; }
-
+      &:hover:not(&--active) { border-color: var(--color-border-strong); color: var(--color-text-primary); }
       &--active {
-        background: #111111;
-        color: #FFFFFF;
-        border-color: #111111;
+        background: var(--color-surface-featured);
+        color: var(--color-surface-featured-text);
+        border-color: var(--color-surface-featured);
       }
     }
 
-    // ── Grouped transactions ──────────────────────────────────────────────────
     .tx-table-wrap {
-      background: #FFFFFF;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-surface);
+      box-shadow: var(--elevation-raised);
       overflow: hidden;
     }
 
     .tx-group {
-      & + & { border-top: 1px solid #F0F0F0; }
+      & + & { border-top: 1px solid var(--color-border-muted); }
     }
 
     .tx-group__header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.625rem 1.25rem;
-      background: #FAFAFA;
-      border-bottom: 1px solid #F0F0F0;
+      padding: var(--space-component-sm) var(--space-component-lg);
+      background: var(--color-bg-sunken);
+      border-bottom: 1px solid var(--color-border-muted);
     }
 
     .tx-group__date {
@@ -288,114 +280,102 @@ const TRANSACTIONS: Transaction[] = [
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.07em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
 
     .tx-group__net {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.75rem;
       font-weight: 700;
-      color: #AAAAAA;
-
-      &--pos { color: #15803d; }
+      color: var(--color-text-muted);
+      &--pos { color: var(--color-text-success); }
     }
 
-    // ── Table ─────────────────────────────────────────────────────────────────
     .tx-table {
       width: 100%;
       border-collapse: collapse;
     }
 
     .tx-table__row {
-      border-bottom: 1px solid #F8F8F8;
+      border-bottom: 1px solid var(--color-border-muted);
       transition: background 0.1s ease;
-
       &:last-child { border-bottom: none; }
-      &:hover { background: #FAFAFA; }
+      &:hover { background: var(--color-bg-sunken); }
     }
 
     .tx-table__td {
-      padding: 0.875rem 1.25rem;
+      padding: var(--space-component-md) var(--space-component-lg);
       vertical-align: middle;
-
       &--id   { width: 8rem; }
       &--time { width: 4rem; white-space: nowrap; }
-      &--desc { }
       &--amount { text-align: right; white-space: nowrap; }
     }
 
     .tx-id {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.75rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
 
     .tx-table__td--time {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.75rem;
-      color: #CCCCCC;
+      color: var(--color-border-default);
     }
 
     .tx-desc {
       display: block;
       font-size: 0.875rem;
       font-weight: 500;
-      color: #111111;
+      color: var(--color-text-primary);
     }
 
     .tx-ref {
       display: block;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.6875rem;
-      color: #CCCCCC;
-      margin-top: 0.125rem;
+      color: var(--color-border-default);
+      margin-top: var(--space-component-xs);
     }
 
-    // ── Type badge ────────────────────────────────────────────────────────────
     .tx-type-badge {
       display: inline-flex;
       align-items: center;
-      padding: 0.1875rem 0.5625rem;
-      border-radius: 9999px;
+      padding: var(--space-component-xs) var(--space-component-sm);
+      border-radius: var(--radius-pill);
       font-size: 0.6875rem;
       font-weight: 600;
       letter-spacing: 0.02em;
       text-transform: capitalize;
-
-      &--payment { background: #EBEBEB; color: #111111; }
-      &--refund  { background: #fee2e2; color: #b91c1c; }
-      &--payout  { background: #eff6ff; color: #1d4ed8; }
-      &--fee     { background: #fef9c3; color: #a16207; }
+      &--payment { background: var(--color-bg-sunken); color: var(--color-text-primary); }
+      &--refund  { background: var(--color-status-danger-bg); color: var(--color-status-danger-text); border: 1px solid var(--color-status-danger-border); }
+      &--payout  { background: var(--color-status-info-bg); color: var(--color-status-info-text); border: 1px solid var(--color-status-info-border); }
+      &--fee     { background: var(--color-status-warning-bg); color: var(--color-status-warning-text); border: 1px solid var(--color-status-warning-border); }
     }
 
-    // ── Status ────────────────────────────────────────────────────────────────
     .tx-status {
       font-size: 0.75rem;
       font-weight: 500;
       text-transform: capitalize;
-
-      &--completed { color: #AAAAAA; }
-      &--pending   { color: #a16207; }
-      &--failed    { color: #b91c1c; }
+      &--completed { color: var(--color-text-muted); }
+      &--pending   { color: var(--color-text-warning); }
+      &--failed    { color: var(--color-text-danger); }
     }
 
-    // ── Amount ────────────────────────────────────────────────────────────────
     .tx-amount {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.9375rem;
       font-weight: 700;
       letter-spacing: -0.01em;
-
-      &--credit { color: #111111; }
-      &--debit  { color: #AAAAAA; }
+      &--credit { color: var(--color-text-primary); }
+      &--debit  { color: var(--color-text-muted); }
     }
 
-    // ── Empty ─────────────────────────────────────────────────────────────────
     .tx-empty {
-      padding: 3rem;
+      padding: var(--space-layout-md);
       text-align: center;
       font-size: 0.875rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
   `],
 })

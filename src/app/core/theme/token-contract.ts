@@ -38,6 +38,29 @@ export const THEME_REGISTRY = [
     description:
       'Luminous warm-neutral language — expressive colour, elevation rhythm, comfortable density',
   },
+  {
+    id: 'gokul',
+    label: 'Gokul',
+    description:
+      'Ops-terminal language — square geometry, flat surfaces, borders as boundaries, high density',
+  },
+  {
+    id: 'paper',
+    label: 'Paper',
+    description:
+      'Printed-material language — warm cream paper, acid-yellow highlight, comfortable density',
+  },
+  {
+    id: 'noir',
+    label: 'Noir',
+    description: 'Warm-dark variant of Paper — ink blacks, white accent, functional-only colour',
+  },
+  {
+    id: 'launchline-obsidian',
+    label: 'Launchline Obsidian',
+    description:
+      'Terminal-flavoured variant of Obsidian — unrestrained monospace, compact density, flat elevation',
+  },
 ] as const satisfies readonly ThemeDefinition[];
 
 export type ThemeId = typeof THEME_REGISTRY[number]['id'];

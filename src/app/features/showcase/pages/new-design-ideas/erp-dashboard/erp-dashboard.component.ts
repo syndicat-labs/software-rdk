@@ -115,13 +115,12 @@ interface RecentOrder {
   `,
   styles: [`
     .erp-dash {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: var(--space-layout-sm);
     }
 
-    // ── Intro ─────────────────────────────────────────────────────────────────
     .erp-dash__intro {
       display: flex;
       align-items: flex-end;
@@ -129,64 +128,61 @@ interface RecentOrder {
     }
 
     .erp-dash__greeting {
-      margin: 0 0 0.25rem;
-      font-family: 'Montserrat', sans-serif;
+      margin: 0 0 var(--space-component-xs);
+      font-family: var(--font-heading);
       font-weight: 800;
       font-size: 1.75rem;
       letter-spacing: -0.03em;
       font-stretch: condensed;
-      color: #111111;
+      color: var(--color-text-primary);
       line-height: 1;
     }
 
     .erp-dash__date {
       margin: 0;
       font-size: 0.8125rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
     }
 
     .erp-dash__report-btn {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       font-size: 0.875rem;
       font-weight: 600;
-      color: #111111;
-      background: #FFFFFF;
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: 9999px;
-      padding: 0.5rem 1.25rem;
+      color: var(--color-text-primary);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-muted);
+      border-radius: var(--radius-pill);
+      padding: var(--space-component-sm) var(--space-component-lg);
       cursor: pointer;
       transition: background 0.15s ease, box-shadow 0.15s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-
+      box-shadow: var(--elevation-raised);
       &:hover {
-        background: #F5F5F5;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        background: var(--color-bg-sunken);
+        box-shadow: var(--elevation-float);
       }
     }
 
-    // ── KPI cards ─────────────────────────────────────────────────────────────
     .erp-dash__kpis {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
+      gap: var(--space-layout-xs);
     }
 
     .kpi-card {
-      background: #FFFFFF;
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-surface);
+      padding: var(--space-layout-sm);
+      box-shadow: var(--elevation-raised);
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
 
     .kpi-card--dark {
-      background: #111111;
-
-      .kpi-card__label  { color: #AAAAAA; }
-      .kpi-card__value  { color: #FFFFFF; }
-      .kpi-card__unit   { color: #AAAAAA; }
+      background: var(--color-surface-featured);
+      .kpi-card__label  { color: var(--color-surface-featured-muted); }
+      .kpi-card__value  { color: var(--color-surface-featured-text); }
+      .kpi-card__unit   { color: var(--color-surface-featured-muted); }
     }
 
     .kpi-card__label {
@@ -194,20 +190,20 @@ interface RecentOrder {
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
     }
 
     .kpi-card__value-row {
       display: flex;
       align-items: baseline;
-      gap: 0.25rem;
+      gap: var(--space-component-xs);
     }
 
     .kpi-card__value {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 2rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
       letter-spacing: -0.03em;
       line-height: 1;
     }
@@ -215,30 +211,27 @@ interface RecentOrder {
     .kpi-card__unit {
       font-size: 0.875rem;
       font-weight: 500;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
     }
 
     .kpi-card__delta {
       font-size: 0.75rem;
       font-weight: 500;
-
-      &--up   { color: #16a34a; }
-      &--down { color: #dc2626; }
+      &--up   { color: var(--color-text-success); }
+      &--down { color: var(--color-text-danger); }
     }
 
-    // ── Body layout ───────────────────────────────────────────────────────────
     .erp-dash__body {
       display: grid;
       grid-template-columns: 1fr 18rem;
-      gap: 1rem;
+      gap: var(--space-layout-xs);
       align-items: start;
     }
 
-    // ── Panel ─────────────────────────────────────────────────────────────────
     .erp-dash__panel {
-      background: #FFFFFF;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-surface);
+      box-shadow: var(--elevation-raised);
       overflow: hidden;
     }
 
@@ -246,83 +239,75 @@ interface RecentOrder {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1.125rem 1.5rem;
-      border-bottom: 1px solid #EBEBEB;
+      padding: var(--space-component-lg) var(--space-layout-sm);
+      border-bottom: 1px solid var(--color-border-muted);
     }
 
     .erp-dash__panel-title {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
       letter-spacing: -0.01em;
     }
 
     .erp-dash__panel-link {
       font-size: 0.8125rem;
       font-weight: 500;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       text-decoration: none;
-
-      &:hover { color: #111111; }
+      &:hover { color: var(--color-text-primary); }
     }
 
-    // ── Table ─────────────────────────────────────────────────────────────────
     .erp-table {
       width: 100%;
       border-collapse: collapse;
     }
 
     .erp-table__th {
-      padding: 0.625rem 1.5rem;
+      padding: var(--space-component-sm) var(--space-layout-sm);
       font-size: 0.6875rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
       text-align: left;
-      background: #FAFAFA;
-      border-bottom: 1px solid #EBEBEB;
-
+      background: var(--color-bg-sunken);
+      border-bottom: 1px solid var(--color-border-muted);
       &--right { text-align: right; }
     }
 
     .erp-table__row {
-      border-bottom: 1px solid #F5F5F5;
-
+      border-bottom: 1px solid var(--color-border-muted);
       &:last-child { border-bottom: none; }
-      &:hover { background: #FAFAFA; }
+      &:hover { background: var(--color-bg-sunken); }
     }
 
     .erp-table__td {
-      padding: 0.875rem 1.5rem;
+      padding: var(--space-component-md) var(--space-layout-sm);
       font-size: 0.875rem;
-      color: #2A2A2A;
-
-      &--mono  { font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; color: #111111; }
-      &--muted { color: #AAAAAA; }
+      color: var(--color-text-primary);
+      &--mono  { font-family: var(--font-data); font-size: 0.8125rem; color: var(--color-text-primary); }
+      &--muted { color: var(--color-text-muted); }
       &--right { text-align: right; }
     }
 
-    // ── Status badges ─────────────────────────────────────────────────────────
     .status-badge {
       display: inline-flex;
       align-items: center;
-      padding: 0.1875rem 0.625rem;
-      border-radius: 9999px;
+      padding: var(--space-component-xs) var(--space-component-md);
+      border-radius: var(--radius-pill);
       font-size: 0.6875rem;
       font-weight: 600;
       text-transform: capitalize;
       letter-spacing: 0.02em;
-
-      &--fulfilled  { background: #dcfce7; color: #15803d; }
-      &--pending    { background: #fef9c3; color: #a16207; }
-      &--processing { background: #EBEBEB; color: #4A4A4A; }
-      &--cancelled  { background: #fee2e2; color: #b91c1c; }
+      &--fulfilled  { background: var(--color-status-success-bg); color: var(--color-status-success-text); border: 1px solid var(--color-status-success-border); }
+      &--pending    { background: var(--color-status-warning-bg); color: var(--color-status-warning-text); border: 1px solid var(--color-status-warning-border); }
+      &--processing { background: var(--color-bg-sunken); color: var(--color-text-secondary); }
+      &--cancelled  { background: var(--color-status-danger-bg); color: var(--color-status-danger-text); border: 1px solid var(--color-status-danger-border); }
     }
 
-    // ── Activity feed ─────────────────────────────────────────────────────────
     .activity-feed {
-      padding: 0.75rem 1.25rem;
+      padding: var(--space-component-md) var(--space-component-lg);
       display: flex;
       flex-direction: column;
       gap: 0;
@@ -330,11 +315,10 @@ interface RecentOrder {
 
     .activity-item {
       display: flex;
-      gap: 0.875rem;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid #F5F5F5;
+      gap: var(--space-component-md);
+      padding: var(--space-component-md) 0;
+      border-bottom: 1px solid var(--color-border-muted);
       align-items: flex-start;
-
       &:last-child { border-bottom: none; }
     }
 
@@ -343,30 +327,29 @@ interface RecentOrder {
       height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
-      margin-top: 0.3125rem;
-
-      &--order    { background: #111111; }
-      &--invoice  { background: #16a34a; }
-      &--customer { background: #6B6B6B; }
-      &--stock    { background: #dc2626; }
+      margin-top: var(--space-component-xs);
+      &--order    { background: var(--color-text-primary); }
+      &--invoice  { background: var(--color-text-success); }
+      &--customer { background: var(--color-text-muted); }
+      &--stock    { background: var(--color-text-danger); }
     }
 
     .activity-item__body {
       display: flex;
       flex-direction: column;
-      gap: 0.125rem;
+      gap: var(--space-component-xs);
       min-width: 0;
     }
 
     .activity-item__action {
       font-size: 0.8125rem;
       font-weight: 600;
-      color: #111111;
+      color: var(--color-text-primary);
     }
 
     .activity-item__subject {
       font-size: 0.8125rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -374,8 +357,8 @@ interface RecentOrder {
 
     .activity-item__time {
       font-size: 0.6875rem;
-      color: #AAAAAA;
-      margin-top: 0.125rem;
+      color: var(--color-text-muted);
+      margin-top: var(--space-component-xs);
     }
   `],
 })

@@ -1,0 +1,173 @@
+// ─── Paper ─────────────────────────────────────────────────────────────────────
+// Print-material design language — warm paper before screen, acid-yellow
+// highlight on newsprint, hairline column rules, typographic hierarchy.
+// See design-language.ts.
+//
+// L0 --oh-* tokens are private. paper and noir (its variant) SHARE this
+// namespace per protocol §7 (registry: noir.variantOf = paper).
+// The block below bridges them onto the full L1 contract.
+
+[data-theme="paper"] {
+
+  // ── L0 · Private primitives ─────────────────────────────────────────────────
+  // Warm cream paper ramp — paper is warm or it is blank (refused: cool grey).
+  --oh-paper-0:     #fffdf8;
+  --oh-paper-10:    #faf6ee;
+  --oh-paper-20:    #f3edde;
+  --oh-paper-30:    #e9e0cc;
+  --oh-paper-40:    #dcd2bb;
+  --oh-ink-300:     #8a7d63;
+  --oh-ink-400:     #6b604c;
+  --oh-ink-500:     #4d4332;
+  --oh-ink-700:     #3a2e1f;
+  --oh-ink-900:     #241c12;
+
+  // Brand — the acid highlighter is the signature hue; nothing else shares it
+  // (colorRole: brand-led). Olive leaf carries the non-highlight functional
+  // brand work: links, focus, borders.
+  --oh-acid-400:    #d9f00a;
+  --oh-acid-900:    #241c12;
+  --oh-leaf-500:    #4d5a0b;
+  --oh-leaf-subtle: #f6f9c8;
+
+  // Status ramps — 700-level text on 50-level grounds (same construction as
+  // evolute), warmed to the paper.
+  --oh-success-700: #047857;  --oh-success-500: #0e8a5f;  --oh-success-subtle: #e7f4ea;
+  --oh-warning-700: #ab4f09;  --oh-warning-500: #c46a0c;  --oh-warning-subtle: #fbebd6;
+  --oh-danger-700:  #b82318;  --oh-danger-500:  #d23f30;  --oh-danger-subtle:  #f9e2de;
+  --oh-info-700:    #1d4ed8;  --oh-info-500:    #2b5ee0;  --oh-info-subtle:    #dfe9f4;
+
+  // ── L1 · Contract bridge ────────────────────────────────────────────────────
+
+  // Text — ink accounting; rank lives in weight and scale, not colour.
+  --color-text-primary:    var(--oh-ink-900);
+  --color-text-secondary:  var(--oh-ink-500);
+  --color-text-muted:      var(--oh-ink-400);
+  --color-text-disabled:   var(--oh-paper-40);
+  --color-text-inverse:    var(--oh-acid-900);
+  --color-text-brand:      var(--oh-leaf-500);
+  --color-text-danger:     var(--oh-danger-700);
+  --color-text-success:    var(--oh-success-700);
+  --color-text-warning:    var(--oh-warning-700);
+  --color-text-info:       var(--oh-info-700);
+
+  // Backgrounds — warm paper sheets, adjacent not stacked (depthModel: flat).
+  --color-bg-base:         var(--oh-paper-10);
+  --color-bg-surface:      var(--oh-paper-0);
+  --color-bg-elevated:     var(--oh-paper-20);
+  --color-bg-sunken:       var(--oh-paper-30);
+  --color-bg-overlay:      rgb(36 28 18 / 0.4);
+  --color-bg-brand:        var(--oh-acid-400);
+  --color-bg-brand-subtle: var(--oh-leaf-subtle);
+  --color-bg-danger:       var(--oh-danger-500);
+  --color-bg-danger-subtle:  var(--oh-danger-subtle);
+  --color-bg-success:      var(--oh-success-500);
+  --color-bg-success-subtle: var(--oh-success-subtle);
+  --color-bg-warning:      var(--oh-warning-500);
+  --color-bg-warning-subtle: var(--oh-warning-subtle);
+  --color-bg-info:         var(--oh-info-500);
+  --color-bg-info-subtle:  var(--oh-info-subtle);
+
+  // Borders — Newsprint Column hairline rules (sectionRhythm: border-rule).
+  --color-border-default:  var(--oh-paper-40);
+  --color-border-strong:   var(--oh-ink-300);
+  --color-border-muted:    var(--oh-paper-30);
+  --color-border-brand:    var(--oh-leaf-500);
+  --color-border-danger:   var(--oh-danger-500);
+  --color-border-success:  var(--oh-success-500);
+  --color-border-warning:  var(--oh-warning-500);
+  --color-border-info:     var(--oh-info-500);
+  --color-border-focus:    var(--oh-leaf-500);
+
+  // Interactive states — print focus is an olive rule, not a glow.
+  --color-hover-overlay:    rgb(36 28 18 / 0.04);
+  --color-active-overlay:   rgb(36 28 18 / 0.08);
+  --color-focus-ring:       var(--oh-leaf-500);
+  --color-focus-ring-width: 2px;
+  --color-focus-ring-offset: 2px;
+  --color-focus-ring-glow:  rgb(77 90 11 / 0.18);
+
+  // Status semantic aliases
+  --color-status-success-bg:     var(--color-bg-success-subtle);
+  --color-status-success-border: var(--color-border-success);
+  --color-status-success-text:   var(--color-text-success);
+  --color-status-success-icon:   var(--oh-success-500);
+
+  --color-status-warning-bg:     var(--color-bg-warning-subtle);
+  --color-status-warning-border: var(--color-border-warning);
+  --color-status-warning-text:   var(--color-text-warning);
+  --color-status-warning-icon:   var(--oh-warning-500);
+
+  --color-status-danger-bg:      var(--color-bg-danger-subtle);
+  --color-status-danger-border:  var(--color-border-danger);
+  --color-status-danger-text:    var(--color-text-danger);
+  --color-status-danger-icon:    var(--oh-danger-500);
+
+  --color-status-info-bg:        var(--color-bg-info-subtle);
+  --color-status-info-border:    var(--color-border-info);
+  --color-status-info-text:      var(--color-text-info);
+  --color-status-info-icon:      var(--oh-info-500);
+
+  // Semantic spacing — density: comfortable. Spacing carries the primary
+  // rhythm; the rule is punctuation (spaceAllocation: even-rhythm).
+  --space-component-xs: var(--space-1);
+  --space-component-sm: var(--space-2);
+  --space-component-md: var(--space-3);
+  --space-component-lg: var(--space-5);
+  --space-layout-xs:    var(--space-5);
+  --space-layout-sm:    var(--space-8);
+  --space-layout-md:    var(--space-12);
+  --space-layout-lg:    var(--space-16);
+
+  // Semantic radii — cornerPhilosophy: uniform. Small corners read like print
+  // stock; square would fight the paper warmth.
+  --radius-component: 2px;
+  --radius-surface:   2px;
+  --radius-pill:      var(--radius-full);
+
+  // Navigation surface — an elevated cream sheet, aligned with flat paper.
+  --color-nav-texture:          none;
+  --color-nav-bg:               var(--oh-paper-20);
+  --color-nav-text:             var(--oh-ink-500);
+  --color-nav-text-active:      var(--oh-ink-900);
+  --color-nav-text-subtle:      var(--oh-ink-400);
+  --color-nav-brand-gradient:   linear-gradient(180deg, var(--oh-leaf-500), var(--oh-ink-700));
+  --color-nav-active-bg:        var(--oh-leaf-subtle);
+  --color-nav-active-indicator: var(--oh-leaf-500);
+  --color-nav-icon-active:      var(--oh-leaf-500);
+  --color-nav-icon-active-bg:   rgb(77 90 11 / 0.14);
+  --color-nav-icon-hover-bg:    rgb(77 90 11 / 0.08);
+  --color-nav-avatar-bg:        var(--oh-leaf-500);
+
+  // Featured surface — the one Highlighter Mark per view: acid-yellow sheet
+  // with dark ink (emphasisSurfaceBudget: 1). The signature hue, never
+  // decoration elsewhere.
+  --color-surface-featured:        var(--oh-acid-400);
+  --color-surface-featured-border: var(--oh-ink-900);
+  --color-surface-featured-text:   var(--oh-acid-900);
+  --color-surface-featured-muted:  rgb(36 28 18 / 0.62);
+
+  // Elevation — flat sheets; a shadow would make cards hover off the paper.
+  --elevation-raised:  none;
+  --elevation-float:   none;
+  --elevation-overlay: none;
+
+  // ── Component token bridge ───────────────────────────────────────────────────
+  --card-bg:                    var(--color-bg-surface);
+  --card-border:                1px solid var(--color-border-default);
+  --card-radius:                var(--radius-surface);
+  --card-shadow:                none;
+  --card-shadow-elevated:       none;
+
+  --spinner-fill-color:         var(--oh-leaf-500);
+  --check-checked-bg:           var(--oh-leaf-500);
+  --check-checked-border:       var(--oh-leaf-500);
+  --toggle-track-on:            var(--oh-leaf-500);
+
+  // Typography — typeRoleAssignment: Montserrat at masthead weight with Plus
+  // Jakarta Sans prose reads as a designed newspaper; mono for figures.
+  --font-display: 'Montserrat', sans-serif;
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body:    'Plus Jakarta Sans', sans-serif;
+  --font-data: 'JetBrains Mono', monospace;
+}

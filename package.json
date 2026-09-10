@@ -26,15 +26,15 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^21.2.18",
+    "@angular/animations": "^21.2.22",
     "@angular/cdk": "^21.2.14",
-    "@angular/common": "^21.2.18",
-    "@angular/compiler": "^21.2.18",
-    "@angular/core": "^21.2.18",
-    "@angular/forms": "^21.2.18",
-    "@angular/platform-browser": "^21.2.18",
-    "@angular/platform-browser-dynamic": "^21.2.18",
-    "@angular/router": "^21.2.18",
+    "@angular/common": "^21.2.22",
+    "@angular/compiler": "21.2.22",
+    "@angular/core": "^21.2.22",
+    "@angular/forms": "^21.2.22",
+    "@angular/platform-browser": "^21.2.22",
+    "@angular/platform-browser-dynamic": "^21.2.22",
+    "@angular/router": "^21.2.22",
     "@primeng/themes": "^21.0.4",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.9",
@@ -43,12 +43,12 @@
     "zone.js": "~0.16.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^21.2.19",
+    "@angular-devkit/build-angular": "^21.2.22",
     "@angular-eslint/eslint-plugin": "^21.4.0",
     "@angular-eslint/eslint-plugin-template": "^21.4.0",
     "@angular-eslint/template-parser": "^21.4.0",
     "@angular/cli": "^21.2.19",
-    "@angular/compiler-cli": "^21.2.18",
+    "@angular/compiler-cli": "^21.2.22",
     "@eslint/js": "^9.39.0",
     "@playwright/test": "^1.60.0",
     "@testing-library/angular": "^19.4.1",
@@ -67,5 +67,12 @@
     "ts-node": "^10.9.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.60.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "lmdb@3.5.1": true,
+    "@parcel/watcher@2.6.0": true,
+    "unrs-resolver@1.12.2": true,
+    "msgpackr-extract@3.0.4": true
   }
 }

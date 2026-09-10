@@ -7,8 +7,9 @@ import { mkdirSync } from 'node:fs';
 // of silently substituting another language's work.
 
 const BASE = process.env['BASE_URL'] ?? 'http://localhost:4200';
+const CHROME = process.env['CHROME_PATH'];
 const OUT = 'test-results/design-ideas';
-const LANGUAGES = ['rdk-default', 'obsidian', 'evolute'];
+const LANGUAGES = ['rdk-default', 'obsidian', 'evolute', 'gokul', 'paper', 'noir', 'launchline-obsidian'];
 const IDEA = process.env['IDEA'] ?? 'pricing-section';
 const GAP_IDEA = 'erp-dashboard';
 
@@ -25,7 +26,7 @@ function mockJwt(): string {
 
 async function main(): Promise<void> {
   mkdirSync(OUT, { recursive: true });
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(CHROME ? { executablePath: CHROME } : {});
   const page = await browser.newPage({ viewport: { width: 1500, height: 1000 } });
 
   const errors: string[] = [];

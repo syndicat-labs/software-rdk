@@ -144,6 +144,55 @@ describe('design language protocol', () => {
     });
   });
 
+  describe('variants inherit a fixed lineage but genuinely deviate', () => {
+    // A variant is not a second language around the same idea. It shares the
+    // parent's namespace, faces and structure, and deviates only on the axes it
+    // owns: paper→noir owns the night, obsidian→launchline owns the terminal.
+    const paper = getDesignLanguage('paper');
+    const noir = getDesignLanguage('noir');
+    const obsidian = getDesignLanguage('obsidian');
+    const launchline = getDesignLanguage('launchline-obsidian');
+
+    it('shares the parent private namespace', () => {
+      expect(noir!.privateTokenPrefix).toBe(paper!.privateTokenPrefix);
+      expect(launchline!.privateTokenPrefix).toBe(obsidian!.privateTokenPrefix);
+    });
+
+    it('shares the parent type signature where the deviation is not typographic', () => {
+      expect(noir!.slots.typeRoleAssignment).toEqual(paper!.slots.typeRoleAssignment);
+      expect(launchline!.slots.typeRoleAssignment.display).not.toEqual(
+        obsidian!.slots.typeRoleAssignment.display,
+      );
+    });
+
+    it('noir owns the night axes and leaves the rest inherited', () => {
+      expect(noir!.slots.darkStrategy).not.toEqual(paper!.slots.darkStrategy);
+      expect(noir!.slots.colorRole).not.toEqual(paper!.slots.colorRole);
+      expect(noir!.slots.colorInHierarchy).not.toEqual(paper!.slots.colorInHierarchy);
+      expect(noir!.slots.density).toBe(paper!.slots.density);
+      expect(noir!.slots.cornerPhilosophy).toBe(paper!.slots.cornerPhilosophy);
+    });
+
+    it('launchline inherits obsidian restraint and tightens it to a terminal', () => {
+      expect(launchline!.slots.depthModel).toBe(obsidian!.slots.depthModel);
+      expect(launchline!.slots.colorInHierarchy).toBe(obsidian!.slots.colorInHierarchy);
+      expect(launchline!.slots.density).not.toEqual(obsidian!.slots.density);
+      expect(launchline!.slots.monospaceScope).not.toEqual(obsidian!.slots.monospaceScope);
+    });
+
+    it('a variant is never a wholesale duplicate of its parent', () => {
+      for (const [variant, parent] of [
+        [noir, paper],
+        [launchline, obsidian],
+      ] as const) {
+        const differing = REQUIRED_SLOTS.filter(
+          (slot) => JSON.stringify(variant!.slots[slot]) !== JSON.stringify(parent!.slots[slot]),
+        );
+        expect(differing.length).toBeGreaterThan(0);
+      }
+    });
+  });
+
   describe('the protocol is language-agnostic', () => {
     // If the two registered languages ever converge on these axes, the protocol
     // is no longer demonstrated by anything in the repository.

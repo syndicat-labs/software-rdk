@@ -66,6 +66,36 @@ export const DESIGN_IDEAS = [
         load: () =>
           import('./variants/pricing-evolute.component').then((m) => m.PricingEvoluteComponent),
       },
+      {
+        language: 'gokul',
+        emphasis:
+          'A compact print column, not a marketing table: hairline rules, square corners, no depth. One featured tier flips to the lifted paper face of the Ink Well — marked by surface contrast alone, never by colour (Display Figure, emphasis budget one).',
+        load: () =>
+          import('./variants/pricing-gokul.component').then((m) => m.PricingGokulComponent),
+      },
+      {
+        language: 'paper',
+        emphasis:
+          'Broadsheet columns divided by hairline rules under a Montserrat masthead; warm paper throughout. The recommended tier is the one Highlighter Mark — acid-yellow sheet with dark ink, the signature hue and nothing else shares it.',
+        load: () =>
+          import('./variants/pricing-paper.component').then((m) => m.PricingPaperComponent),
+      },
+      {
+        language: 'noir',
+        emphasis:
+          'The paper columns set for night: warm sheets, no glare, no gamut. The recommended tier is the White Highlighter — warm-white on warm-ink — the paper hierarchy surviving the collapse of the accent.',
+        load: () =>
+          import('./variants/pricing-noir.component').then((m) => m.PricingNoirComponent),
+      },
+      {
+        language: 'launchline-obsidian',
+        emphasis:
+          'A terminal deck: monospace throughout, compact density, cuts not transitions. One tier is the Dark Card Anchor — the near-black inverted console carrying the decision — everything else is a prompt line marked by weight and offset, never colour.',
+        load: () =>
+          import('./variants/pricing-launchline.component').then(
+            (m) => m.PricingLaunchlineComponent,
+          ),
+      },
     ],
   },
   {

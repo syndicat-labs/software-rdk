@@ -137,13 +137,12 @@ interface LineItem {
   `,
   styles: [`
     .inv-page {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: var(--space-component-lg);
     }
 
-    // ── Actions bar ───────────────────────────────────────────────────────────
     .inv-page__actions {
       display: flex;
       align-items: center;
@@ -153,59 +152,52 @@ interface LineItem {
     .inv-page__back {
       font-size: 0.875rem;
       font-weight: 500;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       cursor: pointer;
-
-      &:hover { color: #111111; }
+      &:hover { color: var(--color-text-primary); }
     }
 
     .inv-page__btns {
       display: flex;
-      gap: 0.625rem;
+      gap: var(--space-component-md);
     }
 
     .inv-btn {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       font-size: 0.875rem;
       font-weight: 600;
-      padding: 0.5rem 1.25rem;
-      border-radius: 9999px;
+      padding: var(--space-component-sm) var(--space-component-lg);
+      border-radius: var(--radius-pill);
       cursor: pointer;
       transition: all 0.15s ease;
-
       &--ghost {
-        background: #FFFFFF;
-        color: #111111;
-        border: 1px solid #E0E0E0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-
-        &:hover { border-color: #AAAAAA; }
+        background: var(--color-bg-surface);
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border-default);
+        box-shadow: var(--elevation-raised);
+        &:hover { border-color: var(--color-border-strong); }
       }
-
       &--primary {
-        background: #111111;
-        color: #FFFFFF;
-        border: 1px solid #111111;
-
-        &:hover { background: #2A2A2A; }
+        background: var(--color-surface-featured);
+        color: var(--color-surface-featured-text);
+        border: 1px solid var(--color-surface-featured);
+        &:hover { background: var(--color-text-primary); }
       }
     }
 
-    // ── Invoice document ──────────────────────────────────────────────────────
     .inv {
-      background: #FFFFFF;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-      padding: 2.5rem;
+      background: var(--color-bg-surface);
+      border-radius: var(--radius-surface);
+      box-shadow: var(--elevation-raised);
+      padding: var(--space-layout-md);
     }
 
     .inv__divider {
       height: 1px;
-      background: #EBEBEB;
-      margin: 1.75rem 0;
+      background: var(--color-border-muted);
+      margin: var(--space-layout-xs) 0;
     }
 
-    // ── Header ────────────────────────────────────────────────────────────────
     .inv__header {
       display: flex;
       align-items: flex-start;
@@ -215,12 +207,12 @@ interface LineItem {
     .inv__brand {
       display: flex;
       align-items: center;
-      gap: 0.625rem;
+      gap: var(--space-component-md);
     }
 
     .inv__brand-mark {
       font-size: 1.5rem;
-      color: #111111;
+      color: var(--color-text-primary);
       line-height: 1;
     }
 
@@ -228,20 +220,20 @@ interface LineItem {
       font-size: 1.125rem;
       font-weight: 800;
       letter-spacing: -0.02em;
-      color: #111111;
+      color: var(--color-text-primary);
     }
 
     .inv__meta {
       display: flex;
       flex-direction: column;
-      gap: 0.375rem;
+      gap: var(--space-component-xs);
       align-items: flex-end;
     }
 
     .inv__meta-row {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
+      gap: var(--space-layout-sm);
     }
 
     .inv__meta-label {
@@ -249,22 +241,20 @@ interface LineItem {
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
       width: 4rem;
       text-align: right;
     }
 
     .inv__meta-value {
       font-size: 0.875rem;
-      color: #111111;
+      color: var(--color-text-primary);
       font-weight: 500;
       min-width: 7rem;
       text-align: right;
-
-      &--mono { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+      &--mono { font-family: var(--font-data); font-weight: 700; }
     }
 
-    // ── Parties ───────────────────────────────────────────────────────────────
     .inv__parties {
       display: flex;
       justify-content: space-between;
@@ -273,8 +263,7 @@ interface LineItem {
     .inv__party {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
-
+      gap: var(--space-component-xs);
       &--right { align-items: flex-end; }
     }
 
@@ -283,84 +272,77 @@ interface LineItem {
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #AAAAAA;
-      margin-bottom: 0.25rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-component-xs);
     }
 
     .inv__party-name {
       font-size: 1rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
       letter-spacing: -0.01em;
     }
 
     .inv__party-detail {
       font-size: 0.875rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       line-height: 1.6;
     }
 
-    // ── Status badge ──────────────────────────────────────────────────────────
     .status-badge {
       display: inline-flex;
       align-items: center;
-      padding: 0.1875rem 0.625rem;
-      border-radius: 9999px;
+      padding: var(--space-component-xs) var(--space-component-md);
+      border-radius: var(--radius-pill);
       font-size: 0.6875rem;
       font-weight: 600;
       letter-spacing: 0.02em;
-
-      &--fulfilled { background: #dcfce7; color: #15803d; }
-      &--pending   { background: #fef9c3; color: #a16207; }
-      &--overdue   { background: #fee2e2; color: #b91c1c; }
+      &--fulfilled { background: var(--color-status-success-bg); color: var(--color-status-success-text); border: 1px solid var(--color-status-success-border); }
+      &--pending   { background: var(--color-status-warning-bg); color: var(--color-status-warning-text); border: 1px solid var(--color-status-warning-border); }
+      &--overdue   { background: var(--color-status-danger-bg); color: var(--color-status-danger-text); border: 1px solid var(--color-status-danger-border); }
     }
 
-    // ── Line items table ──────────────────────────────────────────────────────
     .inv-table {
       width: 100%;
       border-collapse: collapse;
     }
 
     .inv-table__th {
-      padding: 0.625rem 0.875rem;
+      padding: var(--space-component-sm) var(--space-component-md);
       font-size: 0.6875rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
       text-align: left;
-      background: #FAFAFA;
-      border-bottom: 1px solid #EBEBEB;
-
+      background: var(--color-bg-sunken);
+      border-bottom: 1px solid var(--color-border-muted);
       &--desc   { width: 40%; }
       &--right  { text-align: right; }
       &--center { text-align: center; }
     }
 
     .inv-table__row {
-      border-bottom: 1px solid #F5F5F5;
-
+      border-bottom: 1px solid var(--color-border-muted);
       &:last-child { border-bottom: none; }
     }
 
     .inv-table__td {
-      padding: 0.875rem 0.875rem;
+      padding: var(--space-component-md) var(--space-component-md);
       font-size: 0.875rem;
-      color: #2A2A2A;
-
-      &--desc   { font-weight: 500; color: #111111; }
-      &--mono   { font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; }
-      &--bold   { font-weight: 700; color: #111111; }
-      &--muted  { color: #AAAAAA; }
+      color: var(--color-text-primary);
+      &--desc   { font-weight: 500; color: var(--color-text-primary); }
+      &--mono   { font-family: var(--font-data); font-size: 0.8125rem; }
+      &--bold   { font-weight: 700; color: var(--color-text-primary); }
+      &--muted  { color: var(--color-text-muted); }
       &--right  { text-align: right; }
       &--center { text-align: center; }
     }
 
-    // ── Footer ────────────────────────────────────────────────────────────────
     .inv__footer {
       display: grid;
       grid-template-columns: 1fr 22rem;
-      gap: 2rem;
+      gap: var(--space-layout-sm);
       align-items: start;
     }
 
@@ -370,64 +352,62 @@ interface LineItem {
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #AAAAAA;
-      margin-bottom: 0.625rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-component-md);
     }
 
     .inv__notes-body {
       margin: 0;
       font-size: 0.8125rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       line-height: 1.7;
     }
 
-    // ── Totals card (dark) ────────────────────────────────────────────────────
     .inv__totals-card {
-      background: #111111;
-      border-radius: 12px;
-      padding: 1.5rem;
+      background: var(--color-surface-featured);
+      border-radius: var(--radius-surface);
+      padding: var(--space-layout-sm);
       display: flex;
       flex-direction: column;
-      gap: 0.625rem;
+      gap: var(--space-component-md);
     }
 
     .inv__total-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-
-      &--grand { margin-top: 0.25rem; }
+      &--grand { margin-top: var(--space-component-xs); }
     }
 
     .inv__total-label {
       font-size: 0.875rem;
-      color: #AAAAAA;
+      color: var(--color-surface-featured-muted);
     }
 
     .inv__total-value {
       font-size: 0.875rem;
-      color: #DDDDDD;
-
-      &--mono { font-family: 'JetBrains Mono', monospace; }
+      color: var(--color-surface-featured-text);
+      &--mono { font-family: var(--font-data); }
     }
 
     .inv__total-divider {
       height: 1px;
-      background: rgba(255,255,255,0.1);
-      margin: 0.375rem 0;
+      background: var(--color-border-muted);
+      opacity: 0.15;
+      margin: var(--space-component-xs) 0;
     }
 
     .inv__total-grand-label {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
     }
 
     .inv__total-grand-value {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 1.5rem;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
       letter-spacing: -0.02em;
     }
   `],

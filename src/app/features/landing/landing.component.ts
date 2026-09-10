@@ -104,7 +104,7 @@ import { ButtonComponent } from '../../shared/components/atoms/button/button.com
             <h3 class="landing__price-title">RDK</h3>
             <p class="landing__price-value">MIT</p>
             <p class="landing__price-desc">Clone, theme, ship. No telemetry, no lock-in.</p>
-            <rdk-button variant="primary" fullWidth routerLink="/login">Start building</rdk-button>
+            <rdk-button variant="primary" [fullWidth]="true" routerLink="/login">Start building</rdk-button>
             <ul class="landing__price-list">
               <li>Auth + dashboard + landing + showcase</li>
               <li>Token contract + 3 languages</li>
@@ -116,7 +116,7 @@ import { ButtonComponent } from '../../shared/components/atoms/button/button.com
             <h3 class="landing__price-title">Your product</h3>
             <p class="landing__price-value">Yours</p>
             <p class="landing__price-desc">The RDK is the starting point. Your domain is the product.</p>
-            <rdk-button variant="primary" fullWidth routerLink="/showcase">Explore the system</rdk-button>
+            <rdk-button variant="primary" [fullWidth]="true" routerLink="/showcase">Explore the system</rdk-button>
             <ul class="landing__price-list">
               <li>Bring your API — <code>apiBaseUrl</code> in one place</li>
               <li>Per-widget layout, per-user persistence</li>

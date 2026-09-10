@@ -35,9 +35,10 @@ export interface GridWidgetView {
           @if (editMode) {
             <button type="button" class="grid__handle" cdkDragHandle aria-label="Drag {{ view.metric?.label ?? view.instance.widgetId }}">⠿</button>
             <div class="grid__resize" role="group" aria-label="Resize {{ view.metric?.label ?? view.instance.widgetId }}">
-              <button type="button" class="grid__resize-btn" (click)="resized.emit({ id: view.instance.id, colSpan: 3 })" [disabled]="view.instance.colSpan === 3" aria-label="Small">S</button>
-              <button type="button" class="grid__resize-btn" (click)="resized.emit({ id: view.instance.id, colSpan: 6 })" [disabled]="view.instance.colSpan === 6" aria-label="Medium">M</button>
-              <button type="button" class="grid__resize-btn" (click)="resized.emit({ id: view.instance.id, colSpan: 12 })" [disabled]="view.instance.colSpan === 12" aria-label="Large">L</button>
+              <button type="button" class="grid__resize-btn" (click)="resized.emit({ id: view.instance.id, colSpan: 3 })" [disabled]="view.instance.colSpan === 3" aria-label="Small (3 columns)">S</button>
+              <button type="button" class="grid__resize-btn" (click)="resized.emit({ id: view.instance.id, colSpan: 4 })" [disabled]="view.instance.colSpan === 4" aria-label="Medium (4 columns)">M</button>
+              <button type="button" class="grid__resize-btn" (click)="resized.emit({ id: view.instance.id, colSpan: 6 })" [disabled]="view.instance.colSpan === 6" aria-label="Large (6 columns)">L</button>
+              <button type="button" class="grid__resize-btn" (click)="resized.emit({ id: view.instance.id, colSpan: 12 })" [disabled]="view.instance.colSpan === 12" aria-label="Full width (12 columns)">XL</button>
             </div>
           }
 
@@ -47,6 +48,7 @@ export interface GridWidgetView {
               [featured]="view.featured"
               [variant]="variant"
               [showDot]="variant === 'evolute'"
+              [chromaticKey]="view.metric.chromaticKey ?? 1"
               [showActions]="editMode"
               (remove)="removed.emit($event)"
               (configure)="configured.emit($event)"
@@ -57,7 +59,7 @@ export interface GridWidgetView {
 
           <div *cdkDragPreview class="grid__preview">
             @if (view.metric) {
-              <rdk-kpi-card [metric]="view.metric" [featured]="view.featured" [variant]="variant" [showDot]="variant === 'evolute'" />
+              <rdk-kpi-card [metric]="view.metric" [featured]="view.featured" [variant]="variant" [showDot]="variant === 'evolute'" [chromaticKey]="view.metric.chromaticKey ?? 1" />
             }
           </div>
           <div *cdkDragPlaceholder class="grid__placeholder"></div>
@@ -74,7 +76,7 @@ export interface GridWidgetView {
       .grid {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
-        gap: var(--space-layout-xs);
+        gap: var(--space-layout-sm);
       }
 
       .grid__item {

@@ -8,7 +8,7 @@ import type { DashboardMetric } from '../../../../features/dashboard/dashboard.s
   template: `
     <article class="kpi" [class.kpi--featured]="featured" [class.kpi--obsidian]="variant === 'obsidian'" [class.kpi--evolute]="variant === 'evolute'">
       @if (variant === 'evolute' && showDot) {
-        <span class="kpi__dot" aria-hidden="true"></span>
+        <span class="kpi__dot" [attr.data-chromatic-key]="chromaticKey" aria-hidden="true"></span>
       }
       <span class="kpi__label">{{ metric.label }}</span>
       <span class="kpi__value">{{ metric.value }}</span>
@@ -74,16 +74,19 @@ import type { DashboardMetric } from '../../../../features/dashboard/dashboard.s
         background: var(--color-bg-brand);
       }
 
-      /* Chromatic Key per position — overridden via inline style in grid if needed */
-      :host:nth-child(1) .kpi__dot { background: var(--color-bg-brand); }
-      :host:nth-child(2) .kpi__dot { background: var(--color-bg-info); }
-      :host:nth-child(3) .kpi__dot { background: var(--color-bg-success); }
-      :host:nth-child(4) .kpi__dot { background: var(--color-bg-warning); }
+      /* Chromatic Key is data, not DOM position: a reordered dashboard no
+         longer repaints the kpi dots, because the key belongs to the metric. */
+      .kpi--evolute .kpi__dot[data-chromatic-key='1'] { background: var(--color-bg-brand); }
+      .kpi--evolute .kpi__dot[data-chromatic-key='2'] { background: var(--color-bg-info); }
+      .kpi--evolute .kpi__dot[data-chromatic-key='3'] { background: var(--color-bg-success); }
+      .kpi--evolute .kpi__dot[data-chromatic-key='4'] { background: var(--color-bg-warning); }
 
       .kpi__label {
         color: var(--color-text-secondary);
-        font-size: 0.8125rem;
-        letter-spacing: 0.02em;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
       }
 
       .kpi__value {
@@ -149,6 +152,8 @@ export class KpiCardComponent {
   @Input() showActions = false;
   @Input() variant: 'modern' | 'obsidian' | 'evolute' = 'modern';
   @Input() showDot = false;
+  /** Evolute chromatic identity, independent of DOM position (1–4). */
+  @Input() chromaticKey: 1 | 2 | 3 | 4 = 1;
 
   @Output() configure = new EventEmitter<string>();
   @Output() remove = new EventEmitter<string>();

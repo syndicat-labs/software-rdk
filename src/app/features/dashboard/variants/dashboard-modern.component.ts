@@ -76,18 +76,19 @@ interface TransactionRow {
         (configured)="onConfigured($event)"
       />
 
-      <div class="dm__status" role="list" aria-label="Status summary">
-        @for (status of statuses; track status) {
-          <rdk-badge [variant]="STATUS_BADGE[status]" [dot]="true" role="listitem">
-            {{ STATUS_LABEL[status] }} · {{ countFor(status) }}
-          </rdk-badge>
-        }
-      </div>
-
       <rdk-card variant="default" padding="none" class="dm__table">
         <div slot="header" class="dm__table-head">
           <h2 class="dm__table-title">Recent transactions</h2>
-          <span class="dm__table-meta">Live from settlement</span>
+          <div class="dm__table-head-right">
+            <span class="dm__table-meta">Live from settlement</span>
+            <div class="dm__status" role="list" aria-label="Status summary">
+              @for (status of statuses; track status) {
+                <rdk-badge [variant]="STATUS_BADGE[status]" [dot]="true" role="listitem">
+                  {{ STATUS_LABEL[status] }} · {{ countFor(status) }}
+                </rdk-badge>
+              }
+            </div>
+          </div>
         </div>
         <rdk-data-table [columns]="columns" [rows]="rows" [loading]="loading" />
       </rdk-card>
@@ -101,19 +102,19 @@ interface TransactionRow {
         background: var(--color-bg-base);
       }
 
-      .dm__status {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-component-sm);
-        margin: var(--space-layout-sm) 0 var(--space-layout-sm);
-      }
-
       .dm__table-head {
         display: flex;
         align-items: baseline;
         justify-content: space-between;
+        flex-wrap: wrap;
         gap: var(--space-layout-xs);
         padding: var(--space-component-lg) var(--space-component-lg) 0;
+      }
+      .dm__table-head-right {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-component-md);
+        flex-wrap: wrap;
       }
       .dm__table-title {
         margin: 0;
@@ -124,6 +125,11 @@ interface TransactionRow {
       .dm__table-meta {
         color: var(--color-text-muted);
         font-size: 0.75rem;
+      }
+      .dm__status {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-component-sm);
       }
     `,
   ],

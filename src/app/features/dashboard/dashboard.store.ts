@@ -19,6 +19,8 @@ export interface DashboardMetric {
   readonly value: string;
   readonly delta: number;
   readonly unit?: string;
+  /** Position-independent chromatic identity for the Evolute dot, 1–4. */
+  readonly chromaticKey?: 1 | 2 | 3 | 4;
 }
 
 /**
@@ -81,10 +83,10 @@ export class DashboardStore implements RdkListStore<DashboardTransaction> {
     this.errorSignal.set(null);
 
     const metrics: DashboardMetric[] = [
-      { id: 'revenue', label: 'Revenue', value: '£128,430', delta: 12.4, unit: 'MTD' },
-      { id: 'orders', label: 'Orders', value: '1,284', delta: -3.1, unit: 'today' },
-      { id: 'aov', label: 'Average order', value: '£94.18', delta: 2.7, unit: '30d' },
-      { id: 'refunds', label: 'Refunds', value: '£1,920', delta: -0.8, unit: '30d' },
+      { id: 'revenue', label: 'Revenue', value: '£128,430', delta: 12.4, unit: 'MTD', chromaticKey: 1 },
+      { id: 'orders', label: 'Orders', value: '1,284', delta: -3.1, unit: 'today', chromaticKey: 2 },
+      { id: 'aov', label: 'Average order', value: '£94.18', delta: 2.7, unit: '30d', chromaticKey: 3 },
+      { id: 'refunds', label: 'Refunds', value: '£1,920', delta: -0.8, unit: '30d', chromaticKey: 4 },
     ];
 
     const transactions: DashboardTransaction[] = [

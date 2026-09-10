@@ -19,7 +19,7 @@ import { ToggleComponent } from '../../shared/components/molecules/toggle/toggle
     <div class="profile">
       <rdk-card variant="default" padding="lg">
         <div slot="header" class="profile__head">
-          <h2 class="profile__title">Account</h2>
+          <h1 class="profile__title">Account</h1>
           <span class="profile__meta">{{ userId() }}</span>
         </div>
         <div class="profile__info">

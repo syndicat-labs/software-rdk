@@ -40,7 +40,7 @@ describe('DashboardComponent (host)', () => {
       providers: HOST_PROVIDERS,
     });
     expect(screen.getByText('Overview')).toBeInTheDocument();
-    expect(screen.getByText('Modern')).toBeInTheDocument();
+    expect(screen.getAllByText('Modern').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders the Modern variant by default', async () => {

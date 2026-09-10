@@ -148,6 +148,25 @@ a { color: var(--color-text-brand); }
   .anim-card-entrance { animation: cardEntrance 0.5s var(--ease-spring) both; }
 }
 
+// Reduced-motion is a WCAG 2.2 AA requirement (2.3.3), not a toggle: kill
+// decorative transforms, transitions and brightness filters app-wide so no
+// component can ship motion against user preference.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .gradient-text,
+  [class*='hover'] {
+    filter: none !important;
+  }
+}
+
 // ─── Gradient text utility ────────────────────────────────────────────────────
 .gradient-text {
   background: var(--brand-gradient);

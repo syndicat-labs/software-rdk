@@ -1478,3 +1478,82 @@ dashboard/landing).
   evidence is: zero console errors in the capture browser, contract-gate resolution of all 242
   component-read tokens under all 7 languages, and static contrast checks. Human review of
   `test-results/design-ideas/*.png` still applies the render-and-look rule.
+
+## 2026-09-10 — Toolkit presentation: Hybrid Bento + Deck + Craft gallery
+
+### What landed
+
+The post-login surface now reads as a **product toolkit** (approved plan
+`plans/toolkit-presentation-hybrid-bento-deck.md`) instead of a component gallery. Answers locked
+with the user: hybrid approach, Blocks primary / Starters secondary, Bento-style hero, `Cmd+K`
+palette mixing nav + actions + recents + Create, both empty and populated Home states, and the
+Library presentation polished in the same pass.
+
+#### Deck IA + command palette (`src/app/core/command-palette/`)
+- `CommandPaletteService` — `visible`/`query` signals; `buildEntries` = recents +
+  flattened-navigation + Create recipes (pricing, ERP dashboard, checkout, invoice) + actions
+  (toggle language).
+- `CommandRecentsService` — created-path recents, capped at 5, persisted in non-credential
+  `rdk_command_recents_v1` (passes the storage gate).
+- `CommandPaletteComponent` — dialog with keyboard nav, focus management, `Esc`, `role=combobox`
+  + `role=dialog` semantics.
+- Shell integration — header trigger (`⌘K` kbd hint) + global `Cmd/Ctrl+K`, recents recorded on
+  `NavigationEnd` (dashboard home skipped). `APP_NAV_ITEMS` "Dashboard" → "Home".
+
+#### Bento hero (`src/app/features/dashboard/bento/`)
+- `BentoHomeComponent` mounted above the theme-variant grid on the dashboard: 12-col grid,
+  featured anchor cell (`--color-surface-featured`), CTA + ⌘K ghost button, recents satellite
+  ("Continue where you left off"), and Library/Starters/Design-language cells. Empty state renders
+  browse/fork prompts; populated state surfaces recents. This becomes the first impression for the
+  four gap languages — the gap is now progressive disclosure below the hero, not the entry point.
+
+#### Shell & hierarchy (Phase A)
+- App-shell giant `h1` demoted to a slim breadcrumb rail; each page owns its own `h1`
+  (profile "Account" promoted from `h2`).
+- Shell + header token-pure (no raw hex/`#fff`/`rgba`); user name + role meta shown; vestigial
+  empty header start removed.
+
+#### Showcase polish (Phase D)
+- `ShowcaseBlockActionsComponent` — copy `npx rdk add @rdk/<block>` + Fork (records recent,
+  navigates Home); shown on atom/molecule/organism routes via a `blockDescriptor` computed.
+- Library side nav gains "Library › By outcome (Blocks)" group — Landing & marketing, Operations
+  dashboard, Orders queue, Checkout & payment, Invoices, Transactions, Identity & surfaces.
+
+#### Theme-aware polish (Phase D/E)
+- Evolute KPI dot colour: `:host:nth-child()` → `[attr.data-chromatic-key]` on the metric, so
+  reordering no longer repaints; KPI label demoted (0.75rem, uppercase, 0.06em tracking).
+- Dashboard grid resize handles `3/4/6/12` columns (drag preview included); grid gap `xs → sm`.
+- Modern transactions: status summary badges merged into the card header beside the title (matches
+  Evolute's already-inline pattern) — the floating strip is gone.
+- Dashboard loading overlay only while both items and metrics are empty (no destroy/recreate cycle
+  on refresh), and a global `prefers-reduced-motion` block (WCAG 2.2 SC 2.3.3) kills all motion
+  app-wide.
+
+### Gate results (all green)
+
+```
+$ npm run typecheck        — exit 0
+$ npm run lint             — exit 0
+$ npm run lint:rules       — exit 0
+    check-theme-contract   — 90 contract tokens, 7 themes, 243 tokens read, all resolvable
+    check-contrast         — 7 languages, AA
+    check-no-localstorage-auth — 6 pre-existing FLAG-11 ratchet entries, unchanged
+$ npx jest --runInBand     — 810 passed / 50 suites  (22 command-palette + 4 bento + 3 block-actions new)
+$ npm run build:prod       — exit 0 · initial 691.74 kB / 165.45 kB gzip (+3 kB gzip)
+                        (pre-existing showcase budget warnings only: invoice-variants, frosted-glass)
+```
+
+### ADR
+
+`ArchitectureRecordDocument.md` · ADR Amendment 2026-09-10 — Toolkit presentation: Hybrid Bento +
+Deck + Craft gallery (decisions A–G; accepted risks: KPI gaps become progressive disclosure, Bento
+cost capped on Home, Install is a command string not a package, no a11y regression on the palette).
+
+### Notes for review
+
+- Changes are **uncommitted** on branch `feat/toolkit-presentation`; main is untouched.
+- Screenshot evidence for Home/Library/Starters/Header × 7 languages is captured by the harness
+  below; zero-console-error + contract-resolution evidence applies, plus human render-and-look
+  review of the PNGs.
+- Two known layout follow-ups remain: full KPI-grid variants for the four gap languages, and an
+  optional `Cmd+K` hint affordance in the sidebar.

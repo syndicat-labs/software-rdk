@@ -1566,3 +1566,48 @@ amendment declares the languages and their implementation home; it does not pass
   Montserrat 700–900, Plus Jakarta Sans, Space Grotesk).
 - No contract bump: all four use `protocolVersion` 1.1.0-compatible slots.
 - Showcase variants read contract tokens only; showcase is exempt from rule C's private-token ban.
+
+## ADR Amendment 2026-09-10 — Toolkit presentation: Hybrid Bento + Deck + Craft gallery
+
+### Context
+
+Post-login, the platform presented itself as a component gallery: a generic KPI grid plus a
+static transaction table, a header with no function, and a duplicated page title
+(shell `h1` + dashboard `Overview`). Four of seven registered languages render an explicit gap on
+the dashboard, so the default first impression for those languages was "something is missing"
+rather than "here is a toolkit". The user asked for research into more aesthetic ways to present
+toolkits; the research synthesis concluded the platform should read as a *product* — "what can you
+build, where you left off, what to do next" — not as an inventory.
+
+### Decisions
+
+| # | Concern | Decision |
+|---|---|---|
+| A | Approach | **Hybrid**: Linear/Vercel-style *Command Deck* (keyboard-native, list-first) as the IA and launcher, Apple/Notion-style **Bento hero** as the Home first impression, and a shadcn *Craft Gallery* install/fork lifecycle for the Library. |
+| B | Toolkit content | **Components / Blocks are the primary content**; templates/starters (auth + dashboard + billing flows) are secondary, surfaced as Create recipes in the palette and as "By outcome" entries in the Library sidebar. |
+| C | Home | A token-pure Bento hero (featured anchor cell + satellites) is the post-login default, above the language variant's grid. It carries both an empty state (first clone: browse/fork) and a populated state (recents = "Continue where you left off"). |
+| D | Command palette | `Cmd+K` (and the header/bento triggers) indexes **navigation + actions + recents + Create**. Recents persist in non-credential localStorage (`rdk_command_recents_v1`, metadata only — passes `check-no-localstorage-auth`). |
+| E | Shell & hierarchy | The shell owns a slim breadcrumb rail; each page owns its own `h1` (dashboard `Overview`, profile `Account` promoted from `h2`). Shell/header become contract-token-pure with no raw hex values. |
+| F | Library presentation | Showcase side nav gains a "By outcome (Blocks)" group above the component index; component pages get an Install / Fork bar (`npx rdk add @rdk/<block>` copy + fork-to-recents-and-Home). |
+| G | Chromatic Key is data | The Evolute KPI dot colour moved from `:host:nth-child()` (DOM position) to a `data-chromatic-key` attribute carried by the metric, so a reordered dashboard no longer repaints. |
+
+### Accepted risks / constraints
+
+- **KPI gaps persist** for `gokul/paper/noir/launchline-obsidian`. Mitigation: the Bento Home is the
+  default surface, so the gap becomes progressive disclosure below the hero, not the first
+  impression. Full grid variants for those languages remain a follow-up.
+- **Bento cost is capped**: the composition lives on Home only; the Library stays list-first to
+  bound layout and performance work (recorded: bundle initial 691.74 kB / 165.45 kB gzip, +3 kB gzip
+  vs prior).
+- **Install is a command string, not a package**: no registry exists on the mock backend; the copy
+  affordance is explicit rather than a fake install spinner. Fork maps to recents + Home, which the
+  Bento "Continue where you left off" then surfaces.
+- **Native `<select>` language switcher and keyboard number formatting are unchanged**; no a11y
+  regression was introduced by the palette (role=combobox/dialog, focus trap, escape, arrow keys).
+
+### Scope boundary
+
+This amendment covers presentation of the post-login platform and the `/showcase` Library.
+Authentication, data services, the contract itself (v1.1.0, 90 tokens) and the registry gate
+status (`pending`) are untouched. Reduced-motion behaviour is now enforced app-wide
+(`prefers-reduced-motion`), satisfying WCAG 2.2 2.3.3.

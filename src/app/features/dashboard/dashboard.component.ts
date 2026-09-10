@@ -9,6 +9,7 @@ import { LoggingService } from '../../core/logging/logging.service';
 import { DashboardModernComponent } from './variants/dashboard-modern.component';
 import { DashboardObsidianComponent } from './variants/dashboard-obsidian.component';
 import { DashboardEvoluteComponent } from './variants/dashboard-evolute.component';
+import { BentoHomeComponent } from './bento/bento-home.component';
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { ErrorDisplayComponent } from '../../shared/components/error-display/error-display.component';
@@ -40,6 +41,7 @@ import type { WidgetInstance } from '../../core/dashboard-layout/dashboard-layou
     DashboardModernComponent,
     DashboardObsidianComponent,
     DashboardEvoluteComponent,
+    BentoHomeComponent,
     LoadingSpinnerComponent,
     EmptyStateComponent,
     ErrorDisplayComponent,
@@ -79,6 +81,8 @@ import type { WidgetInstance } from '../../core/dashboard-layout/dashboard-layou
       <rdk-error-display [error]="err" (retry)="retryPersist()" data-testid="dashboard-persist-error" />
     }
 
+    <rdk-bento-home />
+
     @if (theme.current() === 'rdk-default') {
       <rdk-dashboard-modern
         [metrics]="store.metrics()"
@@ -114,7 +118,7 @@ import type { WidgetInstance } from '../../core/dashboard-layout/dashboard-layou
       </section>
     }
 
-    @if (loading()) {
+    @if (loading() && store.items().length === 0 && store.metrics().length === 0) {
       <div class="db__overlay" data-testid="dashboard-loading">
         <rdk-loading-spinner label="Loading dashboard…" [showLabel]="true" />
       </div>

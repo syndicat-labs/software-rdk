@@ -105,28 +105,6 @@ interface TransactionRow {
         background: var(--color-bg-base);
       }
 
-      .de__kpi-label {
-        color: var(--color-text-secondary);
-        font-size: 0.8125rem;
-      }
-      .de__kpi-value {
-        color: var(--color-text-primary);
-        font-family: var(--font-data);
-        font-size: 1.75rem;
-        line-height: 1.1;
-      }
-      .de__kpi-delta {
-        color: var(--color-text-success);
-        font-family: var(--font-data);
-        font-size: 0.8125rem;
-      }
-      .de__kpi-delta--down {
-        color: var(--color-text-danger);
-      }
-      .de__kpi-unit {
-        color: var(--color-text-muted);
-      }
-
       /* Highest step of the Lift Ladder — a closing synthesis, not filler. */
       .de__insight {
         display: flex;

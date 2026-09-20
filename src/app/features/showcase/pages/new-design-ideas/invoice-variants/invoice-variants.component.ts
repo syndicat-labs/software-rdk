@@ -318,85 +318,81 @@ import { CommonModule } from '@angular/common';
     :host { display: block; }
 
     .iv-page {
-      padding: 2rem;
+      padding: var(--space-layout-md);
       max-width: 1040px;
       margin: 0 auto;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
     }
 
     .iv-intro {
-      margin-bottom: 2.5rem;
+      margin-bottom: var(--space-layout-md);
     }
     .iv-intro__text {
       font-size: 0.875rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       line-height: 1.6;
       margin: 0;
       max-width: 640px;
     }
     .iv-intro__text code {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.75rem;
-      background: rgba(0,0,0,0.06);
+      background: var(--color-bg-sunken);
       padding: 0.1em 0.35em;
-      border-radius: 4px;
+      border-radius: var(--radius-component);
     }
 
-    /* ── Grid ────────────────────────────────────────────────────────────── */
     .iv-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 3rem 2.5rem;
+      gap: var(--space-layout-md) var(--space-layout-sm);
     }
 
     .iv-cell {
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: var(--space-component-lg);
     }
 
     .iv-card {
-      border-radius: 16px;
+      border-radius: var(--radius-surface);
       overflow: hidden;
     }
 
     .iv-cell__label {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: var(--space-component-xs);
     }
     .iv-cell__num {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.6875rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
       letter-spacing: 0.04em;
     }
     .iv-cell__name {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
       letter-spacing: -0.01em;
     }
     .iv-cell__desc {
       font-size: 0.75rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
       line-height: 1.55;
       max-width: 380px;
     }
 
-    /* ══════════════════════════════════════════════════════════════════════
-       V1 — Document Split
-    ══════════════════════════════════════════════════════════════════════ */
     .v1 {
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      box-shadow: var(--elevation-raised);
     }
 
     .v1__body {
-      background: #FFFFFF;
-      padding: 1.5rem;
+      background: var(--color-bg-surface);
+      padding: var(--space-layout-sm);
       display: flex;
       flex-direction: column;
-      gap: 0.875rem;
+      gap: var(--space-component-md);
     }
 
     .v1__header {
@@ -409,44 +405,44 @@ import { CommonModule } from '@angular/common';
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
     .v1__badge {
       font-size: 0.625rem;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
+      padding: var(--space-component-xs) var(--space-component-md);
+      border-radius: var(--radius-pill);
     }
     .v1__badge--paid {
-      background: rgba(0,0,0,0.07);
-      color: #111111;
+      background: var(--color-bg-sunken);
+      color: var(--color-text-primary);
     }
 
     .v1__ref {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 1.125rem;
       font-weight: 600;
-      color: #111111;
+      color: var(--color-text-primary);
       letter-spacing: -0.01em;
     }
 
     .v1__client {
       font-size: 0.75rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
     }
-    .v1__client-name { font-weight: 600; color: #111111; }
+    .v1__client-name { font-weight: 600; color: var(--color-text-primary); }
 
     .v1__divider {
       height: 1px;
-      background: #EBEBEB;
+      background: var(--color-border-muted);
     }
 
     .v1__items {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
     .v1__item {
       display: flex;
@@ -455,46 +451,45 @@ import { CommonModule } from '@angular/common';
     }
     .v1__item-desc {
       font-size: 0.8125rem;
-      color: #6B6B6B;
+      color: var(--color-text-muted);
     }
     .v1__item-amt {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.8125rem;
-      color: #111111;
+      color: var(--color-text-primary);
     }
 
     .v1__total-row {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      padding-top: 0.5rem;
-      border-top: 2px solid #111111;
+      padding-top: var(--space-component-sm);
+      border-top: 2px solid var(--color-border-strong);
     }
     .v1__total-label {
       font-size: 0.6875rem;
       font-weight: 700;
       letter-spacing: 0.08em;
-      color: #111111;
+      color: var(--color-text-primary);
     }
     .v1__total-amt {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 1.25rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
     }
 
-    /* Perforated separator */
     .v1__perf {
       display: flex;
       align-items: center;
-      background: #EBEBEB;
+      background: var(--color-border-muted);
       position: relative;
     }
     .v1__perf-notch {
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      background: #EBEBEB;
+      background: var(--color-bg-base);
       flex-shrink: 0;
     }
     .v1__perf-notch--left { margin-left: -7px; }
@@ -502,16 +497,16 @@ import { CommonModule } from '@angular/common';
     .v1__perf-line {
       flex: 1;
       height: 1px;
-      border-top: 2px dashed #CCCCCC;
-      margin: 0 0.25rem;
+      border-top: 2px dashed var(--color-border-default);
+      margin: 0 var(--space-component-xs);
     }
 
     .v1__stub {
-      background: #111111;
-      padding: 1.25rem 1.5rem;
+      background: var(--color-surface-featured);
+      padding: var(--space-component-lg) var(--space-layout-sm);
       display: flex;
       align-items: center;
-      gap: 1.25rem;
+      gap: var(--space-component-lg);
     }
     .v1__qr {
       flex-shrink: 0;
@@ -521,43 +516,40 @@ import { CommonModule } from '@angular/common';
     .v1__qr-svg {
       width: 100%;
       height: 100%;
-      color: rgba(255,255,255,0.85);
+      color: var(--color-surface-featured-muted);
     }
     .v1__stub-data {
       display: flex;
       flex-direction: column;
-      gap: 0.375rem;
+      gap: var(--space-component-xs);
     }
     .v1__stub-ref {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.875rem;
       font-weight: 600;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
       letter-spacing: 0.02em;
     }
     .v1__stub-due {
       font-size: 0.75rem;
-      color: rgba(255,255,255,0.55);
+      color: var(--color-surface-featured-muted);
     }
     .v1__stub-action {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.14em;
-      color: rgba(255,255,255,0.35);
-      margin-top: 0.25rem;
+      color: var(--color-surface-featured-muted);
+      margin-top: var(--space-component-xs);
     }
 
-    /* ══════════════════════════════════════════════════════════════════════
-       V2 — Status Tracker
-    ══════════════════════════════════════════════════════════════════════ */
     .v2 {
-      background: #FFFFFF;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-      padding: 1.5rem;
+      background: var(--color-bg-surface);
+      box-shadow: var(--elevation-raised);
+      padding: var(--space-layout-sm);
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: var(--space-layout-xs);
     }
 
     .v2__axis {
@@ -568,36 +560,36 @@ import { CommonModule } from '@angular/common';
     .v2__axis-date {
       display: flex;
       flex-direction: column;
-      gap: 0.125rem;
+      gap: var(--space-component-xs);
     }
     .v2__axis-date--right { text-align: right; }
     .v2__axis-label {
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
     .v2__axis-val {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.75rem;
-      color: #111111;
+      color: var(--color-text-primary);
     }
 
     .v2__status-pill {
       font-size: 0.625rem;
       font-weight: 700;
       letter-spacing: 0.06em;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
+      padding: var(--space-component-xs) var(--space-component-md);
+      border-radius: var(--radius-pill);
     }
     .v2__status-pill--overdue {
-      background: #2E2E2E;
-      color: #EEEEEE;
+      background: var(--color-surface-featured);
+      color: var(--color-surface-featured-text);
     }
 
     .v2__line {
       height: 1px;
-      background: linear-gradient(to right, #CCCCCC, #CCCCCC);
+      background: var(--color-border-default);
       margin: 0;
     }
 
@@ -610,28 +602,28 @@ import { CommonModule } from '@angular/common';
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: #AAAAAA;
-      margin-bottom: 0.25rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-component-xs);
     }
     .v2__inv-ref {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.9375rem;
       font-weight: 600;
-      color: #111111;
+      color: var(--color-text-primary);
     }
     .v2__inv-client {
       font-size: 0.75rem;
-      color: #6B6B6B;
-      margin-top: 0.25rem;
+      color: var(--color-text-muted);
+      margin-top: var(--space-component-xs);
     }
     .v2__inv-amt {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 1.25rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
     }
 
-    .v2__divider { height: 1px; background: #EBEBEB; }
+    .v2__divider { height: 1px; background: var(--color-border-muted); }
 
     .v2__timeline {
       display: flex;
@@ -642,90 +634,88 @@ import { CommonModule } from '@angular/common';
       display: grid;
       grid-template-columns: 12px 1fr;
       grid-template-rows: auto 1fr;
-      column-gap: 0.875rem;
+      column-gap: var(--space-component-md);
       align-items: start;
     }
     .v2__step-node {
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      border: 2px solid #CCCCCC;
-      background: #FFFFFF;
+      border: 2px solid var(--color-border-default);
+      background: var(--color-bg-surface);
       flex-shrink: 0;
       margin-top: 2px;
     }
     .v2__step--done .v2__step-node {
-      background: #111111;
-      border-color: #111111;
+      background: var(--color-text-primary);
+      border-color: var(--color-text-primary);
     }
     .v2__step--current .v2__step-node {
-      background: #FFFFFF;
-      border-color: #111111;
+      background: var(--color-bg-surface);
+      border-color: var(--color-text-primary);
       border-width: 3px;
     }
 
     .v2__step-connector {
       width: 1px;
       min-height: 20px;
-      border-left: 2px dashed #CCCCCC;
+      border-left: 2px dashed var(--color-border-default);
       margin: 2px auto 2px;
       grid-column: 1;
     }
-    .v2__step--done .v2__step-connector { border-color: #111111; border-style: solid; }
+    .v2__step--done .v2__step-connector { border-color: var(--color-text-primary); border-style: solid; }
 
     .v2__step-info {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      padding-bottom: 0.75rem;
+      padding-bottom: var(--space-component-md);
       grid-column: 2;
       grid-row: 1;
     }
     .v2__step-label {
       font-size: 0.8125rem;
       font-weight: 500;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
     .v2__step--done .v2__step-label,
-    .v2__step--current .v2__step-label { color: #111111; }
+    .v2__step--current .v2__step-label { color: var(--color-text-primary); }
     .v2__step-date {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.6875rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
-    .v2__step--done .v2__step-date { color: #6B6B6B; }
+    .v2__step--done .v2__step-date { color: var(--color-text-muted); }
 
-    /* ══════════════════════════════════════════════════════════════════════
-       V3 — Dark Financial Anchor
-    ══════════════════════════════════════════════════════════════════════ */
     .v3 {
-      background: #111111;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
-      padding: 1.75rem 1.5rem;
+      background: var(--color-surface-featured);
+      box-shadow: var(--elevation-float);
+      padding: var(--space-layout-sm) var(--space-layout-sm);
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: var(--space-component-md);
     }
 
     .v3__label {
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.4);
+      color: var(--color-surface-featured-muted);
     }
     .v3__amount {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 2.5rem;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
       letter-spacing: -0.02em;
       line-height: 1;
-      margin-bottom: 0.25rem;
+      margin-bottom: var(--space-component-xs);
     }
 
     .v3__sep {
       height: 1px;
-      background: rgba(255,255,255,0.12);
+      background: var(--color-border-muted);
+      opacity: 0.12;
     }
 
     .v3__metrics {
@@ -736,39 +726,38 @@ import { CommonModule } from '@angular/common';
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
-      padding-right: 1rem;
-      border-right: 1px solid rgba(255,255,255,0.08);
+      gap: var(--space-component-xs);
+      padding-right: var(--space-layout-xs);
+      border-right: 1px solid var(--color-border-muted);
     }
     .v3__metric:last-child { border-right: none; padding-right: 0; }
-    .v3__metric:not(:first-child) { padding-left: 1rem; }
+    .v3__metric:not(:first-child) { padding-left: var(--space-layout-xs); }
 
     .v3__metric-label {
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.4);
+      color: var(--color-surface-featured-muted);
     }
     .v3__metric-val {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.875rem;
       font-weight: 600;
-      color: rgba(255,255,255,0.9);
+      color: var(--color-surface-featured-text);
     }
 
-    /* Segmented progress bar */
     .v3__progress-track {
       display: flex;
       gap: 3px;
-      margin-top: 0.5rem;
+      margin-top: var(--space-component-sm);
     }
     .v3__seg {
       flex: 1;
       height: 4px;
       border-radius: 2px;
-      background: rgba(255,255,255,0.12);
+      background: var(--color-border-muted);
     }
-    .v3__seg--filled { background: rgba(255,255,255,0.85); }
+    .v3__seg--filled { background: var(--color-surface-featured-text); }
 
     .v3__progress-meta {
       display: flex;
@@ -777,49 +766,46 @@ import { CommonModule } from '@angular/common';
     .v3__progress-pct {
       font-size: 0.6875rem;
       font-weight: 700;
-      color: rgba(255,255,255,0.6);
+      color: var(--color-surface-featured-muted);
       letter-spacing: 0.02em;
     }
     .v3__progress-rem {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.6875rem;
-      color: rgba(255,255,255,0.4);
+      color: var(--color-surface-featured-muted);
     }
 
     .v3__ref {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.6875rem;
-      color: rgba(255,255,255,0.25);
+      color: var(--color-surface-featured-muted);
       letter-spacing: 0.04em;
-      margin-top: 0.5rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-top: var(--space-component-sm);
+      padding-top: var(--space-component-md);
+      border-top: 1px solid var(--color-border-muted);
     }
 
-    /* ══════════════════════════════════════════════════════════════════════
-       V4 — Extreme Minimalist
-    ══════════════════════════════════════════════════════════════════════ */
     .v4 {
-      background: #FFFFFF;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-      padding: 2rem 1.75rem;
+      background: var(--color-bg-surface);
+      box-shadow: var(--elevation-raised);
+      padding: var(--space-layout-sm) var(--space-layout-sm);
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: var(--space-component-md);
     }
 
     .v4__label {
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.14em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
 
     .v4__amount {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 3.5rem;
       font-weight: 700;
-      color: #111111;
+      color: var(--color-text-primary);
       letter-spacing: -0.03em;
       line-height: 1;
     }
@@ -831,26 +817,26 @@ import { CommonModule } from '@angular/common';
     .v4__comparison {
       display: flex;
       align-items: flex-end;
-      gap: 1rem;
-      margin-top: 0.5rem;
+      gap: var(--space-layout-xs);
+      margin-top: var(--space-component-sm);
     }
     .v4__period {
       display: flex;
       flex-direction: column;
-      gap: 0.375rem;
+      gap: var(--space-component-xs);
       flex: 1;
     }
     .v4__period-label {
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
     .v4__period-val {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.8125rem;
       font-weight: 600;
-      color: #111111;
+      color: var(--color-text-primary);
     }
     .v4__chart {
       display: flex;
@@ -860,14 +846,14 @@ import { CommonModule } from '@angular/common';
     }
     .v4__bar {
       flex: 1;
-      background: #E0E0E0;
+      background: var(--color-border-default);
       border-radius: 2px 2px 0 0;
       min-height: 2px;
     }
-    .v4__bar--active { background: #111111; }
+    .v4__bar--active { background: var(--color-text-primary); }
     .v4__period-arrow {
       font-size: 0.875rem;
-      color: #CCCCCC;
+      color: var(--color-border-default);
       padding-bottom: 8px;
       flex-shrink: 0;
     }
@@ -875,26 +861,23 @@ import { CommonModule } from '@angular/common';
     .v4__footer {
       display: flex;
       justify-content: space-between;
-      margin-top: 0.75rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid #EBEBEB;
+      margin-top: var(--space-component-md);
+      padding-top: var(--space-component-md);
+      border-top: 1px solid var(--color-border-muted);
     }
     .v4__inv-ref {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.6875rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
     .v4__due {
       font-size: 0.6875rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
 
-    /* ══════════════════════════════════════════════════════════════════════
-       V5 — Industrial Spec Sheet
-    ══════════════════════════════════════════════════════════════════════ */
     .v5 {
-      background: #FAFAFA;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      background: var(--color-bg-sunken);
+      box-shadow: var(--elevation-raised);
       overflow: hidden;
     }
 
@@ -902,24 +885,24 @@ import { CommonModule } from '@angular/common';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1rem 1.25rem 0.875rem;
+      padding: var(--space-layout-xs) var(--space-component-lg) var(--space-component-md);
     }
     .v5__title {
       font-size: 0.6875rem;
       font-weight: 700;
       letter-spacing: 0.12em;
-      color: #111111;
+      color: var(--color-text-primary);
     }
     .v5__ver {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.625rem;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
       letter-spacing: 0.06em;
     }
 
     .v5__rule {
       height: 1px;
-      background: #DCDCDC;
+      background: var(--color-border-default);
     }
 
     .v5__grid {
@@ -927,28 +910,28 @@ import { CommonModule } from '@angular/common';
       grid-template-columns: 1fr 1fr;
     }
     .v5__field {
-      padding: 0.875rem 1.25rem;
+      padding: var(--space-component-md) var(--space-component-lg);
       display: flex;
       flex-direction: column;
-      gap: 0.3rem;
+      gap: var(--space-component-xs);
     }
     .v5__field:nth-child(odd) {
-      border-right: 1px solid #DCDCDC;
+      border-right: 1px solid var(--color-border-default);
     }
 
     .v5__field-label {
       font-size: 0.5rem;
       font-weight: 700;
       letter-spacing: 0.14em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
     .v5__field-val {
       font-size: 0.8125rem;
       font-weight: 500;
-      color: #111111;
+      color: var(--color-text-primary);
     }
     .v5__field-val--mono {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.8125rem;
     }
     .v5__field-val--lg {
@@ -962,80 +945,76 @@ import { CommonModule } from '@angular/common';
     }
 
     .v5__caution {
-      background: #111111;
-      padding: 0.625rem 1.25rem;
+      background: var(--color-surface-featured);
+      padding: var(--space-component-md) var(--space-component-lg);
       display: flex;
       align-items: center;
-      gap: 0.625rem;
+      gap: var(--space-component-md);
     }
     .v5__caution-icon {
       font-size: 0.75rem;
-      color: rgba(255,255,255,0.7);
+      color: var(--color-surface-featured-muted);
     }
     .v5__caution-text {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.5625rem;
       font-weight: 700;
       letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.7);
+      color: var(--color-surface-featured-muted);
     }
 
-    /* ══════════════════════════════════════════════════════════════════════
-       V6 — Payment Progress
-    ══════════════════════════════════════════════════════════════════════ */
     .v6 {
-      background: #111111;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
-      padding: 1.5rem;
+      background: var(--color-surface-featured);
+      box-shadow: var(--elevation-float);
+      padding: var(--space-layout-sm);
       display: flex;
       flex-direction: column;
-      gap: 0.875rem;
+      gap: var(--space-component-md);
     }
 
     .v6__tags {
       display: flex;
-      gap: 0.375rem;
+      gap: var(--space-component-xs);
       flex-wrap: wrap;
     }
     .v6__tag {
       font-size: 0.5625rem;
       font-weight: 600;
       letter-spacing: 0.06em;
-      padding: 0.2rem 0.55rem;
-      border-radius: 9999px;
-      border: 1px solid rgba(255,255,255,0.2);
-      color: rgba(255,255,255,0.5);
+      padding: var(--space-component-xs) var(--space-component-sm);
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--color-border-muted);
+      color: var(--color-surface-featured-muted);
     }
 
     .v6__title {
       font-size: 0.8125rem;
-      color: rgba(255,255,255,0.5);
+      color: var(--color-surface-featured-muted);
       font-weight: 400;
     }
 
     .v6__pct-row {
       display: flex;
       align-items: baseline;
-      gap: 0.875rem;
+      gap: var(--space-component-md);
     }
     .v6__pct {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 3rem;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
       letter-spacing: -0.03em;
       line-height: 1;
     }
     .v6__delta {
       font-size: 0.6875rem;
       font-weight: 600;
-      color: rgba(255,255,255,0.5);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 6px;
-      padding: 0.2rem 0.5rem;
+      color: var(--color-surface-featured-muted);
+      border: 1px solid var(--color-border-muted);
+      border-radius: var(--radius-component);
+      padding: var(--space-component-xs) var(--space-component-sm);
     }
 
-    /* Segmented bar */
     .v6__progress-track {
       display: flex;
       gap: 2px;
@@ -1044,47 +1023,47 @@ import { CommonModule } from '@angular/common';
       flex: 1;
       height: 4px;
       border-radius: 2px;
-      background: rgba(255,255,255,0.1);
+      background: var(--color-border-muted);
     }
-    .v6__seg--filled { background: rgba(255,255,255,0.8); }
+    .v6__seg--filled { background: var(--color-surface-featured-text); }
 
     .v6__status-row {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
     .v6__status {
       font-size: 0.6875rem;
       font-weight: 700;
       letter-spacing: 0.04em;
-      color: rgba(255,255,255,0.55);
+      color: var(--color-surface-featured-muted);
     }
     .v6__rem {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.6875rem;
-      color: rgba(255,255,255,0.35);
+      color: var(--color-surface-featured-muted);
     }
     .v6__rem::before {
       content: '·';
-      margin-right: 0.5rem;
-      color: rgba(255,255,255,0.2);
+      margin-right: var(--space-component-sm);
+      color: var(--color-border-muted);
     }
 
     .v6__footer {
       display: flex;
       justify-content: space-between;
-      padding-top: 0.75rem;
-      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: var(--space-component-md);
+      border-top: 1px solid var(--color-border-muted);
     }
     .v6__ref {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.6875rem;
-      color: rgba(255,255,255,0.2);
+      color: var(--color-surface-featured-muted);
       letter-spacing: 0.04em;
     }
     .v6__due {
       font-size: 0.6875rem;
-      color: rgba(255,255,255,0.2);
+      color: var(--color-surface-featured-muted);
     }
   `],
 })
@@ -1104,7 +1083,6 @@ export class InvoiceVariantsComponent {
 
   protected readonly tags = ['dev', 'invoicing', 'q4-2024'];
 
-  // Dotted column chart heights (Nov: near-zero, Dec: growing trend)
   protected readonly novHeights = [2, 2, 2, 3, 2, 2, 2, 3];
   protected readonly decHeights = [4, 8, 14, 20, 24, 28, 30, 32];
 

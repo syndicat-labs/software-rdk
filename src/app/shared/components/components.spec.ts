@@ -116,6 +116,12 @@ describe('ErrorDisplayComponent', () => {
     const { fixture } = await render(ErrorDisplayComponent, { componentInputs: { error } });
     expect(fixture.componentInstance.severity).toBe('error');
   });
+
+  it('applies warn severity for validation errors', async () => {
+    const error = buildError({ code: ErrorCode.VALIDATION_ERROR, retryable: false });
+    const { fixture } = await render(ErrorDisplayComponent, { componentInputs: { error } });
+    expect(fixture.componentInstance.severity).toBe('warn');
+  });
 });
 
 // ─── EmptyStateComponent ──────────────────────────────────────────────────────

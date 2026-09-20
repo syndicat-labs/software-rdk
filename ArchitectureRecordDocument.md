@@ -1447,3 +1447,167 @@ universal.
 
 **Deferred.** Obsidian and rdk-default retrofit; component semantic-role metadata for Tier B;
 L3 composition archetypes are specified as vocabulary but not yet expressed as components.
+
+---
+
+## ADR Amendment 2026-08-31 — Coverage scope ratified; L2 product surface begins
+
+### FLAG-08 / P5 — coverage scope, ratified
+
+The blanket exclusion `!src/app/features/**` added during the Angular 21 migration (2026-07-18) left
+the demo/showcase/stub layer unmeasured. That exclusion is **removed** and replaced with explicit
+per-directory floors:
+
+- `src/app/features/dashboard/` · `src/app/features/auth/` · `src/app/features/landing/` ·
+  `src/app/features/showcase/`: **80%** lines/branches/functions/statements.
+
+**Rationale (accepted, dated, by decision 2026-08-31):** the product surface is no longer
+presentation scaffolding. It becomes first-class content that every consuming project clones, so it
+must be measured and gated like `core/` and `shared/`. This supersedes the previous ratify-or-revert
+open item: the exclusion is reverted, and the new feature thresholds replace the 70% global as the
+effective floor for those directories (Jest applies the global only to files outside a path-specific
+threshold).
+
+### D3 — strict compliance is universal
+
+Every page, component, and element of this toolkit — including the `showcase` specimen pages — must
+obey the Design Language Protocol, the 90-token contract (v1.1.0), the WCAG 2.2 contrast floor, the
+namespace-isolation rule (components never read a language's private L0 layer), the storage rule, and
+the accessibility floor. Pre-protocol, Obsidian-only specimen pages that carry hardcoded values are
+being retrofitted, not exempted or retired.
+
+### D4 — showcase retrofit
+
+Eight `showcase/pages/new-design-ideas/*` specimena were authored pre-protocol with hardcoded Hex
+values, literal font stacks, and a single (Obsidian) language variant — contradicting both the
+no-raw-values rule and the resolve-under-all-languages rule. They are retrofitted to contract tokens
+and given per-language variants (or an explicit gap) per the `design-idea.ts` contract.
+
+### D2 — auth surface completeness
+
+`register` and `password-reset` are shipped as real surfaces, not deferred. `register` uses the
+existing `AuthService.register()`; `password-reset` introduces `requestReset()`/`resetPassword()`
+with endpoint paths added to `AuthConfig` and a dev-mock-backed contract (see L2.2 in
+`to-do.md` / `IMPLEMENTATION-PLAN.md`).
+
+### Controller of record
+
+This amendment is part of Layer 2 (`IMPLEMENTATION-PLAN.md`), sequenced after the 2026-07-19 plan
+and tracked in `to-do.md`.
+
+---
+
+## ADR Amendment 2026-09-08 — T7 Draggable & Modifiable KPI Cards
+
+### Decisions
+
+| # | Concern | Decision |
+|---|---|---|
+| A | Library | `@angular/cdk/drag-drop` as primary (zero new dep, bundle ~0 KB). `angular-gridster2`/`gridstack` deferred behind feature flag `dashboardGrid: 'cdk' \| 'gridster'` — escalation only if free-form resize + collision is required. |
+| B | Layout model | `DashboardLayout { version, updatedAt, widgets: WidgetInstance[] }` where `WidgetInstance { id, widgetId, colSpan, order, config? }` with closed union `colSpan: 3|4|6|12` (12-col grid). No free pixels. |
+| C | Widget registry | `WidgetRegistry` (core, `providedIn: 'root'`) + `provideWidgets()` factory; `WidgetDefinition<TConfig>` owns `id, component, defaultSize, configSchema, permissions, title`. |
+| D | Persistence | `DashboardLayoutService` → `ApiClient.put('/api/v1/dashboard/layout')` with `request-id` + retry honouring `Retry-After`. Fallback to `localStorage['rdk_dashboard_layout_v1']` when offline; reconcile on next save. Layout is non-sensitive (FLAG-11 ratchet unaffected) but cap at 10 KB and validate at boundary. |
+| E | Personalisation | Per-user layout persisted; per-role seed as default template (admin publishes template, user overrides). Last-write-wins v1; `version` field for future OT/CRDT. |
+| F | Error taxonomy | Add `DASHBOARD_LAYOUT_INVALID` (400) + `DASHBOARD_PERSIST_FAILED` (5xx) to `errors.types.ts`. |
+| G | Design protocol | Variants keep thesis; position is **data** (`layout: WidgetInstance[]` input), not template. No variant rewrites position logic. Gap state (`dashboard.component.ts:44`) unchanged. |
+
+**Answers to T7 open questions (Q1–Q7):** all default to *Recommended* per `to-do-dashboard-draggable.md:106` — reorder+resize+add/remove+config, backend+localStorage fallback, fixed 12-col, per-user, dashboard-only v1, open registry, explicit Edit mode. Each deviation would be an ADR amendment.
+
+**Consequences:** `core/dashboard-layout/` becomes a new bounded context (model, validator, store, service, registry). `DashboardStore` retains metrics/transactions as source of truth; `DashboardLayoutStore` owns presentation order/size. Variants consume `layout: WidgetInstance[]` without duplicating position logic.
+
+**Deferred:** `gridster` escalation, cross-route `WidgetHost` (T7.4), free-form collision.
+
+---
+
+## ADR Amendment 2026-09-09 — Four new design languages; software-rdk becomes the registry's reference implementation
+
+### Context
+
+The machine-root registry (`/home/work/build-blueprint/registry/`, authoritative for the 18-slot
+Design Language Protocol) held four stub declarations whose `implementationRef` pointed at external
+inspiration sites (`devportfolio.example`, `openhandsweb.com`, `launchline-website-inspo`) with all
+slots null. This amendment resolves which project is the implementation source and registers four new
+languages in `software-rdk`.
+
+### Decisions
+
+| # | Concern | Decision |
+|---|---|---|
+| A | Modern's id | The DLP id **stays `rdk-default`** (label "Modern"). The id is also the contract reference theme and the `ThemeService` fallback when nothing is stored, so renaming would break both. |
+| B | Implementation source | `implementationRef` for `gokul`, `paper`, `noir`, `launchline-obsidian` flips to **`software-rdk`** — they are implemented here, not at the inspiration sites. Provenance is preserved in each declaration's `declarationNote`. |
+| C | Product surfaces | The four new languages exist in the registry and the showcase, not as product surfaces: dashboard and landing show the **explicit gap state** for them (no substitute rendering, per D7). Auth/data surfaces are unaffected. |
+
+### Registered languages (2026-09-09)
+
+| id | Basis | Variant of | Notes |
+|---|---|---|---|
+| `gokul` | full declaration | — | Ops-as-editorial: hairline rules, square corners, `Montserrat/Inter/JetBrains Mono`, mono scope `data-and-code`, flat + border surfaces |
+| `paper` | full declaration | — | Warm paper, acid-yellow Highlighter Mark, `Plus Jakarta Sans` body |
+| `noir` | variant | `paper` | Night palette owns the dark; accent collapses to warm-white; shares `--oh-*` namespace, inherits typography/density |
+| `launchline-obsidian` | variant | `obsidian` | Terminal/deck: mono display, unrestricted mono scope, compact density, Deck Cut (no expressive motion) |
+
+All four are protocol-native (18 slots + philosophy), share no new contract tokens (contract stays
+v1.1.0, 90 tokens), and were added to `THEME_REGISTRY` as 7 total. Variants per protocol §7 declare
+only a shared private namespace + global tokens; `noir`/`launchline-obsidian` introduce no `--oh-*`
+uniqueness and no `--ll-*` tokens (rule E).
+
+### Registry consequences
+
+`registry/{gokul,paper,noir,launchline-obsidian}.json` carry full declarations with
+`implementationRef: software-rdk`, `status: declared`, and `variantOf` where applicable.
+`registry/index.json` flips the same four `implementationRef` fields. Retrieval chunks and
+`MANIFEST.json` are regenerated and repinned; `scripts/lint-standards.sh` reports
+"7 languages, declaration files present" green. Gate status (Tier A/B/C) remains `pending` — this
+amendment declares the languages and their implementation home; it does not pass the language gates.
+
+### Accepted constraints
+
+- Fonts limited to the five families already loaded in `src/index.html` (Inter, JetBrains Mono,
+  Montserrat 700–900, Plus Jakarta Sans, Space Grotesk).
+- No contract bump: all four use `protocolVersion` 1.1.0-compatible slots.
+- Showcase variants read contract tokens only; showcase is exempt from rule C's private-token ban.
+
+## ADR Amendment 2026-09-10 — Toolkit presentation: Hybrid Bento + Deck + Craft gallery
+
+### Context
+
+Post-login, the platform presented itself as a component gallery: a generic KPI grid plus a
+static transaction table, a header with no function, and a duplicated page title
+(shell `h1` + dashboard `Overview`). Four of seven registered languages render an explicit gap on
+the dashboard, so the default first impression for those languages was "something is missing"
+rather than "here is a toolkit". The user asked for research into more aesthetic ways to present
+toolkits; the research synthesis concluded the platform should read as a *product* — "what can you
+build, where you left off, what to do next" — not as an inventory.
+
+### Decisions
+
+| # | Concern | Decision |
+|---|---|---|
+| A | Approach | **Hybrid**: Linear/Vercel-style *Command Deck* (keyboard-native, list-first) as the IA and launcher, Apple/Notion-style **Bento hero** as the Home first impression, and a shadcn *Craft Gallery* install/fork lifecycle for the Library. |
+| B | Toolkit content | **Components / Blocks are the primary content**; templates/starters (auth + dashboard + billing flows) are secondary, surfaced as Create recipes in the palette and as "By outcome" entries in the Library sidebar. |
+| C | Home | A token-pure Bento hero (featured anchor cell + satellites) is the post-login default, above the language variant's grid. It carries both an empty state (first clone: browse/fork) and a populated state (recents = "Continue where you left off"). |
+| D | Command palette | `Cmd+K` (and the header/bento triggers) indexes **navigation + actions + recents + Create**. Recents persist in non-credential localStorage (`rdk_command_recents_v1`, metadata only — passes `check-no-localstorage-auth`). |
+| E | Shell & hierarchy | The shell owns a slim breadcrumb rail; each page owns its own `h1` (dashboard `Overview`, profile `Account` promoted from `h2`). Shell/header become contract-token-pure with no raw hex values. |
+| F | Library presentation | Showcase side nav gains a "By outcome (Blocks)" group above the component index; component pages get an Install / Fork bar (`npx rdk add @rdk/<block>` copy + fork-to-recents-and-Home). |
+| G | Chromatic Key is data | The Evolute KPI dot colour moved from `:host:nth-child()` (DOM position) to a `data-chromatic-key` attribute carried by the metric, so a reordered dashboard no longer repaints. |
+
+### Accepted risks / constraints
+
+- **KPI gaps persist** for `gokul/paper/noir/launchline-obsidian`. Mitigation: the Bento Home is the
+  default surface, so the gap becomes progressive disclosure below the hero, not the first
+  impression. Full grid variants for those languages remain a follow-up.
+- **Bento cost is capped**: the composition lives on Home only; the Library stays list-first to
+  bound layout and performance work (recorded: bundle initial 691.74 kB / 165.45 kB gzip, +3 kB gzip
+  vs prior).
+- **Install is a command string, not a package**: no registry exists on the mock backend; the copy
+  affordance is explicit rather than a fake install spinner. Fork maps to recents + Home, which the
+  Bento "Continue where you left off" then surfaces.
+- **Native `<select>` language switcher and keyboard number formatting are unchanged**; no a11y
+  regression was introduced by the palette (role=combobox/dialog, focus trap, escape, arrow keys).
+
+### Scope boundary
+
+This amendment covers presentation of the post-login platform and the `/showcase` Library.
+Authentication, data services, the contract itself (v1.1.0, 90 tokens) and the registry gate
+status (`pending`) are untouched. Reduced-motion behaviour is now enforced app-wide
+(`prefers-reduced-motion`), satisfying WCAG 2.2 2.3.3.

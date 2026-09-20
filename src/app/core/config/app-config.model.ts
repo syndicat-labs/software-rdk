@@ -12,12 +12,16 @@ export interface AuthConfig {
   readonly loginPath: string;
   readonly logoutPath: string;
   readonly refreshPath: string;
+  readonly registerPath: string;
+  readonly requestResetPath: string;
+  readonly resetPasswordPath: string;
   readonly accessTokenKey: string;
   readonly refreshTokenKey: string;
   readonly proactiveRefreshThresholdSeconds: number;
-  readonly registerPath: string;
   // UI navigation routes
   readonly loginRoute: string;
+  readonly registerRoute: string;
+  readonly resetPasswordRoute: string;
   readonly postLoginRoute: string;
   readonly postLogoutRoute: string;
 }
@@ -39,10 +43,14 @@ export const DEFAULT_AUTH_CONFIG: AuthConfig = {
   logoutPath: '/auth/logout',
   refreshPath: '/auth/refresh',
   registerPath: '/auth/register',
+  requestResetPath: '/auth/request-reset',
+  resetPasswordPath: '/auth/reset-password',
   accessTokenKey: 'rdk_access_token',
   refreshTokenKey: 'rdk_refresh_token',
   proactiveRefreshThresholdSeconds: 60,
   loginRoute: '/login',
+  registerRoute: '/register',
+  resetPasswordRoute: '/password-reset',
   postLoginRoute: '/app/dashboard',
   postLogoutRoute: '/login',
 };

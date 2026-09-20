@@ -29,6 +29,11 @@ export interface AuthTokenResponse {
   readonly user: AuthUser;
 }
 
+export interface ResetPasswordCredentials {
+  readonly token: string;
+  readonly password: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -85,6 +90,28 @@ export class AuthService {
     this.store.reset();
     this.logger.info(MODULE, 'User logged out');
     this.router.navigate([this.config.auth.postLogoutRoute]);
+  }
+
+  requestReset(email: string): Observable<void> {
+    const url = `${this.config.auth.baseUrl}${this.config.auth.requestResetPath}`;
+    return this.http.post<void>(url, { email }).pipe(
+      catchError((err: unknown) => {
+        const appError = err instanceof HttpErrorResponse ? fromHttpError(err) : fromUnknown(err);
+        this.logger.warn(MODULE, 'Password reset requested', { code: appError.code });
+        return throwError(() => appError);
+      }),
+    );
+  }
+
+  resetPassword(credentials: ResetPasswordCredentials): Observable<void> {
+    const url = `${this.config.auth.baseUrl}${this.config.auth.resetPasswordPath}`;
+    return this.http.post<void>(url, credentials).pipe(
+      catchError((err: unknown) => {
+        const appError = err instanceof HttpErrorResponse ? fromHttpError(err) : fromUnknown(err);
+        this.logger.warn(MODULE, 'Password reset failed', { code: appError.code });
+        return throwError(() => appError);
+      }),
+    );
   }
 
   refreshToken(): Observable<AuthTokenResponse> {

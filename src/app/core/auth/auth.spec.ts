@@ -246,6 +246,54 @@ describe('AuthService', () => {
     }));
   });
 
+  describe('requestReset', () => {
+    it('posts the email to the request-reset endpoint', fakeAsync(() => {
+      let completed = false;
+      service.requestReset('a@b.com').subscribe({ complete: () => (completed = true) });
+      const req = controller.expectOne(`${BASE_URL}/auth/request-reset`);
+      expect(req.request.body).toEqual({ email: 'a@b.com' });
+      req.flush(null);
+      tick();
+      expect(completed).toBe(true);
+    }));
+
+    it('rethrows a typed error on failure', fakeAsync(() => {
+      let code: string | undefined;
+      service.requestReset('a@b.com').subscribe({ error: (e) => (code = e.code) });
+      controller
+        .expectOne(`${BASE_URL}/auth/request-reset`)
+        .flush(null, { status: 500, statusText: 'Server Error' });
+      tick();
+      expect(code).toBe(ErrorCode.INFRASTRUCTURE_HTTP_ERROR);
+    }));
+  });
+
+  describe('resetPassword', () => {
+    it('posts token and password to the reset endpoint', fakeAsync(() => {
+      let completed = false;
+      service
+        .resetPassword({ token: 'tok', password: 'newPass' })
+        .subscribe({ complete: () => (completed = true) });
+      const req = controller.expectOne(`${BASE_URL}/auth/reset-password`);
+      expect(req.request.body).toEqual({ token: 'tok', password: 'newPass' });
+      req.flush(null);
+      tick();
+      expect(completed).toBe(true);
+    }));
+
+    it('rethrows a typed error on failure', fakeAsync(() => {
+      let code: string | undefined;
+      service
+        .resetPassword({ token: 'tok', password: 'newPass' })
+        .subscribe({ error: (e) => (code = e.code) });
+      controller
+        .expectOne(`${BASE_URL}/auth/reset-password`)
+        .flush(null, { status: 400, statusText: 'Bad Request' });
+      tick();
+      expect(code).toBe(ErrorCode.VALIDATION_ERROR);
+    }));
+  });
+
   describe('logout', () => {
     it('clears tokens', () => {
       tokenService.setTokens('at', 'rt');

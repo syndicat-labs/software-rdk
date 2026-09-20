@@ -1397,3 +1397,163 @@ is L2 in the plan.
 **Reference-library renaming** — 545 images unified and 298 usefully named; 247 remain hash-named.
 Local vision inference proved marginal on this hardware (7.7 GB, no GPU): a 3B model held 3.9 GB RSS
 and thrashed the machine to 148 MB free. Recorded so the finding is not re-derived.
+
+---
+
+## 2026-09-09 — Four new design languages; machine-root registry declares software-rdk as the implementation source
+
+### What landed
+
+Four protocol-native design languages are authored in `design-language.ts` and the machine-root
+registry (`/home/work/build-blueprint/registry/`), with software-rdk as their `implementationRef`:
+
+- **gokul** (full) — Ops-as-editorial. Hairline Rule + Display Figure + Ink Well; square corners,
+  flat + border surfaces; display `Montserrat`, data `JetBrains Mono` at `data-and-code` scope;
+  `expressiveAllowedIn: ['never']`.
+- **paper** (full) — Warm paper, acid-yellow **Highlighter Mark**; `Plus Jakarta Sans` body, border
+  section rhythm, comfortable density.
+- **noir** (variant of paper) — Night palette: warm-desaturated, accent collapses to warm-white
+  (**White Highlighter**); owns `darkStrategy`/`colorRole`/`colorInHierarchy`, inherits paper's
+  type/density/corner.
+- **launchline-obsidian** (variant of obsidian) — Terminal/deck: display `JetBrains Mono`,
+  unrestricted mono scope, compact density, **Deck Cut** (never-expressive motion); inherits
+  obsidian's restraint axes.
+
+`THEME_REGISTRY` grew to **7 languages** (token-contract.ts). No contract bump: still v1.1.0,
+90 tokens; all four map to contract tokens. Themes: `src/styles/themes/_gokul|_paper|_noir|
+_launchline-obsidian.scss` (hand-aligned non-Prettier by house convention; shared fonts only).
+
+### Variant-lineage tests
+
+`design-language.spec.ts` now asserts the variant contract: shares parent private namespace, shares
+non-typographic type signature, noir owns the night axes (differs on the three colour slots, equal on
+density/corner), launchline inherits obsidian restraint (differs on density/mono/display), and a
+variant is never a wholesale duplicate.
+
+### Showcase + screenshots
+
+Four flagship pricing variants (`pricing-gokul|paper|noir|launchline.component.ts`) registered under
+`pricing-section`; `design-idea.ts` gap state covers the other ideas for the new languages. The
+registry-driven language-comparison page covers all seven with no change. Both screenshot harnesses
+gained `CHROME_PATH` (system Chrome; Playwright's Chromium download failed) and the `LANGUAGES` list
+extended to 7. Captured with zero console errors:
+
+- `test-results/design-ideas/` — pricing-section × 7 languages + erp-dashboard gap states
+- `test-results/language-comparison/` — 7 panels
+
+FLAG-06 note: the rendered half is now captured for all seven languages under the new-design-ideas and
+comparison pages; direct screenshot-diffing against `docs/design-refs/` remains open.
+
+### Gate results (all green)
+
+```
+$ npm run typecheck        — exit 0
+$ npm run lint:rules       — exit 0
+    check-theme-contract   — 90 contract tokens, 7 themes, 242 tokens read, all resolvable
+    check-contrast         — 7 languages, AA (4.5+) — gokul muted #8b8a90, noir warm-400 #9d9482
+                        post-tuned; status + inverse + focus-ring pairs verified
+    check-no-localstorage-auth — 6 pre-existing FLAG-11 ratchet entries, unchanged
+$ npx jest --runInBand     — 776 passed / 45 suites   (design-language spec alone: 84+)
+$ npm run build            — exit 0 (pre-existing showcase budget warnings only: invoice-variants, frosted-glass)
+```
+
+Machine root:
+
+```
+$ bash scripts/lint-standards.sh   — ALL GATES PASS
+    [design-language-registry] OK: registry structure valid, 7 languages, declaration files present
+    [retrieval-current] ✓  RAG chunks regenerate identically (138 chunks, 26 sources)
+$ node scripts/build-chunks.mjs    — built 138 chunks from 26 sources
+```
+
+Registry files: `registry/{gokul,paper,noir,launchline-obsidian}.json` = full 18-slot declarations,
+`variantOf` where applicable, `implementationRef: software-rdk`, `status: declared`. `MANIFEST.json`
+repinned for the 6 changed files. Decisions recorded in the 2026-09-09 ADR amendment (D-A: id stays
+`rdk-default`; D-B: implementationRef flip with provenance in `declarationNote`; D-C: gap state on
+dashboard/landing).
+
+### Notes for review
+
+- Screenshots were captured by the harness; the model cannot visually verify PNGs — the render
+  evidence is: zero console errors in the capture browser, contract-gate resolution of all 242
+  component-read tokens under all 7 languages, and static contrast checks. Human review of
+  `test-results/design-ideas/*.png` still applies the render-and-look rule.
+
+## 2026-09-10 — Toolkit presentation: Hybrid Bento + Deck + Craft gallery
+
+### What landed
+
+The post-login surface now reads as a **product toolkit** (approved plan
+`plans/toolkit-presentation-hybrid-bento-deck.md`) instead of a component gallery. Answers locked
+with the user: hybrid approach, Blocks primary / Starters secondary, Bento-style hero, `Cmd+K`
+palette mixing nav + actions + recents + Create, both empty and populated Home states, and the
+Library presentation polished in the same pass.
+
+#### Deck IA + command palette (`src/app/core/command-palette/`)
+- `CommandPaletteService` — `visible`/`query` signals; `buildEntries` = recents +
+  flattened-navigation + Create recipes (pricing, ERP dashboard, checkout, invoice) + actions
+  (toggle language).
+- `CommandRecentsService` — created-path recents, capped at 5, persisted in non-credential
+  `rdk_command_recents_v1` (passes the storage gate).
+- `CommandPaletteComponent` — dialog with keyboard nav, focus management, `Esc`, `role=combobox`
+  + `role=dialog` semantics.
+- Shell integration — header trigger (`⌘K` kbd hint) + global `Cmd/Ctrl+K`, recents recorded on
+  `NavigationEnd` (dashboard home skipped). `APP_NAV_ITEMS` "Dashboard" → "Home".
+
+#### Bento hero (`src/app/features/dashboard/bento/`)
+- `BentoHomeComponent` mounted above the theme-variant grid on the dashboard: 12-col grid,
+  featured anchor cell (`--color-surface-featured`), CTA + ⌘K ghost button, recents satellite
+  ("Continue where you left off"), and Library/Starters/Design-language cells. Empty state renders
+  browse/fork prompts; populated state surfaces recents. This becomes the first impression for the
+  four gap languages — the gap is now progressive disclosure below the hero, not the entry point.
+
+#### Shell & hierarchy (Phase A)
+- App-shell giant `h1` demoted to a slim breadcrumb rail; each page owns its own `h1`
+  (profile "Account" promoted from `h2`).
+- Shell + header token-pure (no raw hex/`#fff`/`rgba`); user name + role meta shown; vestigial
+  empty header start removed.
+
+#### Showcase polish (Phase D)
+- `ShowcaseBlockActionsComponent` — copy `npx rdk add @rdk/<block>` + Fork (records recent,
+  navigates Home); shown on atom/molecule/organism routes via a `blockDescriptor` computed.
+- Library side nav gains "Library › By outcome (Blocks)" group — Landing & marketing, Operations
+  dashboard, Orders queue, Checkout & payment, Invoices, Transactions, Identity & surfaces.
+
+#### Theme-aware polish (Phase D/E)
+- Evolute KPI dot colour: `:host:nth-child()` → `[attr.data-chromatic-key]` on the metric, so
+  reordering no longer repaints; KPI label demoted (0.75rem, uppercase, 0.06em tracking).
+- Dashboard grid resize handles `3/4/6/12` columns (drag preview included); grid gap `xs → sm`.
+- Modern transactions: status summary badges merged into the card header beside the title (matches
+  Evolute's already-inline pattern) — the floating strip is gone.
+- Dashboard loading overlay only while both items and metrics are empty (no destroy/recreate cycle
+  on refresh), and a global `prefers-reduced-motion` block (WCAG 2.2 SC 2.3.3) kills all motion
+  app-wide.
+
+### Gate results (all green)
+
+```
+$ npm run typecheck        — exit 0
+$ npm run lint             — exit 0
+$ npm run lint:rules       — exit 0
+    check-theme-contract   — 90 contract tokens, 7 themes, 243 tokens read, all resolvable
+    check-contrast         — 7 languages, AA
+    check-no-localstorage-auth — 6 pre-existing FLAG-11 ratchet entries, unchanged
+$ npx jest --runInBand     — 810 passed / 50 suites  (22 command-palette + 4 bento + 3 block-actions new)
+$ npm run build:prod       — exit 0 · initial 691.74 kB / 165.45 kB gzip (+3 kB gzip)
+                        (pre-existing showcase budget warnings only: invoice-variants, frosted-glass)
+```
+
+### ADR
+
+`ArchitectureRecordDocument.md` · ADR Amendment 2026-09-10 — Toolkit presentation: Hybrid Bento +
+Deck + Craft gallery (decisions A–G; accepted risks: KPI gaps become progressive disclosure, Bento
+cost capped on Home, Install is a command string not a package, no a11y regression on the palette).
+
+### Notes for review
+
+- Changes are **uncommitted** on branch `feat/toolkit-presentation`; main is untouched.
+- Screenshot evidence for Home/Library/Starters/Header × 7 languages is captured by the harness
+  below; zero-console-error + contract-resolution evidence applies, plus human render-and-look
+  review of the PNGs.
+- Two known layout follow-ups remain: full KPI-grid variants for the four gap languages, and an
+  optional `Cmd+K` hint affordance in the sidebar.

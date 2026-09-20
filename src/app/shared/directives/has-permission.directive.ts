@@ -24,8 +24,8 @@ export class HasPermissionDirective implements OnDestroy {
     this.updateView();
   });
 
-  @Input() set rdkHasPermission(roles: string | string[]) {
-    this.requiredRoles = Array.isArray(roles) ? roles : [roles];
+  @Input() set rdkHasPermission(roles: string | readonly string[]) {
+    this.requiredRoles = Array.isArray(roles) ? [...roles] : [roles];
     this.updateView();
   }
 

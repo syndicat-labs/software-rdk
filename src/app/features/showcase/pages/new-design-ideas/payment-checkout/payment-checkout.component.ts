@@ -172,27 +172,26 @@ interface OrderLine {
             </div>
           </div>
 
-          <!-- Illustration placeholder -->
           <div class="order-card__illustration" aria-hidden="true">
             <svg viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="pay-g1" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#6366f1"/>
-                  <stop offset="100%" stop-color="#8b5cf6"/>
+                  <stop offset="0%" stop-color="var(--color-bg-brand)"/>
+                  <stop offset="100%" stop-color="var(--color-text-brand)"/>
                 </linearGradient>
                 <linearGradient id="pay-g2" x1="100%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#0ea5e9"/>
-                  <stop offset="100%" stop-color="#6366f1"/>
+                  <stop offset="0%" stop-color="var(--color-bg-info)"/>
+                  <stop offset="100%" stop-color="var(--color-bg-brand)"/>
                 </linearGradient>
               </defs>
               <ellipse cx="200" cy="100" rx="120" ry="80" fill="url(#pay-g1)" opacity="0.25" transform="rotate(-15 200 100)"/>
               <ellipse cx="230" cy="80" rx="90" ry="60" fill="url(#pay-g2)" opacity="0.2" transform="rotate(10 230 80)"/>
-              <rect x="100" y="50" width="140" height="90" rx="10" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
-              <rect x="100" y="50" width="140" height="28" rx="10" fill="rgba(255,255,255,0.05)"/>
-              <rect x="114" y="96" width="40" height="6" rx="3" fill="rgba(255,255,255,0.15)"/>
-              <rect x="114" y="108" width="60" height="4" rx="2" fill="rgba(255,255,255,0.08)"/>
-              <circle cx="210" cy="99" r="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-              <circle cx="222" cy="99" r="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+              <rect x="100" y="50" width="140" height="90" rx="10" fill="none" stroke="var(--color-surface-featured-text)" stroke-opacity="0.08" stroke-width="1.5"/>
+              <rect x="100" y="50" width="140" height="28" rx="10" fill="var(--color-surface-featured-text)" fill-opacity="0.05"/>
+              <rect x="114" y="96" width="40" height="6" rx="3" fill="var(--color-surface-featured-text)" fill-opacity="0.15"/>
+              <rect x="114" y="108" width="60" height="4" rx="2" fill="var(--color-surface-featured-text)" fill-opacity="0.08"/>
+              <circle cx="210" cy="99" r="10" fill="var(--color-surface-featured-text)" fill-opacity="0.06" stroke="var(--color-surface-featured-text)" stroke-opacity="0.12" stroke-width="1"/>
+              <circle cx="222" cy="99" r="10" fill="var(--color-surface-featured-text)" fill-opacity="0.06" stroke="var(--color-surface-featured-text)" stroke-opacity="0.12" stroke-width="1"/>
             </svg>
           </div>
 
@@ -202,17 +201,15 @@ interface OrderLine {
     </div>
   `,
   styles: [`
-    // ── Layout ────────────────────────────────────────────────────────────────
     .checkout {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       display: grid;
       grid-template-columns: 1fr 22rem;
-      gap: 2rem;
+      gap: var(--space-layout-sm);
       align-items: start;
       max-width: 860px;
     }
 
-    // ── Form column ───────────────────────────────────────────────────────────
     .checkout__form-col {
       display: flex;
       flex-direction: column;
@@ -220,10 +217,10 @@ interface OrderLine {
     }
 
     .checkout__section {
-      padding: 1.5rem 0;
+      padding: var(--space-layout-sm) 0;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: var(--space-layout-xs);
     }
 
     .checkout__section-title {
@@ -232,63 +229,58 @@ interface OrderLine {
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #AAAAAA;
+      color: var(--color-text-muted);
     }
 
     .checkout__divider {
       height: 1px;
-      background: #E8E8E8;
+      background: var(--color-border-muted);
     }
 
-    // ── Card type tabs ────────────────────────────────────────────────────────
     .card-tabs {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
 
     .card-tab {
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       font-size: 0.875rem;
       font-weight: 500;
-      padding: 0.4375rem 1rem;
-      border-radius: 9999px;
-      border: 1px solid #E0E0E0;
-      background: #FFFFFF;
-      color: #6B6B6B;
+      padding: var(--space-component-sm) var(--space-component-lg);
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--color-border-default);
+      background: var(--color-bg-surface);
+      color: var(--color-text-muted);
       cursor: pointer;
       transition: all 0.15s ease;
-
       &--active {
-        background: #111111;
-        color: #FFFFFF;
-        border-color: #111111;
+        background: var(--color-surface-featured);
+        color: var(--color-surface-featured-text);
+        border-color: var(--color-surface-featured);
       }
-
       &:not(&--active):hover {
-        border-color: #AAAAAA;
-        color: #111111;
+        border-color: var(--color-border-strong);
+        color: var(--color-text-primary);
       }
     }
 
-    // ── Fields ────────────────────────────────────────────────────────────────
     .field {
       display: flex;
       flex-direction: column;
-      gap: 0.375rem;
+      gap: var(--space-component-xs);
       flex: 1;
-
       &--narrow { max-width: 9rem; }
     }
 
     .field-row {
       display: flex;
-      gap: 0.875rem;
+      gap: var(--space-component-md);
     }
 
     .field__label {
       font-size: 0.8125rem;
       font-weight: 600;
-      color: #2A2A2A;
+      color: var(--color-text-primary);
     }
 
     .field__input-wrap {
@@ -298,51 +290,47 @@ interface OrderLine {
     .field__input {
       width: 100%;
       height: 2.75rem;
-      padding: 0 0.875rem;
-      font-family: 'Inter', sans-serif;
+      padding: 0 var(--space-component-md);
+      font-family: var(--font-body);
       font-size: 0.9375rem;
-      color: #111111;
-      background: #FFFFFF;
-      border: 1px solid #E0E0E0;
-      border-radius: 10px;
+      color: var(--color-text-primary);
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-component);
       outline: none;
       box-sizing: border-box;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
-
-      &::placeholder { color: #CCCCCC; }
-
+      &::placeholder { color: var(--color-text-muted); }
       &:focus {
-        border-color: #111111;
-        box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.07);
+        border-color: var(--color-border-focus);
+        box-shadow: 0 0 0 var(--color-focus-ring-width) var(--color-focus-ring-glow);
       }
-
       &--mono {
-        font-family: 'JetBrains Mono', monospace;
+        font-family: var(--font-data);
         font-size: 0.875rem;
         letter-spacing: 0.04em;
       }
-
       &--select {
         appearance: none;
         cursor: pointer;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23AAAAAA' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
-        background-position: right 0.875rem center;
-        padding-right: 2.25rem;
+        background-position: right var(--space-component-md) center;
+        padding-right: var(--space-layout-sm);
       }
     }
 
     .field__input-wrap .field__input {
-      padding-right: 4rem;
+      padding-right: var(--space-layout-md);
     }
 
     .field__card-icons {
       position: absolute;
-      right: 0.75rem;
+      right: var(--space-component-md);
       top: 50%;
       transform: translateY(-50%);
       display: flex;
-      gap: 0.375rem;
+      gap: var(--space-component-xs);
       pointer-events: none;
     }
 
@@ -350,87 +338,80 @@ interface OrderLine {
       font-size: 0.5625rem;
       font-weight: 800;
       letter-spacing: 0.04em;
-      padding: 0.1875rem 0.4rem;
+      padding: var(--space-component-xs) var(--space-component-sm);
       border-radius: 3px;
-
-      &--visa { background: #1a1f71; color: #FFFFFF; }
-      &--mc   { background: #eb001b; color: #FFFFFF; }
+      &--visa { background: var(--color-surface-featured); color: var(--color-surface-featured-text); }
+      &--mc   { background: var(--color-text-danger); color: var(--color-text-inverse); }
     }
 
     .field__cvc-hint {
       position: absolute;
-      right: 0.875rem;
+      right: var(--space-component-md);
       top: 50%;
       transform: translateY(-50%);
       font-size: 0.875rem;
-      color: #CCCCCC;
+      color: var(--color-border-default);
       pointer-events: none;
     }
 
-    // ── Pay button ────────────────────────────────────────────────────────────
     .checkout__pay-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.625rem;
+      gap: var(--space-component-md);
       width: 100%;
       height: 3.25rem;
-      margin-top: 1.5rem;
-      background: #111111;
-      color: #FFFFFF;
-      font-family: 'Inter', sans-serif;
+      margin-top: var(--space-layout-sm);
+      background: var(--color-surface-featured);
+      color: var(--color-surface-featured-text);
+      font-family: var(--font-body);
       font-size: 1rem;
       font-weight: 700;
       border: none;
-      border-radius: 9999px;
+      border-radius: var(--radius-pill);
       cursor: pointer;
       letter-spacing: -0.01em;
       transition: background 0.15s ease, box-shadow 0.15s ease;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-
+      box-shadow: var(--elevation-raised);
       .pi { font-size: 0.875rem; opacity: 0.7; }
-
       &:hover {
-        background: #2A2A2A;
-        box-shadow: 0 6px 24px rgba(0,0,0,0.24);
+        background: var(--color-text-primary);
+        box-shadow: var(--elevation-float);
       }
     }
 
-    // ── Trust bar ─────────────────────────────────────────────────────────────
     .checkout__trust {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.625rem;
-      margin-top: 1rem;
+      gap: var(--space-component-md);
+      margin-top: var(--space-layout-xs);
       flex-wrap: wrap;
     }
 
     .checkout__trust-item {
       display: flex;
       align-items: center;
-      gap: 0.3125rem;
+      gap: var(--space-component-xs);
       font-size: 0.75rem;
-      color: #AAAAAA;
-
+      color: var(--color-text-muted);
       .pi { font-size: 0.6875rem; }
     }
 
     .checkout__trust-sep {
-      color: #DDDDDD;
+      color: var(--color-border-muted);
       font-size: 0.75rem;
     }
 
-    // ── Summary card (dark) ───────────────────────────────────────────────────
     .checkout__summary-col {
       position: sticky;
-      top: 1.5rem;
+      top: var(--space-layout-sm);
     }
 
     .order-card {
-      background: #111111;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+      background: var(--color-surface-featured);
+      border-radius: var(--radius-surface);
+      box-shadow: var(--elevation-float);
       overflow: hidden;
     }
 
@@ -438,23 +419,23 @@ interface OrderLine {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1.5rem 1.5rem 1rem;
+      padding: var(--space-layout-sm) var(--space-layout-sm) var(--space-layout-xs);
     }
 
     .order-card__title {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
     }
 
     .order-card__ref {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.75rem;
-      color: #555555;
+      color: var(--color-surface-featured-muted);
     }
 
     .order-card__lines {
-      padding: 0 1.5rem;
+      padding: 0 var(--space-layout-sm);
       display: flex;
       flex-direction: column;
       gap: 0;
@@ -464,24 +445,23 @@ interface OrderLine {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 1rem;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-
+      gap: var(--space-layout-xs);
+      padding: var(--space-component-md) 0;
+      border-bottom: 1px solid var(--color-border-muted);
       &:last-child { border-bottom: none; }
     }
 
     .order-line__info {
       display: flex;
       flex-direction: column;
-      gap: 0.125rem;
+      gap: var(--space-component-xs);
       min-width: 0;
     }
 
     .order-line__name {
       font-size: 0.8125rem;
       font-weight: 600;
-      color: #DDDDDD;
+      color: var(--color-surface-featured-text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -489,87 +469,84 @@ interface OrderLine {
 
     .order-line__desc {
       font-size: 0.6875rem;
-      color: #555555;
+      color: var(--color-surface-featured-muted);
     }
 
     .order-line__right {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
       flex-shrink: 0;
     }
 
     .order-line__qty {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.6875rem;
-      color: #555555;
+      color: var(--color-surface-featured-muted);
     }
 
     .order-line__total {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.8125rem;
       font-weight: 600;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
     }
 
     .order-card__divider {
       height: 1px;
-      background: rgba(255,255,255,0.07);
-      margin: 0 1.5rem;
+      background: var(--color-border-muted);
+      opacity: 0.08;
+      margin: 0 var(--space-layout-sm);
     }
 
-    // ── Totals ────────────────────────────────────────────────────────────────
     .order-totals {
-      padding: 1rem 1.5rem 0;
+      padding: var(--space-layout-xs) var(--space-layout-sm) 0;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-component-sm);
     }
 
     .order-totals__row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-
       &--total {
-        padding-top: 0.75rem;
-        border-top: 1px solid rgba(255,255,255,0.07);
-        margin-top: 0.25rem;
+        padding-top: var(--space-component-md);
+        border-top: 1px solid var(--color-border-muted);
+        margin-top: var(--space-component-xs);
       }
     }
 
     .order-totals__label {
       font-size: 0.8125rem;
-      color: #555555;
+      color: var(--color-surface-featured-muted);
     }
 
     .order-totals__value {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 0.8125rem;
-      color: #AAAAAA;
+      color: var(--color-surface-featured-muted);
     }
 
     .order-totals__total-label {
       font-size: 0.875rem;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
     }
 
     .order-totals__total-value {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-data);
       font-size: 1.375rem;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--color-surface-featured-text);
       letter-spacing: -0.02em;
     }
 
-    // ── Illustration ──────────────────────────────────────────────────────────
     .order-card__illustration {
       display: flex;
       justify-content: flex-end;
       overflow: hidden;
-      margin-top: 0.5rem;
-
+      margin-top: var(--space-component-sm);
       svg {
         width: 100%;
         height: auto;

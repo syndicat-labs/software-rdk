@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { ShowcaseBlockActionsComponent } from '../showcase-block-actions/showcase-block-actions.component';
 
 interface NavItem {
   label: string;
@@ -21,7 +22,7 @@ interface NavGroup {
 @Component({
   selector: 'app-showcase-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ShowcaseBlockActionsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="showcase-layout">
@@ -60,6 +61,9 @@ interface NavGroup {
       </nav>
 
       <main class="showcase-canvas">
+        @if (blockDescriptor()) {
+          <rdk-showcase-block-actions [blockLabel]="blockDescriptor()!.label" />
+        }
         <router-outlet />
       </main>
     </div>
@@ -185,6 +189,8 @@ interface NavGroup {
   `],
 })
 export class ShowcaseLayoutComponent {
+  private readonly router = inject(Router);
+
   // The showcase previously pinned data-theme="obsidian" on its own host, so
   // every page rendered in one language regardless of selection. That made the
   // showcase a demonstration of Obsidian rather than of the component library,
@@ -193,6 +199,24 @@ export class ShowcaseLayoutComponent {
   // language. No showcase page reads --obs-* tokens, so nothing depended on it.
 
   protected readonly navGroups: NavGroup[] = [
+    {
+      label: 'Library',
+      sections: [
+        {
+          label: 'By outcome',
+          badge: 'Blocks',
+          items: [
+            { label: 'Landing & marketing', path: 'new-design-ideas/pricing-section' },
+            { label: 'Operations dashboard', path: 'new-design-ideas/erp-dashboard' },
+            { label: 'Orders queue', path: 'new-design-ideas/erp-orders' },
+            { label: 'Checkout & payment', path: 'new-design-ideas/payment-checkout' },
+            { label: 'Invoices', path: 'new-design-ideas/erp-invoice' },
+            { label: 'Transactions', path: 'new-design-ideas/payment-transactions' },
+            { label: 'Identity & surfaces', path: 'new-design-ideas/frosted-glass' },
+          ],
+        },
+      ],
+    },
     {
       label: 'Components',
       sections: [
@@ -258,5 +282,25 @@ export class ShowcaseLayoutComponent {
         },
       ],
     },
-  ];
+];
+
+  /**
+   * Breakdown bar ("Install / Fork") is a library affordance, not a demo
+   * surface: it appears only on component-block routes (atoms / molecules /
+   * organisms), matching a nav item so the id seen under the name is real.
+   * Composed pages (new-design-ideas, protocol) and the language comparison
+   * hang off other routes and carry no install command.
+   */
+  protected readonly blockDescriptor = computed<{ label: string; path: string } | null>(() => {
+    const url = this.router.url.split('?')[0];
+    const path = url.replace(/^\/showcase\//, '');
+    if (!/^(atoms|molecules|organisms)\//.test(path)) return null;
+    for (const group of this.navGroups) {
+      for (const section of group.sections) {
+        const hit = section.items.find((item) => item.path === path);
+        if (hit) return { label: hit.label, path: hit.path };
+      }
+    }
+    return null;
+  });
 }

@@ -74,5 +74,12 @@
     "@parcel/watcher@2.6.0": true,
     "unrs-resolver@1.12.2": true,
     "msgpackr-extract@3.0.4": true
+  },
+  "overrides": {
+    "@angular-devkit/build-angular": {
+      "less": {
+        "image-size": "^2.0.4"
+      }
+    }
   }
 }

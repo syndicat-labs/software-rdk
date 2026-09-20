@@ -4,6 +4,11 @@ import { CommandRecentsService } from './command-recents.service';
 describe('CommandRecentsService', () => {
   let service: CommandRecentsService;
 
+  function reload(): CommandRecentsService {
+    TestBed.resetTestingModule();
+    return TestBed.inject(CommandRecentsService);
+  }
+
   beforeEach(() => {
     localStorage.clear();
     service = TestBed.inject(CommandRecentsService);
@@ -44,14 +49,12 @@ describe('CommandRecentsService', () => {
 
   it('ignores undefined, malformed storage', () => {
     localStorage.setItem('rdk_command_recents_v1', 'not-json');
-    const reloaded = TestBed.inject(CommandRecentsService);
-    expect(reloaded.list()).toEqual([]);
+    expect(reload().list()).toEqual([]);
   });
 
   it('rejects malformed entries on load', () => {
     localStorage.setItem('rdk_command_recents_v1', JSON.stringify([{ label: 'X' }, 42, null]));
-    const reloaded = TestBed.inject(CommandRecentsService);
-    expect(reloaded.list()).toEqual([]);
+    expect(reload().list()).toEqual([]);
   });
 
   it('clears the list and storage', () => {
@@ -59,5 +62,52 @@ describe('CommandRecentsService', () => {
     service.clear();
     expect(service.list()).toEqual([]);
     expect(localStorage.getItem('rdk_command_recents_v1')).toBe('[]');
+  });
+
+  it('rejects records with an empty label or url', () => {
+    service.record('', '/showcase/atoms/button');
+    expect(service.list()).toEqual([]);
+    service.record('Button', '');
+    expect(service.list()).toEqual([]);
+    service.record('', '');
+    expect(service.list()).toEqual([]);
+  });
+
+  it('rejects non-array JSON in storage', () => {
+    localStorage.setItem('rdk_command_recents_v1', JSON.stringify({ unexpected: true }));
+    expect(reload().list()).toEqual([]);
+  });
+
+  it('drops a well-formed object that is missing the timestamp', () => {
+    localStorage.setItem('rdk_command_recents_v1', JSON.stringify([{ label: 'Button', url: '/showcase/atoms/button' }]));
+    expect(reload().list()).toEqual([]);
+  });
+
+  it('restores persisted valid entries in order', () => {
+    localStorage.setItem(
+      'rdk_command_recents_v1',
+      JSON.stringify([
+        { label: 'A', url: '/a', at: 1 },
+        { label: 'B', url: '/b', at: 2 },
+      ]),
+    );
+    expect(reload().list()).toEqual([
+      { label: 'A', url: '/a', at: 1 },
+      { label: 'B', url: '/b', at: 2 },
+    ]);
+  });
+
+  it('swallows storage write failures', () => {
+    const setItem = jest
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(() => {
+        throw new Error('quota exceeded');
+      });
+    try {
+      expect(() => service.record('Button', '/showcase/atoms/button')).not.toThrow();
+      expect(service.list()).toHaveLength(1);
+    } finally {
+      setItem.mockRestore();
+    }
   });
 });

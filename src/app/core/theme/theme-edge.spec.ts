@@ -78,4 +78,12 @@ describe('ThemeService', () => {
     const service = makeService();
     expect(THEME_REGISTRY.some((t) => t.id === service.current())).toBe(true);
   });
+
+  it('restores a known stored theme id', () => {
+    const target = THEME_REGISTRY[0].id;
+    localStorage.setItem(STORAGE_KEY, target);
+    TestBed.resetTestingModule();
+    const service = makeService();
+    expect(service.current()).toBe(target);
+  });
 });
